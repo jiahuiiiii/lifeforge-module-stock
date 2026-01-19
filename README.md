@@ -1,5 +1,7 @@
 # 📈 Stock Module
 
+<img width="4750" height="3359" alt="Untitled (A4 (Landscape))" src="https://github.com/user-attachments/assets/c71239e9-0c9b-466f-94bd-62fe6cb7c3a8" />
+
 A comprehensive stock tracking and analysis module for LifeForge. Track your investments, manage watchlists, build virtual portfolios, and analyze stocks using the Cold Eye Investment Strategy.
 
 ## ✨ Features
