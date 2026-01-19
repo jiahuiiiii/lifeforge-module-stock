@@ -1,0 +1,52 @@
+{
+  "title": "Stock",
+  "description": "Track stocks, manage your watchlist, and build your portfolio.",
+  "subsections": {
+    "dashboard": "Dashboard",
+    "watchlist": "Watchlist",
+    "portfolio": "Portfolio",
+    "calculators": "Calculators",
+    "analyzer": "Analyzer",
+    "logbook": "Logbook",
+    "settings": "Settings",
+    "guide": "Guide",
+    "diary": "Diary"
+  },
+  "apps": {
+    "Portfolio": {
+      "Portfolio": "Portfolio",
+      "Description for Portfolio": "Track your stock portfolio and performance"
+    }
+  },
+  "common": {
+    "modals": {
+      "Create Portfolio": "Create Portfolio",
+      "Rename Portfolio": "Rename Portfolio"
+    },
+    "buttons": {
+      "Add Holding": "Add Holding"
+    }
+  },
+  "empty": {
+    "stock": {
+      "title": "Stock Module",
+      "description": "Something amazing is coming soon!"
+    },
+    "search": {
+      "title": "No results found",
+      "description": "Try adjusting your search or filter to find what you're looking for."
+    },
+    "watchlist": {
+      "title": "No stocks in watchlist",
+      "description": "Search and add stocks from Dashboard to track them here."
+    },
+    "portfolio": {
+      "title": "No stocks in portfolio",
+      "description": "Search and add stocks from Dashboard to track them here."
+    },
+    "diary": {
+      "title": "Nohing in diary",
+      "description": "Add a new diary to get started!"
+    }
+  }
+}

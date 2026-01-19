@@ -1,0 +1,32 @@
+{
+  "title": "股票",
+  "description": "追蹤股票、管理關注列表並構建您的投資組合。",
+  "subsections": {
+    "dashboard": "儀表板",
+    "watchlist": "關注列表",
+    "portfolio": "投資組合",
+    "calculators": "計算器",
+    "analyzer": "分析器",
+    "logbook": "日誌本",
+    "settings": "設定",
+    "guide": "指南"
+  },
+  "empty": {
+    "stock": {
+      "title": "股票模組",
+      "description": "精彩內容即將推出！"
+    },
+    "search": {
+      "title": "未找到結果",
+      "description": "請嘗試調整搜尋條件以找到您想要的內容。"
+    },
+    "watchlist": {
+      "title": "關注列表為空",
+      "description": "從儀表板搜尋並添加股票以在此處追蹤。"
+    },
+    "portfolio": {
+      "title": "投資組合為空",
+      "description": "從儀表板搜尋並添加股票以在此處追蹤。"
+    }
+  }
+}

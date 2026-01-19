@@ -1,0 +1,32 @@
+{
+  "title": "股票",
+  "description": "跟踪股票、管理关注列表并构建您的投资组合。",
+  "subsections": {
+    "dashboard": "仪表板",
+    "watchlist": "关注列表",
+    "portfolio": "投资组合",
+    "calculators": "计算器",
+    "analyzer": "分析器",
+    "logbook": "日志本",
+    "settings": "设置",
+    "guide": "指南"
+  },
+  "empty": {
+    "stock": {
+      "title": "股票模块",
+      "description": "精彩内容即将推出！"
+    },
+    "search": {
+      "title": "未找到结果",
+      "description": "请尝试调整搜索条件以找到您想要的内容。"
+    },
+    "watchlist": {
+      "title": "关注列表为空",
+      "description": "从仪表板搜索并添加股票以在此处跟踪。"
+    },
+    "portfolio": {
+      "title": "投资组合为空",
+      "description": "从仪表板搜索并添加股票以在此处跟踪。"
+    }
+  }
+}

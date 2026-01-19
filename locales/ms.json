@@ -1,0 +1,32 @@
+{
+  "title": "Saham",
+  "description": "Jejak saham, urus senarai pantau, dan bina portfolio anda.",
+  "subsections": {
+    "dashboard": "Papan Pemuka",
+    "watchlist": "Senarai Pantau",
+    "portfolio": "Portfolio",
+    "calculators": "Kalkulator",
+    "analyzer": "Penganalisis",
+    "logbook": "Buku Log",
+    "settings": "Tetapan",
+    "guide": "Panduan"
+  },
+  "empty": {
+    "stock": {
+      "title": "Modul Saham",
+      "description": "Sesuatu yang menarik akan datang!"
+    },
+    "search": {
+      "title": "Tiada keputusan ditemui",
+      "description": "Cuba laraskan carian anda untuk mencari apa yang anda cari."
+    },
+    "watchlist": {
+      "title": "Senarai pantau kosong",
+      "description": "Cari dan tambah saham dari Papan Pemuka untuk memantaunya di sini."
+    },
+    "portfolio": {
+      "title": "Portfolio kosong",
+      "description": "Cari dan tambah saham dari Papan Pemuka untuk memantaunya di sini."
+    }
+  }
+}

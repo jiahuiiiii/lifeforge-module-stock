@@ -1,0 +1,41 @@
+{
+  "name": "@lifeforge/jiahuiiiii--stock",
+  "displayName": "Stock",
+  "version": "0.0.4",
+  "description": "Track stocks, manage your watchlist, build virtual portfolio, and analyze stocks with the Cold Eye Investment Strategy.",
+  "author": "jiahuiiiii <wongjiahui0915@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jiahuiiiii/lifeforge-module-stock"
+  },
+  "scripts": {
+    "types": "cd client && bun tsc",
+    "build:client": "cd client && bun run vite build",
+    "build:server": "bun build ./server/index.ts --outdir ./server/dist --target bun --external @lifeforge/server-utils --external zod"
+  },
+  "dependencies": {
+    "katex": "^0.16.27",
+    "recharts": "^2.15.0",
+    "recharts-to-png": "^3.0.1",
+    "uuid": "^13.0.0",
+    "zustand": "^5.0.10"
+  },
+  "peerDependencies": {
+    "lifeforge-ui": "workspace:*",
+    "shared": "workspace:*",
+    "@lifeforge/server-utils": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/uuid": "^11.0.0"
+  },
+  "lifeforge": {
+    "category": "Finance",
+    "icon": "material-symbols-light:candlestick-chart",
+    "APIKeyAccess": {
+      "fmp": {
+        "required": true,
+        "usage": "Fetching stock quotes"
+      }
+    }
+  }
+}
