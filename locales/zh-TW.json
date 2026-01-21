@@ -25,8 +25,8 @@
       "title": "投資組合",
       "description": "管理您的持倉並追蹤投資表現。"
     },
-    "calculators": {
-      "title": "計算器",
+    "toolbox": {
+      "title": "分析器工具箱",
       "description": "計算股票分析的關鍵財務指標。"
     },
     "analyzer": {
@@ -34,7 +34,7 @@
       "description": "使用冷眼投資法分析股票。"
     },
     "logbook": {
-      "title": "日誌本",
+      "title": "分析日誌本",
       "description": "記錄並回顧您的股票分析歷史。"
     },
     "settings": {
@@ -91,7 +91,22 @@
     "diaryTitle": "日記標題",
     "feeling": "感覺",
     "notes": "筆記",
-    "image": "圖片"
+    "image": "圖片",
+    "currentPrice": "目前價格",
+    "annualDividend": "年度股息",
+    "startValue": "起始值",
+    "endValue": "結束值",
+    "years": "年數",
+    "netIncome": "淨收入",
+    "totalRevenue": "總營收",
+    "marketCap": "市值（或價格）",
+    "totalSales": "總銷售額（或每股銷售額）",
+    "eps": "每股盈餘（EPS）",
+    "equity": "股東權益",
+    "currentPe": "目前本益比",
+    "avgPe": "10年平均本益比",
+    "peRatio": "本益比",
+    "cagr": "複合年成長率"
   },
   "placeholders": {
     "portfolioName": "我的投資組合",
@@ -159,6 +174,14 @@
     "holding": {
       "title": "投資組合中沒有持倉",
       "description": "新增您的第一個股票持倉，開始構建您的虛擬投資組合。"
+    },
+    "savedAnalysisLog": {
+      "title": "還沒有保存的分析日誌",
+      "description": "完成分析並保存以在此處查看。"
+    },
+    "savedCalculatorLog": {
+      "title": "還沒有保存的計算日誌",
+      "description": "使用工具箱中的計算器並點擊右下角的\"保存\"按鈕以保存您的計算。"
     }
   },
   "diary": {
@@ -180,5 +203,46 @@
   },
   "items": {
     "diary": "日記條目"
+  },
+  "calculators": {
+    "categories": {
+      "gdp": "GDP - 創造財富",
+      "prc": "PRC - 維持財富",
+      "supplementary": "補充檢查"
+    },
+    "items": {
+      "cagr": {
+        "title": "複合年成長率",
+        "desc": "支援負數，k/M/B後綴"
+      },
+      "dy": {
+        "title": "股息率",
+        "desc": "價格和股息的單位需一致（美元/美分）"
+      },
+      "pe": {
+        "title": "本益比",
+        "desc": "本益比和每股盈餘的單位需一致（美元/美分）"
+      },
+      "margin": {
+        "title": "利潤率",
+        "desc": "支援負數，k/M/B後綴"
+      },
+      "roe": {
+        "title": "股東權益報酬率",
+        "desc": "支援負數，k/M/B後綴"
+      },
+      "peg": {
+        "title": "祖魯法則",
+        "desc": "檢查PEG比率是否符合祖魯法則（PEG ≤ 1.0）"
+      },
+      "peDiscount": {
+        "title": "歷史本益比折扣",
+        "desc": "將當前本益比與歷史平均值比較以獲得安全邊際"
+      },
+      "ps": {
+        "title": "市銷率",
+        "desc": "計算市銷率"
+      }
+    }
   }
 }

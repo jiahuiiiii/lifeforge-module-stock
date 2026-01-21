@@ -1,4 +1,4 @@
-// Types for Cold Eye Investment Analyzer
+import COLORS from 'tailwindcss/colors'
 
 export type MetricId = 'cagr' | 'dy' | 'pe' | 'margin' | 'roe' | 'cashflow'
 
@@ -95,36 +95,21 @@ export function getVerdict(gdpScore: number, prcScore: number): Verdict {
   return 'FAIL'
 }
 
-export function getVerdictLabel(verdict: Verdict): string {
-  switch (verdict) {
-    case 'PASS':
-      return 'Invest'
-    case 'NEUTRAL':
-      return 'Watch'
-    case 'FAIL':
-      return 'Reject'
-  }
-}
-
-export function getVerdictColor(verdict: Verdict): string {
-  switch (verdict) {
-    case 'PASS':
-      return 'text-green-500'
-    case 'NEUTRAL':
-      return 'text-yellow-500'
-    case 'FAIL':
-      return 'text-red-500'
-  }
-}
-
-export function getVerdictBgColor(verdict: Verdict): string {
-  switch (verdict) {
-    case 'PASS':
-      return 'bg-green-500/20 border-green-500/50'
-    case 'NEUTRAL':
-      return 'bg-yellow-500/20 border-yellow-500/50'
-    case 'FAIL':
-      return 'bg-red-500/20 border-red-500/50'
+export const VERDICTS = {
+  PASS: {
+    icon: 'tabler:check',
+    label: 'Invest',
+    color: COLORS.green[500]
+  },
+  NEUTRAL: {
+    icon: 'tabler:alert-circle',
+    label: 'Watch',
+    color: COLORS.yellow[500]
+  },
+  FAIL: {
+    icon: 'tabler:x',
+    label: 'Reject',
+    color: COLORS.red[500]
   }
 }
 

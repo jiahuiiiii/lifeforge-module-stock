@@ -1,29 +1,28 @@
 import { Widget } from 'lifeforge-ui'
 import type { ReactNode } from 'react'
+import { useTranslation } from 'react-i18next'
 
-interface CalculatorCardProps {
-  title: string
-  description?: string
-  icon: string
-  color: string
-  children: ReactNode
-  result?: ReactNode
-}
-
-export default function CalculatorCard({
-  title,
-  description,
+export default function CalculatorWrapper({
+  calculatorKey,
   icon,
   color,
   children,
   result
-}: CalculatorCardProps) {
+}: {
+  calculatorKey: string
+  icon: string
+  color: string
+  children: ReactNode
+  result?: ReactNode
+}) {
+  const { t } = useTranslation('apps.jiahuiiiii$stock')
+
   return (
     <Widget
-      description={description}
+      description={t(`calculators.items.${calculatorKey}.desc`)}
       icon={icon}
       iconColor={color}
-      title={title}
+      title={t(`calculators.items.${calculatorKey}.title`)}
     >
       <div className="flex-1 space-y-3">{children}</div>
       {result && (

@@ -9,9 +9,9 @@ export default {
     '/portfolio/:portfolioId': lazy(() => import('@/pages/PortfolioHolding')),
     '/diary': lazy(() => import('@/pages/Diary')),
     '/chart/:symbolAndName': lazy(() => import('@/pages/StockChart')),
-    '/analyzer/toolbox': lazy(() => import('@/pages/Analyzer/Toolbox')),
+    '/analyzer/toolbox': lazy(() => import('@/pages/Toolbox')),
     '/analyzer/gdp-prc': lazy(() => import('@/pages/Analyzer/GdpPrc')),
-    '/analyzer/logbook': lazy(() => import('@/pages/Analyzer/Logbook')),
+    '/analyzer/logbook': lazy(() => import('@/pages/AnalyzerLogbook')),
     '/analyzer/settings': lazy(() => import('@/pages/Analyzer/Settings')),
     '/analyzer/guide': lazy(() => import('@/pages/Analyzer/Guide'))
   },

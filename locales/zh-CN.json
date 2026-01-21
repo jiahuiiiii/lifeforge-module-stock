@@ -25,8 +25,8 @@
       "title": "投资组合",
       "description": "管理您的持仓并追踪投资表现。"
     },
-    "calculators": {
-      "title": "计算器",
+    "toolbox": {
+      "title": "分析器工具箱",
       "description": "计算股票分析的关键财务指标。"
     },
     "analyzer": {
@@ -34,7 +34,7 @@
       "description": "使用冷眼投资法分析股票。"
     },
     "logbook": {
-      "title": "日志本",
+      "title": "分析日志本",
       "description": "记录并回顾您的股票分析历史。"
     },
     "settings": {
@@ -91,7 +91,22 @@
     "diaryTitle": "日记标题",
     "feeling": "感觉",
     "notes": "笔记",
-    "image": "图片"
+    "image": "图片",
+    "currentPrice": "当前价格",
+    "annualDividend": "年度股息",
+    "startValue": "起始值",
+    "endValue": "结束值",
+    "years": "年数",
+    "netIncome": "净收入",
+    "totalRevenue": "总营收",
+    "marketCap": "市值（或价格）",
+    "totalSales": "总销售额（或每股销售额）",
+    "eps": "每股收益（EPS）",
+    "equity": "股东权益",
+    "currentPe": "当前市盈率",
+    "avgPe": "10年平均市盈率",
+    "peRatio": "市盈率",
+    "cagr": "复合年增长率"
   },
   "placeholders": {
     "portfolioName": "我的投资组合",
@@ -159,6 +174,14 @@
     "holding": {
       "title": "投资组合中没有持仓",
       "description": "添加您的第一个股票持仓，开始构建您的虚拟投资组合。"
+    },
+    "savedAnalysisLog": {
+      "title": "还没有保存的分析日志",
+      "description": "完成分析并保存以在这里查看。"
+    },
+    "savedCalculatorLog": {
+      "title": "还没有保存的计算器日志",
+      "description": "使用工具箱中的计算器并点击右下角的\"保存\"按钮以保存您的计算。"
     }
   },
   "diary": {
@@ -180,5 +203,46 @@
   },
   "items": {
     "diary": "日记条目"
+  },
+  "calculators": {
+    "categories": {
+      "gdp": "GDP - 创造财富",
+      "prc": "PRC - 维持财富",
+      "supplementary": "补充检查"
+    },
+    "items": {
+      "cagr": {
+        "title": "复合年增长率",
+        "desc": "支持负数，k/M/B后缀"
+      },
+      "dy": {
+        "title": "股息率",
+        "desc": "价格和股息的单位需一致（美元/美分）"
+      },
+      "pe": {
+        "title": "市盈率",
+        "desc": "市盈率和每股收益的单位需一致（美元/美分）"
+      },
+      "margin": {
+        "title": "利润率",
+        "desc": "支持负数，k/M/B后缀"
+      },
+      "roe": {
+        "title": "股东权益回报率",
+        "desc": "支持负数，k/M/B后缀"
+      },
+      "peg": {
+        "title": "祖鲁法则",
+        "desc": "检查PEG比率是否符合祖鲁法则（PEG ≤ 1.0）"
+      },
+      "peDiscount": {
+        "title": "历史市盈率折扣",
+        "desc": "将当前市盈率与历史平均值比较以获得安全边际"
+      },
+      "ps": {
+        "title": "市销率",
+        "desc": "计算市销率"
+      }
+    }
   }
 }

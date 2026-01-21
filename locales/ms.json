@@ -25,8 +25,8 @@
       "title": "Portfolio",
       "description": "Urus pegangan anda dan jejak prestasi pelaburan."
     },
-    "calculators": {
-      "title": "Kalkulator",
+    "toolbox": {
+      "title": "Pengalat Penganalisis",
       "description": "Kira metrik kewangan utama untuk analisis saham."
     },
     "analyzer": {
@@ -34,7 +34,7 @@
       "description": "Analisis saham menggunakan metodologi pelaburan Cold Eye."
     },
     "logbook": {
-      "title": "Buku Log",
+      "title": "Buku Log Analisis",
       "description": "Rekod dan semak sejarah analisis saham anda."
     },
     "settings": {
@@ -91,7 +91,22 @@
     "diaryTitle": "Judul Diari",
     "feeling": "Perasaan",
     "notes": "Nota",
-    "image": "Gambar"
+    "image": "Gambar",
+    "currentPrice": "Harga Semasa",
+    "annualDividend": "Dividen Tahunan",
+    "startValue": "Nilai Mula",
+    "endValue": "Nilai Akhir",
+    "years": "Tahun",
+    "netIncome": "Pendapatan Bersih",
+    "totalRevenue": "Jumlah Hasil",
+    "marketCap": "Modal Pasaran (atau Harga)",
+    "totalSales": "Jumlah Jualan (atau Jualan/Saham)",
+    "eps": "Pendapatan Per Saham (EPS)",
+    "equity": "Ekuiti Pemegang Saham",
+    "currentPe": "PE Semasa",
+    "avgPe": "Purata PE 10 Tahun",
+    "peRatio": "Nisbah PE",
+    "cagr": "CAGR"
   },
   "placeholders": {
     "portfolioName": "Portfolio Saya",
@@ -159,6 +174,14 @@
     "holding": {
       "title": "Tiada pegangan dalam portfolio",
       "description": "Mula bina portfolio maya anda dengan menambah pegangan saham pertama."
+    },
+    "savedAnalysisLog": {
+      "title": "Tiada log analisis saham yang disimpan",
+      "description": "Lengkapkan analisis saham dan simpan untuk melihatnya di sini."
+    },
+    "savedCalculatorLog": {
+      "title": "Tiada log kalkulator yang disimpan",
+      "description": "Gunakan kalkulator dalam Pengalat dan klik \"Simpan\" untuk menyimpan kiraan anda."
     }
   },
   "diary": {
@@ -180,5 +203,46 @@
   },
   "items": {
     "diary": "Entri Diari"
+  },
+  "calculators": {
+    "categories": {
+      "gdp": "GDP - Mencipta Kekayaan",
+      "prc": "PRC - Mengekalkan Kekayaan",
+      "supplementary": "Semakan Tambahan"
+    },
+    "items": {
+      "cagr": {
+        "title": "CAGR",
+        "desc": "Nombor negatif, akhiran k/M/B disokong"
+      },
+      "dy": {
+        "title": "Hasil Dividen",
+        "desc": "Unit Harga dan Dividen perlu sama (dolar/sen)"
+      },
+      "pe": {
+        "title": "Nisbah PE",
+        "desc": "Unit P/E dan EPS perlu sama (dolar/sen)"
+      },
+      "margin": {
+        "title": "Margin Keuntungan",
+        "desc": "Nombor negatif, akhiran k/M/B disokong"
+      },
+      "roe": {
+        "title": "Kalkulator ROE",
+        "desc": "Nombor negatif, akhiran k/M/B disokong"
+      },
+      "peg": {
+        "title": "Prinsip Zulu",
+        "desc": "Semak sama ada nisbah PEG memenuhi Prinsip Zulu (PEG ≤ 1.0)"
+      },
+      "peDiscount": {
+        "title": "Diskaun PE Sejarah",
+        "desc": "Bandingkan PE semasa dengan purata sejarah untuk margin keselamatan"
+      },
+      "ps": {
+        "title": "Harga-ke-Jualan",
+        "desc": "Kira nisbah harga-ke-jualan"
+      }
+    }
   }
 }

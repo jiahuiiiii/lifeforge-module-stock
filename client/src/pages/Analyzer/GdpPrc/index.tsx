@@ -10,17 +10,15 @@ import {
 import { useMemo, useState } from 'react'
 import { v4 as uuid } from 'uuid'
 
+import ScoreBadge from '../../Toolbox/components/ScoreBadge'
 import { getScore } from '../calculators'
-import ScoreBadge from '../components/ScoreBadge'
 import { useAnalyzerStore } from '../store'
 import {
   CASH_FLOW_OPTIONS,
   type CashFlowOption,
   type StockLog,
-  getVerdict,
-  getVerdictBgColor,
-  getVerdictColor,
-  getVerdictLabel
+  VERDICTS,
+  getVerdict
 } from '../types'
 
 interface QualitativeChecks {
@@ -386,11 +384,7 @@ export default function GdpPrc() {
               <div>
                 <div className="text-bg-500 mb-1 flex items-center justify-between text-sm">
                   <span>G: CAGR (%)</span>
-                  <ScoreBadge
-                    maxScore={50}
-                    score={scores.cagrScore}
-                    size="sm"
-                  />
+                  <ScoreBadge maxScore={50} score={scores.cagrScore} />
                 </div>
                 <TextInput
                   required
@@ -404,7 +398,7 @@ export default function GdpPrc() {
               <div>
                 <div className="text-bg-500 mb-1 flex items-center justify-between text-sm">
                   <span>D: Dividend Yield (%)</span>
-                  <ScoreBadge maxScore={40} score={scores.dyScore} size="sm" />
+                  <ScoreBadge maxScore={40} score={scores.dyScore} />
                 </div>
                 <TextInput
                   required
@@ -418,7 +412,7 @@ export default function GdpPrc() {
               <div>
                 <div className="text-bg-500 mb-1 flex items-center justify-between text-sm">
                   <span>P: PE Ratio</span>
-                  <ScoreBadge maxScore={30} score={scores.peScore} size="sm" />
+                  <ScoreBadge maxScore={30} score={scores.peScore} />
                 </div>
                 <TextInput
                   required
@@ -482,11 +476,7 @@ export default function GdpPrc() {
               <div>
                 <div className="text-bg-500 mb-1 flex items-center justify-between text-sm">
                   <span>P: Profit Margin (%)</span>
-                  <ScoreBadge
-                    maxScore={20}
-                    score={scores.marginScore}
-                    size="sm"
-                  />
+                  <ScoreBadge maxScore={20} score={scores.marginScore} />
                 </div>
                 <TextInput
                   required
@@ -500,7 +490,7 @@ export default function GdpPrc() {
               <div>
                 <div className="text-bg-500 mb-1 flex items-center justify-between text-sm">
                   <span>R: ROE (%)</span>
-                  <ScoreBadge maxScore={20} score={scores.roeScore} size="sm" />
+                  <ScoreBadge maxScore={20} score={scores.roeScore} />
                 </div>
                 <TextInput
                   required
@@ -514,11 +504,7 @@ export default function GdpPrc() {
               <div>
                 <div className="text-bg-500 mb-1 flex items-center justify-between text-sm">
                   <span>C: Cash Flow</span>
-                  <ScoreBadge
-                    maxScore={40}
-                    score={scores.cashFlowScore}
-                    size="sm"
-                  />
+                  <ScoreBadge maxScore={40} score={scores.cashFlowScore} />
                 </div>
                 <ListboxInput
                   buttonContent={
@@ -646,14 +632,14 @@ export default function GdpPrc() {
           </div>
 
           <div
-            className={`mx-auto mb-6 inline-flex items-center gap-3 rounded-xl border-2 px-6 py-4 ${getVerdictBgColor(verdict)}`}
+            className={`mx-auto mb-6 inline-flex items-center gap-3 rounded-xl border-2 px-6 py-4 ${VERDICTS[verdict].color}`}
           >
-            <div className={`text-5xl font-black ${getVerdictColor(verdict)}`}>
+            <div className={`text-5xl font-black ${VERDICTS[verdict].color}`}>
               {verdict}
             </div>
             <div className="text-left">
-              <div className={`text-lg font-bold ${getVerdictColor(verdict)}`}>
-                Verdict: {getVerdictLabel(verdict)}
+              <div className={`text-lg font-bold ${VERDICTS[verdict].color}`}>
+                Verdict: {VERDICTS[verdict].label}
               </div>
               <div className="text-bg-500 text-sm">
                 {verdict === 'PASS' && 'Score >= 50 in both - Strong Candidate'}

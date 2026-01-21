@@ -25,8 +25,8 @@
       "title": "Portfolio",
       "description": "Manage your holdings and track your investment performance."
     },
-    "calculators": {
-      "title": "Calculators",
+    "toolbox": {
+      "title": "Analyzer Toolbox",
       "description": "Calculate key financial metrics for stock analysis."
     },
     "analyzer": {
@@ -34,7 +34,7 @@
       "description": "Analyze stocks using the Cold Eye investment methodology."
     },
     "logbook": {
-      "title": "Logbook",
+      "title": "Analysis Logbook",
       "description": "Record and review your stock analysis history."
     },
     "settings": {
@@ -91,7 +91,22 @@
     "diaryTitle": "Diary Title",
     "feeling": "Feeling",
     "notes": "Notes",
-    "image": "Image"
+    "image": "Image",
+    "currentPrice": "Current Price",
+    "annualDividend": "Annual Dividend",
+    "startValue": "Start Value",
+    "endValue": "End Value",
+    "years": "Years",
+    "netIncome": "Net Income",
+    "totalRevenue": "Total Revenue",
+    "marketCap": "Market Cap (or Price)",
+    "totalSales": "Total Sales (or Sales/Share)",
+    "eps": "Earnings Per Share (EPS)",
+    "equity": "Shareholders' Equity",
+    "currentPe": "Current PE",
+    "avgPe": "10-Year Average PE",
+    "peRatio": "PE Ratio",
+    "cagr": "CAGR"
   },
   "placeholders": {
     "portfolioName": "My Portfolio",
@@ -159,6 +174,14 @@
     "holding": {
       "title": "No holdings in portfolio",
       "description": "Start building your virtual portfolio by adding your first stock holding."
+    },
+    "savedAnalysisLog": {
+      "title": "No stock analyses saved yet.",
+      "description": "Complete an analysis and save it to see it here."
+    },
+    "savedCalculatorLogs": {
+      "title": "No calculator logs saved yet.",
+      "description": "Use the Toolbox calculators and click the \"Save\" button at the bottom right to save your calculations."
     }
   },
   "diary": {
@@ -180,5 +203,46 @@
   },
   "items": {
     "diary": "Diary Entry"
+  },
+  "calculators": {
+    "categories": {
+      "gdp": "GDP - Creating Wealth",
+      "prc": "PRC - Sustaining Wealth",
+      "supplementary": "Supplementary Checks"
+    },
+    "items": {
+      "cagr": {
+        "title": "CAGR",
+        "desc": "Negative Numbers, k/M/B suffix supported"
+      },
+      "dy": {
+        "title": "Dividend Yield",
+        "desc": "The unit of Price and Dividend needs to be the same (dollar/cent)"
+      },
+      "pe": {
+        "title": "PE Ratio",
+        "desc": "The unit of P/E and EPS needs to be the same (dollar/cent)"
+      },
+      "margin": {
+        "title": "Profit Margin",
+        "desc": "Negative Numbers, k/M/B suffix supported"
+      },
+      "roe": {
+        "title": "ROE",
+        "desc": "Negative Numbers, k/M/B suffix supported"
+      },
+      "peg": {
+        "title": "Zulu Principle (PEG ≤ 1.0)",
+        "desc": "Check if PEG ratio meets Zulu Principle (PEG ≤ 1.0)"
+      },
+      "peDiscount": {
+        "title": "Historical PE Discount",
+        "desc": "Compare current PE to historical average for safety margin"
+      },
+      "ps": {
+        "title": "Price-to-Sales",
+        "desc": "Calculate price-to-sales ratio"
+      }
+    }
   }
 }
