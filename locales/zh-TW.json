@@ -9,7 +9,131 @@
     "analyzer": "分析器",
     "logbook": "日誌本",
     "settings": "設定",
-    "guide": "指南"
+    "guide": "指南",
+    "diary": "日記"
+  },
+  "subsectionsTitleAndDesc": {
+    "dashboard": {
+      "title": "儀表板",
+      "description": "追蹤股票、管理關注列表並構建您的投資組合。"
+    },
+    "watchlist": {
+      "title": "關注列表",
+      "description": "監控您關注的股票及其即時表現。"
+    },
+    "portfolio": {
+      "title": "投資組合",
+      "description": "管理您的持倉並追蹤投資表現。"
+    },
+    "calculators": {
+      "title": "計算器",
+      "description": "計算股票分析的關鍵財務指標。"
+    },
+    "analyzer": {
+      "title": "分析器",
+      "description": "使用冷眼投資法分析股票。"
+    },
+    "logbook": {
+      "title": "日誌本",
+      "description": "記錄並回顧您的股票分析歷史。"
+    },
+    "settings": {
+      "title": "設定",
+      "description": "配置評分閾值和分析參數。"
+    },
+    "guide": {
+      "title": "投資指南",
+      "description": "學習冷眼投資哲學和策略。"
+    },
+    "diary": {
+      "title": "日記",
+      "description": "記錄您的投資思考和市場觀察。"
+    }
+  },
+  "titles": {
+    "portfolio": "投資組合"
+  },
+  "buttons": {
+    "createPortfolio": "建立投資組合",
+    "addHolding": "新增持倉"
+  },
+  "modals": {
+    "portfolio": {
+      "create": "建立投資組合",
+      "update": "更新投資組合",
+      "delete": "刪除投資組合",
+      "deleteConfirmation": "確定要刪除「{{name}}」投資組合嗎？此操作無法撤銷。"
+    },
+    "holding": {
+      "create": "新增持倉",
+      "update": "編輯持倉",
+      "remove": "移除持倉",
+      "removeConfirmation": "從投資組合中移除 {{symbol}}？此操作無法撤銷。"
+    },
+    "diary": {
+      "create": "新增日記",
+      "update": "編輯日記",
+      "remove": "移除日記",
+      "removeConfirmation": "確定要刪除「{{name}}」日記嗎？此操作無法撤銷。"
+    }
+  },
+  "inputs": {
+    "portfolioName": "投資組合名稱",
+    "symbol": "股票代碼",
+    "companyName": "公司名稱",
+    "shares": "股數",
+    "avgCost": "平均成本價",
+    "dateAdded": "新增日期",
+    "compare": "對比",
+    "timeRange": "時間範圍",
+    "closingTime": "收盤時間",
+    "date": "日期",
+    "diaryTitle": "日記標題",
+    "feeling": "感覺",
+    "notes": "筆記",
+    "image": "圖片"
+  },
+  "placeholders": {
+    "portfolioName": "我的投資組合",
+    "symbol": "AAPL",
+    "companyName": "蘋果"
+  },
+  "widgets": {
+    "totalValue": "總市值",
+    "totalCost": "總成本",
+    "totalPL": "總盈虧",
+    "dayChange": "日漲跌",
+    "performanceVs": "對比 <benchmark></benchmark> 表現"
+  },
+  "table": {
+    "symbol": "代碼",
+    "addedOn": "新增日期",
+    "shares": "股數",
+    "avgCost": "平均成本",
+    "currentPrice": "現價",
+    "marketValue": "市值",
+    "pl": "盈虧",
+    "plPercent": "盈虧 %",
+    "actions": "操作"
+  },
+  "portfolio": {
+    "holdingsCount": "{{count}} 只持倉",
+    "holdingsValuing": "{{count}} 只持倉，價值 ${{value}}"
+  },
+  "errors": {
+    "portfolio": {
+      "createFailed": "建立投資組合失敗",
+      "renameFailed": "重新命名投資組合失敗",
+      "deleteFailed": "刪除投資組合失敗"
+    },
+    "holding": {
+      "createFailed": "新增持倉失敗",
+      "updateFailed": "更新持倉失敗",
+      "removeFailed": "移除持倉失敗"
+    }
+  },
+  "common": {
+    "loading": "載入中..."
   },
   "empty": {
     "stock": {
@@ -27,6 +151,34 @@
     "portfolio": {
       "title": "投資組合為空",
       "description": "從儀表板搜尋並添加股票以在此處追蹤。"
+    },
+    "diary": {
+      "title": "日記為空",
+      "description": "新增日記以開始！"
+    },
+    "holding": {
+      "title": "投資組合中沒有持倉",
+      "description": "新增您的第一個股票持倉，開始構建您的虛擬投資組合。"
     }
+  },
+  "diary": {
+    "sidebar": {
+      "allEntries": "所有條目",
+      "moods": "心情"
+    },
+    "headers": {
+      "all": "全部",
+      "allEntries": "所有條目"
+    },
+    "moods": {
+      "bullish": "看漲",
+      "neutral": "中立",
+      "bearish": "看跌",
+      "excited": "興奮",
+      "anxious": "焦慮"
+    }
+  },
+  "items": {
+    "diary": "日記條目"
   }
 }

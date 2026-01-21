@@ -12,20 +12,128 @@
     "guide": "Guide",
     "diary": "Diary"
   },
-  "apps": {
-    "Portfolio": {
-      "Portfolio": "Portfolio",
-      "Description for Portfolio": "Track your stock portfolio and performance"
+  "subsectionsTitleAndDesc": {
+    "dashboard": {
+      "title": "Dashboard",
+      "description": "Track stocks, manage your watchlist, and build your portfolio."
+    },
+    "watchlist": {
+      "title": "Watchlist",
+      "description": "Monitor your favorite stocks and their real-time performance."
+    },
+    "portfolio": {
+      "title": "Portfolio",
+      "description": "Manage your holdings and track your investment performance."
+    },
+    "calculators": {
+      "title": "Calculators",
+      "description": "Calculate key financial metrics for stock analysis."
+    },
+    "analyzer": {
+      "title": "Analyzer",
+      "description": "Analyze stocks using the Cold Eye investment methodology."
+    },
+    "logbook": {
+      "title": "Logbook",
+      "description": "Record and review your stock analysis history."
+    },
+    "settings": {
+      "title": "Settings",
+      "description": "Configure scoring thresholds and analysis parameters."
+    },
+    "guide": {
+      "title": "Investment Guide",
+      "description": "Learn the Cold Eye philosophy and investment strategies."
+    },
+    "diary": {
+      "title": "Diary",
+      "description": "Record your investment thoughts and market observations."
+    }
+  },
+  "titles": {
+    "portfolio": "Portfolio"
+  },
+  "buttons": {
+    "createPortfolio": "Create Portfolio",
+    "addHolding": "Add Holding"
+  },
+  "modals": {
+    "portfolio": {
+      "create": "Create Portfolio",
+      "update": "Update Portfolio",
+      "delete": "Delete Portfolio",
+      "deleteConfirmation": "Are you sure you want to delete \"{{name}}\" portfolio? This action cannot be undone."
+    },
+    "holding": {
+      "create": "Add Holding",
+      "update": "Edit Holding",
+      "remove": "Remove Holding",
+      "removeConfirmation": "Remove {{symbol}} from portfolio? This action cannot be undone."
+    },
+    "diary": {
+      "create": "Add Diary",
+      "update": "Edit Diary",
+      "remove": "Remove Diary",
+      "removeConfirmation": "Remove {{symbol}} from portfolio? This action cannot be undone."
+    }
+  },
+  "inputs": {
+    "portfolioName": "Portfolio Name",
+    "symbol": "Symbol",
+    "companyName": "Company Name",
+    "shares": "Number of Shares",
+    "avgCost": "Average Cost per Share",
+    "dateAdded": "Date Added",
+    "compare": "Compare",
+    "timeRange": "Time Range",
+    "closingTime": "Closing Time",
+    "date": "Date",
+    "diaryTitle": "Diary Title",
+    "feeling": "Feeling",
+    "notes": "Notes",
+    "image": "Image"
+  },
+  "placeholders": {
+    "portfolioName": "My Portfolio",
+    "symbol": "AAPL",
+    "companyName": "Apple"
+  },
+  "widgets": {
+    "totalValue": "Total Value",
+    "totalCost": "Total Cost",
+    "totalPL": "Total P/L",
+    "dayChange": "Day Change",
+    "performanceVs": "Performance vs <benchmark></benchmark>"
+  },
+  "table": {
+    "symbol": "Symbol",
+    "addedOn": "Added On",
+    "shares": "Shares",
+    "avgCost": "Avg Cost",
+    "currentPrice": "Current Price",
+    "marketValue": "Market Value",
+    "pl": "P/L",
+    "plPercent": "P/L %",
+    "actions": "Actions"
+  },
+  "portfolio": {
+    "holdingsCount": "{{count}} holdings",
+    "holdingsValuing": "{{count}} Holdings valuing ${{value}}"
+  },
+  "errors": {
+    "portfolio": {
+      "createFailed": "Failed to create portfolio",
+      "renameFailed": "Failed to rename portfolio",
+      "deleteFailed": "Failed to delete portfolio"
+    },
+    "holding": {
+      "createFailed": "Failed to add holding",
+      "updateFailed": "Failed to update holding",
+      "removeFailed": "Failed to remove holding"
     }
   },
   "common": {
-    "modals": {
-      "Create Portfolio": "Create Portfolio",
-      "Rename Portfolio": "Rename Portfolio"
-    },
-    "buttons": {
-      "Add Holding": "Add Holding"
-    }
+    "loading": "Loading..."
   },
   "empty": {
     "stock": {
@@ -45,8 +153,32 @@
       "description": "Search and add stocks from Dashboard to track them here."
     },
     "diary": {
-      "title": "Nohing in diary",
+      "title": "Nothing in diary",
       "description": "Add a new diary to get started!"
+    },
+    "holding": {
+      "title": "No holdings in portfolio",
+      "description": "Start building your virtual portfolio by adding your first stock holding."
     }
+  },
+  "diary": {
+    "sidebar": {
+      "allEntries": "All Entries",
+      "moods": "Moods"
+    },
+    "headers": {
+      "all": "All",
+      "allEntries": "All Entries"
+    },
+    "moods": {
+      "bullish": "Bullish",
+      "neutral": "Neutral",
+      "bearish": "Bearish",
+      "excited": "Excited",
+      "anxious": "Anxious"
+    }
+  },
+  "items": {
+    "diary": "Diary Entry"
   }
 }

@@ -32,7 +32,7 @@ function Watchlist() {
 
   const quoteQueries = useQueries({
     queries: watchlist.map(item =>
-      forgeAPI.getQuote.input({ symbol: item.symbol }).queryOptions({
+      forgeAPI.data.getQuote.input({ symbol: item.symbol }).queryOptions({
         refetchInterval: 30000,
         enabled: !!item.symbol,
         retry: 0
@@ -66,45 +66,37 @@ function Watchlist() {
     localStorage.setItem('stock_watchlist', JSON.stringify(updated))
   }
 
-  if (watchlist.length === 0) {
-    return (
-      <div className="animate-[fadeSlideIn_0.3s_ease-out]">
-        <ModuleHeader />
-        <EmptyStateScreen
-          icon="tabler:eye-off"
-          message={{
-            id: 'watchlist',
-            namespace: 'apps.jiahuiiiii$stock'
-          }}
-        />
-      </div>
-    )
-  }
-
   return (
-    <div className="animate-[fadeSlideIn_0.3s_ease-out]">
-      <ModuleHeader title="Watchlist" />
-
-      {/* Header section */}
-      <div className="mb-6">
-        <p className="text-bg-500">
-          Track your favorite stocks in real-time. Prices update every 30
-          seconds.
-        </p>
-      </div>
-
-      {/* Watchlist grid */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {watchlist.map(item => (
-          <QuoteItem
-            key={item.symbol}
-            item={item}
-            quote={quotes[item.symbol]}
-            removeFromWatchlist={removeFromWatchlist}
+    <>
+      <ModuleHeader
+        icon="tabler:eye"
+        namespace="apps.jiahuiiiii$stock"
+        title="watchlist"
+        tKey="subsectionsTitleAndDesc"
+      />
+      {watchlist.length === 0 ? (
+        <div className="flex-1">
+          <EmptyStateScreen
+            icon="tabler:eye-off"
+            message={{
+              id: 'watchlist',
+              namespace: 'apps.jiahuiiiii$stock'
+            }}
           />
-        ))}
-      </div>
-    </div>
+        </div>
+      ) : (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {watchlist.map(item => (
+            <QuoteItem
+              key={item.symbol}
+              item={item}
+              quote={quotes[item.symbol]}
+              removeFromWatchlist={removeFromWatchlist}
+            />
+          ))}
+        </div>
+      )}
+    </>
   )
 }
 

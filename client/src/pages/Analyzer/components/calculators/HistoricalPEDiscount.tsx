@@ -1,24 +1,21 @@
 import { Icon } from '@iconify/react'
+import { NumberInput } from 'lifeforge-ui'
 import { useMemo, useState } from 'react'
 
 import { calculatePEDiscount } from '../../calculators'
 import CalculatorCard from '../CalculatorCard'
 
 export default function HistoricalPEDiscount() {
-  const [currentPE, setCurrentPE] = useState<string>('')
+  const [currentPE, setCurrentPE] = useState(0)
 
-  const [avgPE, setAvgPE] = useState<string>('')
+  const [avgPE, setAvgPE] = useState(0)
 
   const { discount, isUndervalued } = useMemo(() => {
-    const current = parseFloat(currentPE)
-
-    const avg = parseFloat(avgPE)
-
-    if (isNaN(current) || isNaN(avg) || current <= 0 || avg <= 0) {
+    if (currentPE <= 0 || avgPE <= 0) {
       return { discount: null, isUndervalued: false }
     }
 
-    const discountValue = calculatePEDiscount(current, avg)
+    const discountValue = calculatePEDiscount(currentPE, avgPE)
 
     return { discount: discountValue, isUndervalued: discountValue >= 25 }
   }, [currentPE, avgPE])
@@ -32,7 +29,7 @@ export default function HistoricalPEDiscount() {
           <div className="flex items-center justify-between">
             <div>
               <div className="text-bg-500 text-sm">PE Discount</div>
-              <div className="text-2xl font-bold">
+              <div className="text-2xl font-semibold">
                 {discount > 0 ? '+' : ''}
                 {discount.toFixed(1)}%
               </div>
@@ -58,28 +55,22 @@ export default function HistoricalPEDiscount() {
       }
       title="Historical PE Discount"
     >
-      <div>
-        <label className="text-bg-500 mb-1 block text-sm">Current PE</label>
-        <input
-          className="border-bg-200 bg-bg-50 dark:border-bg-700 dark:bg-bg-900 w-full rounded-lg border px-3 py-2 text-sm"
-          placeholder="e.g., 12"
-          type="number"
-          value={currentPE}
-          onChange={e => setCurrentPE(e.target.value)}
-        />
-      </div>
-      <div>
-        <label className="text-bg-500 mb-1 block text-sm">
-          10-Year Average PE
-        </label>
-        <input
-          className="border-bg-200 bg-bg-50 dark:border-bg-700 dark:bg-bg-900 w-full rounded-lg border px-3 py-2 text-sm"
-          placeholder="e.g., 20"
-          type="number"
-          value={avgPE}
-          onChange={e => setAvgPE(e.target.value)}
-        />
-      </div>
+      <NumberInput
+        icon="tabler:percentage"
+        label="Current PE"
+        namespace="apps.jiahuiiiii$stock"
+        placeholder="e.g., 12"
+        value={currentPE}
+        onChange={setCurrentPE}
+      />
+      <NumberInput
+        icon="tabler:chart-line"
+        label="10-Year Average PE"
+        namespace="apps.jiahuiiiii$stock"
+        placeholder="e.g., 20"
+        value={avgPE}
+        onChange={setAvgPE}
+      />
     </CalculatorCard>
   )
 }

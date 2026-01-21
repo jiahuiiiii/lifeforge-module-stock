@@ -6,6 +6,7 @@ export default {
     '/': lazy(() => import('@/pages/Dashboard')),
     '/watchlist': lazy(() => import('@/pages/Watchlist')),
     '/portfolio': lazy(() => import('@/pages/Portfolio')),
+    '/portfolio/:portfolioId': lazy(() => import('@/pages/PortfolioHolding')),
     '/diary': lazy(() => import('@/pages/Diary')),
     '/chart/:symbolAndName': lazy(() => import('@/pages/StockChart')),
     '/analyzer/toolbox': lazy(() => import('@/pages/Analyzer/Toolbox')),

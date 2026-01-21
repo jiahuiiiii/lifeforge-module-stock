@@ -37,7 +37,12 @@ export default function Logbook() {
   if (hasNoLogs) {
     return (
       <div className="flex h-full animate-[fadeSlideIn_0.3s_ease-out] flex-col">
-        <ModuleHeader title="Analysis Logbook" />
+        <ModuleHeader
+          icon="tabler:notebook"
+          namespace="apps.jiahuiiiii$stock"
+          title="logbook"
+          tKey="subsectionsTitleAndDesc"
+        />
         <div className="flex-center flex-1 flex-col gap-4">
           <Icon
             className="text-bg-300 dark:text-bg-600 size-20"

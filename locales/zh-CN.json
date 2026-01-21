@@ -9,7 +9,131 @@
     "analyzer": "分析器",
     "logbook": "日志本",
     "settings": "设置",
-    "guide": "指南"
+    "guide": "指南",
+    "diary": "日记"
+  },
+  "subsectionsTitleAndDesc": {
+    "dashboard": {
+      "title": "仪表板",
+      "description": "追踪股票、管理关注列表并构建您的投资组合。"
+    },
+    "watchlist": {
+      "title": "关注列表",
+      "description": "监控您关注的股票及其实时表现。"
+    },
+    "portfolio": {
+      "title": "投资组合",
+      "description": "管理您的持仓并追踪投资表现。"
+    },
+    "calculators": {
+      "title": "计算器",
+      "description": "计算股票分析的关键财务指标。"
+    },
+    "analyzer": {
+      "title": "分析器",
+      "description": "使用冷眼投资法分析股票。"
+    },
+    "logbook": {
+      "title": "日志本",
+      "description": "记录并回顾您的股票分析历史。"
+    },
+    "settings": {
+      "title": "设置",
+      "description": "配置评分阈值和分析参数。"
+    },
+    "guide": {
+      "title": "投资指南",
+      "description": "学习冷眼投资哲学和策略。"
+    },
+    "diary": {
+      "title": "日记",
+      "description": "记录您的投资思考和市场观察。"
+    }
+  },
+  "titles": {
+    "portfolio": "投资组合"
+  },
+  "buttons": {
+    "createPortfolio": "创建投资组合",
+    "addHolding": "添加持仓"
+  },
+  "modals": {
+    "portfolio": {
+      "create": "创建投资组合",
+      "update": "更新投资组合",
+      "delete": "删除投资组合",
+      "deleteConfirmation": "确定要删除\"{{name}}\"投资组合吗？此操作无法撤销。"
+    },
+    "holding": {
+      "create": "添加持仓",
+      "update": "编辑持仓",
+      "remove": "移除持仓",
+      "removeConfirmation": "从投资组合中移除 {{symbol}}？此操作无法撤销。"
+    },
+    "diary": {
+      "create": "新增日记",
+      "update": "编辑日记",
+      "remove": "移除日记",
+      "removeConfirmation": "确定要删除「{{name}}」日记吗？此操作无法撤销。"
+    }
+  },
+  "inputs": {
+    "portfolioName": "投资组合名称",
+    "symbol": "股票代码",
+    "companyName": "公司名称",
+    "shares": "股数",
+    "avgCost": "平均成本价",
+    "dateAdded": "添加日期",
+    "compare": "对比",
+    "timeRange": "时间范围",
+    "closingTime": "收盘时间",
+    "date": "日期",
+    "diaryTitle": "日记标题",
+    "feeling": "感觉",
+    "notes": "笔记",
+    "image": "图片"
+  },
+  "placeholders": {
+    "portfolioName": "我的投资组合",
+    "symbol": "AAPL",
+    "companyName": "苹果"
+  },
+  "widgets": {
+    "totalValue": "总市值",
+    "totalCost": "总成本",
+    "totalPL": "总盈亏",
+    "dayChange": "日涨跌",
+    "performanceVs": "对比 <benchmark></benchmark> 表现"
+  },
+  "table": {
+    "symbol": "代码",
+    "addedOn": "添加日期",
+    "shares": "股数",
+    "avgCost": "平均成本",
+    "currentPrice": "现价",
+    "marketValue": "市值",
+    "pl": "盈亏",
+    "plPercent": "盈亏 %",
+    "actions": "操作"
+  },
+  "portfolio": {
+    "holdingsCount": "{{count}} 只持仓",
+    "holdingsValuing": "{{count}} 只持仓，价值 ${{value}}"
+  },
+  "errors": {
+    "portfolio": {
+      "createFailed": "创建投资组合失败",
+      "renameFailed": "重命名投资组合失败",
+      "deleteFailed": "删除投资组合失败"
+    },
+    "holding": {
+      "createFailed": "添加持仓失败",
+      "updateFailed": "更新持仓失败",
+      "removeFailed": "移除持仓失败"
+    }
+  },
+  "common": {
+    "loading": "加载中..."
   },
   "empty": {
     "stock": {
@@ -27,6 +151,34 @@
     "portfolio": {
       "title": "投资组合为空",
       "description": "从仪表板搜索并添加股票以在此处跟踪。"
+    },
+    "diary": {
+      "title": "日记为空",
+      "description": "添加新日记以开始！"
+    },
+    "holding": {
+      "title": "投资组合中没有持仓",
+      "description": "添加您的第一个股票持仓，开始构建您的虚拟投资组合。"
     }
+  },
+  "diary": {
+    "sidebar": {
+      "allEntries": "所有条目",
+      "moods": "心情"
+    },
+    "headers": {
+      "all": "全部",
+      "allEntries": "所有条目"
+    },
+    "moods": {
+      "bullish": "看涨",
+      "neutral": "中立",
+      "bearish": "看跌",
+      "excited": "兴奋",
+      "anxious": "焦虑"
+    }
+  },
+  "items": {
+    "diary": "日记条目"
   }
 }

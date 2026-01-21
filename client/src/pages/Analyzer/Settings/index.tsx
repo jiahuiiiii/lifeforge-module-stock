@@ -162,7 +162,12 @@ export default function Settings() {
 
   return (
     <div className="animate-[fadeSlideIn_0.3s_ease-out]">
-      <ModuleHeader title="Analyzer Settings" />
+      <ModuleHeader
+        icon="tabler:settings"
+        namespace="apps.jiahuiiiii$stock"
+        title="settings"
+        tKey="subsectionsTitleAndDesc"
+      />
       <div className="space-y-6">
         {/* Metric Editors + Cash Flow */}
         <div className="grid gap-4 lg:grid-cols-2">

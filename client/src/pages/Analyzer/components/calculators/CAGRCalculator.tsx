@@ -1,22 +1,20 @@
+import { NumberInput, TextInput } from 'lifeforge-ui'
 import { useEffect, useMemo, useState } from 'react'
+import COLORS from 'tailwindcss/colors'
 
 import { calculateCAGR, getScore } from '../../calculators'
 import { useAnalyzerStore } from '../../store'
 import CalculatorCard from '../CalculatorCard'
 import ScoreBadge from '../ScoreBadge'
 
-// Parse shorthand numbers like 100k, 1M, 2B (also handles negatives like -100k)
 function parseShorthand(value: string): number {
   if (!value) return NaN
 
-  // Remove commas and whitespace, convert to lowercase
   const cleaned = value.replace(/,/g, '').replace(/\s/g, '').toLowerCase()
 
   if (!cleaned) return NaN
 
-  // Handle negative sign
   let isNegative = false
-
   let numStr = cleaned
 
   if (cleaned.startsWith('-')) {
@@ -24,7 +22,6 @@ function parseShorthand(value: string): number {
     numStr = cleaned.slice(1)
   }
 
-  // Check for suffix (k, m, b)
   const lastChar = numStr.slice(-1)
 
   const multipliers: Record<string, number> = {
@@ -42,23 +39,22 @@ function parseShorthand(value: string): number {
 
     result = isNaN(num) ? NaN : num * multipliers[lastChar]
   } else {
-    // No suffix, parse as regular number
     result = parseFloat(numStr)
   }
 
   return isNegative ? -result : result
 }
 
-interface CAGRCalculatorProps {
+export default function CAGRCalculator({
+  onValueChange
+}: {
   onValueChange?: (value: number | null, score: number) => void
-}
+}) {
+  const [startValue, setStartValue] = useState('')
 
-export default function CAGRCalculator({ onValueChange }: CAGRCalculatorProps) {
-  const [startValue, setStartValue] = useState<string>('')
+  const [endValue, setEndValue] = useState('')
 
-  const [endValue, setEndValue] = useState<string>('')
-
-  const [years, setYears] = useState<string>('5')
+  const [years, setYears] = useState(5)
 
   const settings = useAnalyzerStore(s => s.settings)
 
@@ -67,80 +63,64 @@ export default function CAGRCalculator({ onValueChange }: CAGRCalculatorProps) {
 
     const end = parseShorthand(endValue)
 
-    const y = parseFloat(years)
-
-    if (isNaN(start) || isNaN(end) || isNaN(y) || start === 0 || y <= 0) {
+    if (isNaN(start) || isNaN(end) || start === 0 || years <= 0) {
       return { cagr: null, score: 0 }
     }
 
-    const cagrValue = calculateCAGR(end, start, y)
+    const cagrValue = calculateCAGR(end, start, years)
 
     const scoreValue = getScore(cagrValue, settings.cagr)
 
     return { cagr: cagrValue, score: scoreValue }
   }, [startValue, endValue, years, settings.cagr])
 
-  // Report value changes to parent
   useEffect(() => {
     onValueChange?.(cagr, score)
   }, [cagr, score, onValueChange])
 
   return (
     <CalculatorCard
+      color={COLORS.lime[500]}
       description="Negative Numbers, k/M/B suffix supported"
       icon="tabler:trending-up"
       result={
-        cagr !== null ? (
+        cagr !== null && (
           <div className="flex items-center justify-between">
             <div>
               <div className="text-bg-500 text-sm">Growth Rate</div>
-              <div className="text-2xl font-bold">{cagr.toFixed(2)}%</div>
+              <div className="text-2xl font-semibold">{cagr.toFixed(2)}%</div>
             </div>
             <ScoreBadge maxScore={50} score={score} />
-          </div>
-        ) : (
-          <div className="text-bg-500 text-center text-sm">
-            Enter values to calculate
           </div>
         )
       }
       title="CAGR Calculator"
     >
-      <div>
-        <label className="text-bg-500 mb-1 block text-sm">
-          Year N-{years || '5'} Net Profit (e.g. 2021)
-        </label>
-        <input
-          className="border-bg-200 bg-bg-50 dark:border-bg-700 dark:bg-bg-900 w-full rounded-lg border px-3 py-2 text-sm"
-          placeholder="e.g., 100k, 1M, 2B"
-          type="text"
-          value={startValue}
-          onChange={e => setStartValue(e.target.value)}
-        />
-      </div>
-      <div>
-        <label className="text-bg-500 mb-1 block text-sm">
-          Year N Net Profit (e.g. 2026)
-        </label>
-        <input
-          className="border-bg-200 bg-bg-50 dark:border-bg-700 dark:bg-bg-900 w-full rounded-lg border px-3 py-2 text-sm"
-          placeholder="e.g., 150k, 1.5M"
-          type="text"
-          value={endValue}
-          onChange={e => setEndValue(e.target.value)}
-        />
-      </div>
-      <div>
-        <label className="text-bg-500 mb-1 block text-sm">Years</label>
-        <input
-          className="border-bg-200 bg-bg-50 dark:border-bg-700 dark:bg-bg-900 w-full rounded-lg border px-3 py-2 text-sm"
-          max="20"
-          min="1"
-          type="number"
-          value={years}
-          onChange={e => setYears(e.target.value)}
-        />
-      </div>
+      <TextInput
+        icon="tabler:calendar-minus"
+        label={`Year N-${years} Net Profit`}
+        namespace="apps.jiahuiiiii$stock"
+        placeholder="e.g., 100k, 1M, 2B"
+        value={startValue}
+        onChange={setStartValue}
+      />
+      <TextInput
+        icon="tabler:calendar"
+        label="Year N Net Profit"
+        namespace="apps.jiahuiiiii$stock"
+        placeholder="e.g., 150k, 1.5M"
+        value={endValue}
+        onChange={setEndValue}
+      />
+      <NumberInput
+        icon="tabler:hourglass"
+        label="Years"
+        max={20}
+        min={1}
+        namespace="apps.jiahuiiiii$stock"
+        value={years}
+        onChange={setYears}
+      />
     </CalculatorCard>
   )
 }

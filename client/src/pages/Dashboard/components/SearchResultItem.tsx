@@ -5,7 +5,7 @@ import type forgeAPI from '@/utils/forgeAPI'
 
 import type { WatchlistItem } from '../index'
 
-type BestMatch = InferOutput<typeof forgeAPI.search>['bestMatches'][number]
+type BestMatch = InferOutput<typeof forgeAPI.data.search>['bestMatches'][number]
 
 function SearchResultItem({ match }: { match: BestMatch }) {
   return (

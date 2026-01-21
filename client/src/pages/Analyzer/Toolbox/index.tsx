@@ -1,5 +1,6 @@
-import { ModuleHeader } from 'lifeforge-ui'
+import { FAB, ModuleHeader } from 'lifeforge-ui'
 import { useCallback, useState } from 'react'
+import COLORS from 'tailwindcss/colors'
 
 import SaveCalculationModal from '../components/SaveCalculationModal'
 import CAGRCalculator from '../components/calculators/CAGRCalculator'
@@ -111,81 +112,71 @@ export default function Toolbox() {
     roeData.value !== null
 
   return (
-    <div className="animate-[fadeSlideIn_0.3s_ease-out]">
-      <ModuleHeader title="Analyzer Toolbox" />
-      <div className="space-y-6">
-        {/* Row 1: GDP Fundamentals */}
-        <section>
-          <h2 className="text-bg-500 mb-3 flex items-center gap-2 text-sm font-semibold tracking-wide uppercase">
-            <span className="bg-custom-500 size-2 rounded-full" />
-            GDP - Creating Wealth
-          </h2>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            <CAGRCalculator onValueChange={handleCagrChange} />
-            <DividendYieldCalculator onValueChange={handleDyChange} />
-            <PERatioCalculator onValueChange={handlePeChange} />
-          </div>
-        </section>
-
-        {/* Row 2: PRC Sustaining Wealth */}
-        <section>
-          <h2 className="text-bg-500 mb-3 flex items-center gap-2 text-sm font-semibold tracking-wide uppercase">
-            <span className="size-2 rounded-full bg-blue-500" />
-            PRC - Sustaining Wealth
-          </h2>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            <ProfitMarginCalculator onValueChange={handleMarginChange} />
-            <ROECalculator onValueChange={handleRoeChange} />
-          </div>
-        </section>
-
-        {/* Row 3: Supplementary Checks */}
-        <section>
-          <h2 className="text-bg-500 mb-3 flex items-center gap-2 text-sm font-semibold tracking-wide uppercase">
-            <span className="size-2 rounded-full bg-purple-500" />
-            Supplementary Checks
-          </h2>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            <ZuluChecker />
-            <HistoricalPEDiscount />
-            <PSScanner />
-          </div>
-        </section>
+    <>
+      <ModuleHeader
+        icon="tabler:calculator"
+        namespace="apps.jiahuiiiii$stock"
+        title="analyzer"
+        tKey="subsectionsTitleAndDesc"
+      />
+      <div className="mb-12 space-y-6">
+        {[
+          {
+            title: 'GDP - Creating Wealth',
+            color: COLORS.lime[500],
+            children: (
+              <>
+                <CAGRCalculator onValueChange={handleCagrChange} />
+                <DividendYieldCalculator onValueChange={handleDyChange} />
+                <PERatioCalculator onValueChange={handlePeChange} />
+              </>
+            )
+          },
+          {
+            title: 'PRC - Sustaining Wealth',
+            color: COLORS.blue[500],
+            children: (
+              <>
+                <ProfitMarginCalculator onValueChange={handleMarginChange} />
+                <ROECalculator onValueChange={handleRoeChange} />
+              </>
+            )
+          },
+          {
+            title: 'Supplementary Checks',
+            color: COLORS.purple[500],
+            children: (
+              <>
+                <ZuluChecker />
+                <HistoricalPEDiscount />
+                <PSScanner />
+              </>
+            )
+          }
+        ].map(section => (
+          <section key={section.title}>
+            <h2 className="text-bg-500 mb-3 flex items-center gap-2 font-semibold tracking-wide">
+              <span
+                className="h-6 w-1 rounded-full"
+                style={{ backgroundColor: section.color }}
+              />
+              {section.title}
+            </h2>
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {section.children}
+            </div>
+          </section>
+        ))}
       </div>
 
-      {/* Floating Save Button - only show if there's at least one value */}
       {hasAnyValue && (
-        <button
-          className="bg-custom-500 hover:bg-custom-600 fixed right-8 bottom-8 flex items-center gap-2 rounded-full px-6 py-3 font-medium text-white shadow-lg transition-all hover:scale-105"
-          type="button"
+        <FAB
+          icon="tabler:device-floppy"
+          visibilityBreakpoint={false}
           onClick={() => setIsSaveModalOpen(true)}
         >
-          <span className="size-5">
-            <svg
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2}
-              viewBox="0 0 24 24"
-            >
-              <path
-                d="M5 5a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-14z"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M14 17v-6h-4v6"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M9 5v4h6v-4h-2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </span>
           Save
-        </button>
+        </FAB>
       )}
 
       <SaveCalculationModal
@@ -193,6 +184,6 @@ export default function Toolbox() {
         onClose={() => setIsSaveModalOpen(false)}
         onSave={handleSave}
       />
-    </div>
+    </>
   )
 }

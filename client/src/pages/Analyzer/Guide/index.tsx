@@ -1,17 +1,17 @@
 import { Icon } from '@iconify/react'
 import katex from 'katex'
 import 'katex/dist/katex.min.css'
-import { Card, ModuleHeader } from 'lifeforge-ui'
+import { Card, ModuleHeader, Tabs } from 'lifeforge-ui'
 import { useState } from 'react'
 
 type Tab = 'philosophy' | 'glossary' | 'howto' | 'limitations'
 
-const TABS: { id: Tab; label: string; icon: string }[] = [
-  { id: 'philosophy', label: 'Philosophy', icon: 'tabler:bulb' },
-  { id: 'glossary', label: 'Glossary', icon: 'tabler:book' },
-  { id: 'howto', label: 'How to Use', icon: 'tabler:list-check' },
-  { id: 'limitations', label: 'Limitations', icon: 'tabler:alert-triangle' }
-]
+const TABS = [
+  { id: 'philosophy', name: 'Philosophy', icon: 'tabler:bulb' },
+  { id: 'glossary', name: 'Glossary', icon: 'tabler:book' },
+  { id: 'howto', name: 'How to Use', icon: 'tabler:list-check' },
+  { id: 'limitations', name: 'Limitations', icon: 'tabler:alert-triangle' }
+] as const
 
 function Formula({ latex }: { latex: string }) {
   const html = katex.renderToString(latex, {
@@ -32,7 +32,7 @@ function PhilosophyTab() {
           <div className="flex size-10 items-center justify-center rounded-lg bg-blue-500/10">
             <Icon className="size-5 text-blue-500" icon="tabler:eye" />
           </div>
-          <h2 className="text-xl font-bold">The Cold Eye Philosophy</h2>
+          <h2 className="text-xl font-semibold">The Cold Eye Philosophy</h2>
         </div>
         <p className="text-bg-500 mb-4">
           The &quot;Cold Eye&quot; approach emphasizes disciplined, emotionless
@@ -47,7 +47,7 @@ function PhilosophyTab() {
               <div className="text-custom-500 mb-1 font-semibold">
                 GDP Score
               </div>
-              <p className="text-bg-500 text-sm">
+              <p className="text-bg-500">
                 Measures wealth creation through Growth (CAGR), Dividends, and
                 Price (PE ratio)
               </p>
@@ -56,7 +56,7 @@ function PhilosophyTab() {
               <div className="text-custom-500 mb-1 font-semibold">
                 PRC Score
               </div>
-              <p className="text-bg-500 text-sm">
+              <p className="text-bg-500">
                 Measures wealth sustainability through Profit margin, ROE, and
                 Cash flow
               </p>
@@ -65,7 +65,7 @@ function PhilosophyTab() {
               <div className="text-custom-500 mb-1 font-semibold">
                 Score &gt; 100
               </div>
-              <p className="text-bg-500 text-sm">
+              <p className="text-bg-500">
                 Minimum threshold for investment consideration (Grade A)
               </p>
             </div>
@@ -78,7 +78,7 @@ function PhilosophyTab() {
           <div className="flex size-10 items-center justify-center rounded-lg bg-purple-500/10">
             <Icon className="size-5 text-purple-500" icon="tabler:moon" />
           </div>
-          <h2 className="text-xl font-bold">The Sleep Strategy</h2>
+          <h2 className="text-xl font-semibold">The Sleep Strategy</h2>
         </div>
         <p className="text-bg-500 mb-4">
           Before analyzing any numbers, ask yourself: &quot;Can I sleep well at
@@ -118,7 +118,7 @@ function PhilosophyTab() {
               />
               <div>
                 <div className="font-medium">{item.title}</div>
-                <p className="text-bg-500 text-sm">{item.desc}</p>
+                <p className="text-bg-500">{item.desc}</p>
               </div>
             </div>
           ))}
@@ -130,7 +130,7 @@ function PhilosophyTab() {
           <div className="flex size-10 items-center justify-center rounded-lg bg-orange-500/10">
             <Icon className="size-5 text-orange-500" icon="tabler:scale" />
           </div>
-          <h2 className="text-xl font-bold">Opportunity Cost</h2>
+          <h2 className="text-xl font-semibold">Opportunity Cost</h2>
         </div>
         <p className="text-bg-500">
           Every investment decision has an opportunity cost. By investing in one
@@ -149,7 +149,7 @@ function GlossaryTab() {
       term: 'CAGR',
       fullName: 'Compound Annual Growth Rate',
       latex:
-        '\\left(\\frac{\\text{End Value}}{\\text{Start Value}}\\right)^{\\frac{1}{n}} - 1',
+        '\\left(\\dfrac{\\text{End Value}}{\\text{Start Value}}\\right)^{\\frac{1}{n}} - 1',
       description:
         'Measures the average annual growth rate of an investment over a specified period, smoothing out volatility.',
       color: 'green'
@@ -157,7 +157,7 @@ function GlossaryTab() {
     {
       term: 'PE Ratio',
       fullName: 'Price-to-Earnings',
-      latex: '\\frac{\\text{Stock Price}}{\\text{EPS}}',
+      latex: '\\dfrac{\\text{Stock Price}}{\\text{EPS}}',
       description:
         'Shows how much investors are willing to pay for each dollar of earnings. Lower is generally better.',
       color: 'blue'
@@ -165,7 +165,7 @@ function GlossaryTab() {
     {
       term: 'PEG Ratio',
       fullName: 'Price/Earnings to Growth',
-      latex: '\\frac{\\text{PE Ratio}}{\\text{CAGR}}',
+      latex: '\\dfrac{\\text{PE Ratio}}{\\text{CAGR}}',
       description:
         'Adjusts PE for growth. A PEG ≤ 1.0 suggests the stock may be undervalued relative to its growth rate (Zulu Principle).',
       color: 'purple'
@@ -174,7 +174,7 @@ function GlossaryTab() {
       term: 'Dividend Yield',
       fullName: 'Annual Dividend Return',
       latex:
-        '\\frac{\\text{Annual Dividend}}{\\text{Stock Price}} \\times 100\\%',
+        '\\dfrac{\\text{Annual Dividend}}{\\text{Stock Price}} \\times 100\\%',
       description:
         'The percentage return from dividends alone. Higher yields indicate better income potential.',
       color: 'orange'
@@ -182,7 +182,7 @@ function GlossaryTab() {
     {
       term: 'Net Profit Margin',
       fullName: 'Profitability Ratio',
-      latex: '\\frac{\\text{Net Profit}}{\\text{Revenue}} \\times 100\\%',
+      latex: '\\dfrac{\\text{Net Profit}}{\\text{Revenue}} \\times 100\\%',
       description:
         'Shows how much profit a company keeps from each dollar of revenue. Higher margins indicate better efficiency.',
       color: 'teal'
@@ -191,7 +191,7 @@ function GlossaryTab() {
       term: 'ROE',
       fullName: 'Return on Equity',
       latex:
-        '\\frac{\\text{Net Income}}{\\text{Shareholder Equity}} \\times 100\\%',
+        '\\dfrac{\\text{Net Income}}{\\text{Shareholder Equity}} \\times 100\\%',
       description:
         'Measures how effectively a company uses shareholder capital to generate profits.',
       color: 'pink'
@@ -199,7 +199,7 @@ function GlossaryTab() {
     {
       term: 'P/S Ratio',
       fullName: 'Price-to-Sales',
-      latex: '\\frac{\\text{Market Cap}}{\\text{Total Revenue}}',
+      latex: '\\dfrac{\\text{Market Cap}}{\\text{Total Revenue}}',
       description:
         'Useful for companies with low or negative earnings. Must be combined with profit margin analysis.',
       color: 'indigo'
@@ -225,20 +225,20 @@ function GlossaryTab() {
               className={`flex size-10 items-center justify-center rounded-lg ${colorClasses[item.color].bg}`}
             >
               <span
-                className={`text-lg font-bold ${colorClasses[item.color].text}`}
+                className={`text-lg font-semibold ${colorClasses[item.color].text}`}
               >
                 {item.term.charAt(0)}
               </span>
             </div>
             <div>
               <h3 className="font-semibold">{item.term}</h3>
-              <span className="text-bg-500 text-xs">{item.fullName}</span>
+              <span className="text-bg-500 text-sm">{item.fullName}</span>
             </div>
           </div>
           <div className="bg-bg-100 dark:bg-bg-800/50 flex items-center justify-center rounded-lg px-4 py-3">
             <Formula latex={item.latex} />
           </div>
-          <p className="text-bg-500 text-sm">{item.description}</p>
+          <p className="text-bg-500">{item.description}</p>
         </Card>
       ))}
     </div>
@@ -304,7 +304,7 @@ function HowToTab() {
           <div className="flex size-10 items-center justify-center rounded-lg bg-green-500/10">
             <Icon className="size-5 text-green-500" icon="tabler:search" />
           </div>
-          <h2 className="text-xl font-bold">Finding Financial Data</h2>
+          <h2 className="text-xl font-semibold">Finding Financial Data</h2>
         </div>
         <p className="text-bg-500 mb-4">
           To use this analyzer effectively, you need access to company financial
@@ -314,10 +314,10 @@ function HowToTab() {
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="bg-bg-100 dark:bg-bg-800/50 rounded-lg p-4">
             <h3 className="mb-2 font-semibold">Annual Reports</h3>
-            <p className="text-bg-500 mb-2 text-sm">
+            <p className="text-bg-500 mb-2">
               Visit the company&apos;s Investor Relations page. Key sections:
             </p>
-            <ul className="text-bg-500 space-y-1 text-sm">
+            <ul className="text-bg-500 space-y-1">
               <li className="flex items-center gap-2">
                 <Icon className="text-custom-500 size-4" icon="tabler:check" />
                 Income Statement: Net profit, revenue, EPS
@@ -334,7 +334,7 @@ function HowToTab() {
           </div>
           <div className="bg-bg-100 dark:bg-bg-800/50 rounded-lg p-4">
             <h3 className="mb-2 font-semibold">Data Providers</h3>
-            <ul className="text-bg-500 space-y-2 text-sm">
+            <ul className="text-bg-500 space-y-2">
               <li className="flex items-center gap-2">
                 <Icon className="size-4 text-blue-500" icon="tabler:world" />
                 <strong>Yahoo Finance</strong> - Free key statistics
@@ -357,7 +357,7 @@ function HowToTab() {
           <div className="flex size-10 items-center justify-center rounded-lg bg-blue-500/10">
             <Icon className="size-5 text-blue-500" icon="tabler:list-numbers" />
           </div>
-          <h2 className="text-xl font-bold">Step-by-Step Analysis</h2>
+          <h2 className="text-xl font-semibold">Step-by-Step Analysis</h2>
         </div>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {steps.map(item => (
@@ -366,13 +366,13 @@ function HowToTab() {
               className="bg-bg-100 dark:bg-bg-800/50 rounded-lg p-3"
             >
               <div className="mb-2 flex items-center gap-2">
-                <div className="bg-custom-500 flex size-6 items-center justify-center rounded-full text-xs font-bold text-white">
+                <div className="bg-custom-500 flex size-6 items-center justify-center rounded-full text-sm font-semibold text-white">
                   {item.step}
                 </div>
                 <Icon className="text-custom-500 size-4" icon={item.icon} />
               </div>
-              <div className="text-sm font-medium">{item.title}</div>
-              <p className="text-bg-500 mt-1 text-xs">{item.desc}</p>
+              <div className="font-medium">{item.title}</div>
+              <p className="text-bg-500 mt-1 text-sm">{item.desc}</p>
             </div>
           ))}
         </div>
@@ -383,7 +383,7 @@ function HowToTab() {
           <div className="flex size-10 items-center justify-center rounded-lg bg-yellow-500/10">
             <Icon className="size-5 text-yellow-500" icon="tabler:bulb" />
           </div>
-          <h2 className="text-xl font-bold">Tips for Better Analysis</h2>
+          <h2 className="text-xl font-semibold">Tips for Better Analysis</h2>
         </div>
         <div className="grid gap-3 sm:grid-cols-2">
           {[
@@ -417,7 +417,7 @@ function HowToTab() {
                 className="text-custom-500 size-5 shrink-0"
                 icon={item.icon}
               />
-              <span className="text-sm">{item.tip}</span>
+              <span className="">{item.tip}</span>
             </div>
           ))}
         </div>
@@ -437,37 +437,37 @@ function LimitationsTab() {
               icon="tabler:alert-triangle"
             />
           </div>
-          <h2 className="text-xl font-bold">Blind Spots & Limitations</h2>
+          <h2 className="text-xl font-semibold">Blind Spots & Limitations</h2>
         </div>
 
         <div className="space-y-4">
           {/* Tech/Growth Unfriendliness */}
           <div className="bg-bg-100 dark:bg-bg-800/50 rounded-lg p-4">
-            <h3 className="mb-2 flex items-center gap-2 font-bold text-red-500">
+            <h3 className="mb-2 flex items-center gap-2 font-semibold text-red-500">
               <Icon className="size-5" icon="tabler:rocket-off" />
               Unfriendly to Tech & Growth Stocks
             </h3>
-            <p className="text-bg-500 mb-3 text-sm">
+            <p className="text-bg-500 mb-3">
               The current model may penalize high-growth companies unjustly:
             </p>
             <div className="grid gap-3 sm:grid-cols-2">
               <div className="bg-bg-50 dark:bg-bg-900/50 rounded p-3">
-                <div className="text-sm font-semibold">Dividend Issues</div>
-                <p className="text-bg-500 text-xs">
+                <div className="font-semibold">Dividend Issues</div>
+                <p className="text-bg-500 text-sm">
                   Great tech companies (like early Amazon or Tesla) often
                   reinvest profits instead of paying dividends, leading to low
                   scores.
                 </p>
               </div>
               <div className="bg-bg-50 dark:bg-bg-900/50 rounded p-3">
-                <div className="text-sm font-semibold">PE Ratio Issues</div>
-                <p className="text-bg-500 text-xs">
+                <div className="font-semibold">PE Ratio Issues</div>
+                <p className="text-bg-500 text-sm">
                   Quality growth stocks often trade at PE &gt; 30x. This model
                   would give them only 5 points.
                 </p>
               </div>
             </div>
-            <p className="text-bg-500 mt-3 border-l-2 border-red-500 pl-2 text-xs italic">
+            <p className="text-bg-500 mt-3 border-l-2 border-red-500 pl-2 text-sm italic">
               Result: You might miss an entire tech bull run and end up only
               with traditional sectors like Banks, Real Estate, or
               Manufacturing.
@@ -476,11 +476,11 @@ function LimitationsTab() {
 
           {/* Lagging Indicators */}
           <div className="bg-bg-100 dark:bg-bg-800/50 rounded-lg p-4">
-            <h3 className="mb-2 flex items-center gap-2 font-bold text-orange-500">
+            <h3 className="mb-2 flex items-center gap-2 font-semibold text-orange-500">
               <Icon className="size-5" icon="tabler:history" />
               Lagging Indicators
             </h3>
-            <p className="text-bg-500 text-sm">
+            <p className="text-bg-500">
               Compounded Growth (CAGR) and ROE depend on past data. A perfect
               past score doesn&apos;t guarantee future success if an industry is
               facing disruption (e.g., film cameras vs. digital). This model
@@ -490,11 +490,11 @@ function LimitationsTab() {
 
           {/* Simplified Cash Flow */}
           <div className="bg-bg-100 dark:bg-bg-800/50 rounded-lg p-4">
-            <h3 className="mb-2 flex items-center gap-2 font-bold text-yellow-500">
+            <h3 className="mb-2 flex items-center gap-2 font-semibold text-yellow-500">
               <Icon className="size-5" icon="tabler:coins" />
               Simplified Cash Flow
             </h3>
-            <p className="text-bg-500 text-sm">
+            <p className="text-bg-500">
               The model gives 40 points for &quot;Profit + Net Inflow&quot;.
               However, expanding companies may have negative cash flow due to
               heavy investment (R&D, factories). This isn&apos;t necessarily
@@ -509,18 +509,18 @@ function LimitationsTab() {
           <div className="flex size-10 items-center justify-center rounded-lg bg-blue-500/10">
             <Icon className="size-5 text-blue-500" icon="tabler:users" />
           </div>
-          <h2 className="text-xl font-bold">Who is this for?</h2>
+          <h2 className="text-xl font-semibold">Who is this for?</h2>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="rounded-lg border border-green-500/20 bg-green-500/5 p-4">
             <div className="mb-2 flex items-center gap-2">
               <Icon className="size-5 text-green-500" icon="tabler:check" />
-              <h3 className="font-bold text-green-700 dark:text-green-400">
+              <h3 className="font-semibold text-green-700 dark:text-green-400">
                 Suitable For
               </h3>
             </div>
-            <ul className="text-bg-500 space-y-2 text-sm">
+            <ul className="text-bg-500 space-y-2">
               <li>
                 • Long-term holders seeking stability (&quot;Steady
                 Happiness&quot;)
@@ -536,11 +536,11 @@ function LimitationsTab() {
           <div className="rounded-lg border border-red-500/20 bg-red-500/5 p-4">
             <div className="mb-2 flex items-center gap-2">
               <Icon className="size-5 text-red-500" icon="tabler:x" />
-              <h3 className="font-bold text-red-700 dark:text-red-400">
+              <h3 className="font-semibold text-red-700 dark:text-red-400">
                 Not Suitable For
               </h3>
             </div>
-            <ul className="text-bg-500 space-y-2 text-sm">
+            <ul className="text-bg-500 space-y-2">
               <li>• Aggressive investors targeting Tech Giants</li>
               <li>• High-growth sectors (Artificial Intelligence, Biotech)</li>
               <li>• Short-term trading or speculation</li>
@@ -549,7 +549,7 @@ function LimitationsTab() {
         </div>
 
         <div className="border-bg-200 dark:border-bg-700 mt-4 border-t pt-4">
-          <div className="text-bg-400 flex items-start gap-2 text-xs">
+          <div className="text-bg-400 flex items-start gap-2 text-sm">
             <Icon className="mt-0.5 size-4" icon="tabler:book" />
             <div>
               <p className="font-semibold">
@@ -571,27 +571,21 @@ export default function Guide() {
   const [activeTab, setActiveTab] = useState<Tab>('philosophy')
 
   return (
-    <div className="animate-[fadeSlideIn_0.3s_ease-out]">
-      <ModuleHeader title="Investment Guide" />
+    <div>
+      <ModuleHeader
+        icon="tabler:book"
+        namespace="apps.jiahuiiiii$stock"
+        title="guide"
+        tKey="subsectionsTitleAndDesc"
+      />
       <div className="space-y-6">
         {/* Tab Navigation */}
-        <div className="bg-bg-100 dark:bg-bg-800/50 flex gap-1 overflow-x-auto rounded-lg p-1">
-          {TABS.map(tab => (
-            <button
-              key={tab.id}
-              className={`flex flex-1 items-center justify-center gap-2 rounded-md px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors ${
-                activeTab === tab.id
-                  ? 'bg-custom-500 text-white shadow-sm'
-                  : 'text-bg-500 hover:bg-bg-200 hover:text-bg-800 dark:hover:bg-bg-700 dark:hover:text-bg-200'
-              }`}
-              type="button"
-              onClick={() => setActiveTab(tab.id)}
-            >
-              <Icon className="size-4" icon={tab.icon} />
-              {tab.label}
-            </button>
-          ))}
-        </div>
+        <Tabs
+          currentTab={activeTab}
+          enabled={TABS.map(t => t.id)}
+          items={TABS}
+          onTabChange={setActiveTab}
+        />
 
         {/* Tab Content */}
         {activeTab === 'philosophy' && <PhilosophyTab />}

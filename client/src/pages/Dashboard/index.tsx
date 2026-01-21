@@ -21,7 +21,7 @@ function Dashboard() {
   const [searchQuery, setSearchQuery] = useState('')
 
   const searchResultQuery = useQuery(
-    forgeAPI.search
+    forgeAPI.data.search
       .input({
         keywords: searchQuery
       })

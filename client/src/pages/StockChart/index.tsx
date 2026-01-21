@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
-import { Button, GoBackButton, WithQuery } from 'lifeforge-ui'
+import { Button, GoBackButton, ViewModeSelector, WithQuery } from 'lifeforge-ui'
 import { useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'shared'
 
-import CandlestickChart from '@/components/CandlestickChart'
+import CandlestickChart from '@/pages/StockChart/components/CandlestickChart'
 import forgeAPI from '@/utils/forgeAPI'
 
 import type { WatchlistItem } from '../Dashboard'
@@ -22,7 +22,7 @@ function StockChart() {
   const [watchlistVersion, setWatchlistVersion] = useState(0)
 
   const stockDataQuery = useQuery(
-    forgeAPI.getStock
+    forgeAPI.data.getStock
       .input({
         symbol: symbol ?? ''
       })
@@ -107,27 +107,15 @@ function StockChart() {
           {isInWatchList ? 'Remove from Watchlist' : 'Add to Watchlist'}
         </Button>
       </div>
-      <div className="my-6 flex items-center gap-2">
-        <span className="text-bg-500 text-sm">Time Range:</span>
-        <div className="bg-bg-200 dark:bg-bg-700 flex rounded-lg p-0.5">
-          {(['1D', '5D', '1M', '3M', '6M', '1Y', '5Y'] as TimeRange[]).map(
-            range => (
-              <button
-                key={range}
-                className={`rounded px-2.5 py-1 text-xs font-medium transition-colors ${
-                  timeRange === range
-                    ? 'bg-bg-50 text-bg-900 dark:bg-bg-800 dark:text-bg-100 shadow-sm'
-                    : 'text-bg-500 hover:text-bg-700 dark:hover:text-bg-300'
-                }`}
-                type="button"
-                onClick={() => setTimeRange(range)}
-              >
-                {range}
-              </button>
-            )
-          )}
-        </div>
-      </div>
+      <ViewModeSelector
+        className="my-6"
+        currentMode={timeRange}
+        options={['1D', '5D', '1M', '3M', '6M', '1Y', '5Y'].map(range => ({
+          text: range,
+          value: range
+        }))}
+        onModeChange={setTimeRange}
+      />
       <WithQuery query={stockDataQuery}>
         {() => <CandlestickChart data={filteredData} symbol={symbol} />}
       </WithQuery>

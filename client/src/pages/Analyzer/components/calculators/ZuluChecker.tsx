@@ -1,24 +1,21 @@
 import { Icon } from '@iconify/react'
+import { NumberInput } from 'lifeforge-ui'
 import { useMemo, useState } from 'react'
 
 import { calculatePEG } from '../../calculators'
 import CalculatorCard from '../CalculatorCard'
 
 export default function ZuluChecker() {
-  const [peRatio, setPeRatio] = useState<string>('')
+  const [peRatio, setPeRatio] = useState(0)
 
-  const [cagr, setCagr] = useState<string>('')
+  const [cagr, setCagr] = useState(0)
 
   const { peg, isPass } = useMemo(() => {
-    const pe = parseFloat(peRatio)
-
-    const growth = parseFloat(cagr)
-
-    if (isNaN(pe) || isNaN(growth) || pe <= 0 || growth <= 0) {
+    if (peRatio <= 0 || cagr <= 0) {
       return { peg: null, isPass: false }
     }
 
-    const pegValue = calculatePEG(pe, growth)
+    const pegValue = calculatePEG(peRatio, cagr)
 
     return { peg: pegValue, isPass: pegValue <= 1.0 }
   }, [peRatio, cagr])
@@ -32,7 +29,7 @@ export default function ZuluChecker() {
           <div className="flex items-center justify-between">
             <div>
               <div className="text-bg-500 text-sm">PEG Ratio</div>
-              <div className="text-2xl font-bold">{peg.toFixed(2)}</div>
+              <div className="text-2xl font-semibold">{peg.toFixed(2)}</div>
             </div>
             <div
               className={`flex items-center gap-2 rounded-full border px-3 py-1 text-sm font-semibold ${
@@ -53,26 +50,22 @@ export default function ZuluChecker() {
       }
       title="Zulu Principle Checker"
     >
-      <div>
-        <label className="text-bg-500 mb-1 block text-sm">PE Ratio</label>
-        <input
-          className="border-bg-200 bg-bg-50 dark:border-bg-700 dark:bg-bg-900 w-full rounded-lg border px-3 py-2 text-sm"
-          placeholder="e.g., 15"
-          type="number"
-          value={peRatio}
-          onChange={e => setPeRatio(e.target.value)}
-        />
-      </div>
-      <div>
-        <label className="text-bg-500 mb-1 block text-sm">CAGR (%)</label>
-        <input
-          className="border-bg-200 bg-bg-50 dark:border-bg-700 dark:bg-bg-900 w-full rounded-lg border px-3 py-2 text-sm"
-          placeholder="e.g., 20"
-          type="number"
-          value={cagr}
-          onChange={e => setCagr(e.target.value)}
-        />
-      </div>
+      <NumberInput
+        icon="tabler:percentage"
+        label="PE Ratio"
+        namespace="apps.jiahuiiiii$stock"
+        placeholder="e.g., 15"
+        value={peRatio}
+        onChange={setPeRatio}
+      />
+      <NumberInput
+        icon="tabler:trending-up"
+        label="CAGR (%)"
+        namespace="apps.jiahuiiiii$stock"
+        placeholder="e.g., 20"
+        value={cagr}
+        onChange={setCagr}
+      />
     </CalculatorCard>
   )
 }

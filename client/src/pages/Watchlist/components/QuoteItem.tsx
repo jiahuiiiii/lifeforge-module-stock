@@ -1,6 +1,6 @@
 import { Icon } from '@iconify/react'
-import { Button, Card, LoadingScreen } from 'lifeforge-ui'
-import { Link } from 'shared'
+import { Button, Card, ConfirmationModal, LoadingScreen } from 'lifeforge-ui'
+import { Link, useModalStore } from 'shared'
 
 import type { WatchlistItem } from '@/pages/Dashboard'
 
@@ -15,6 +15,8 @@ function QuoteItem({
   quote: Quote | 'error'
   removeFromWatchlist: (symbol: string) => void
 }) {
+  const { open } = useModalStore()
+
   const isPositive = quote === 'error' ? false : quote?.change >= 0
 
   const isLoading = quote === undefined
@@ -30,11 +32,10 @@ function QuoteItem({
             : 'border-l-4 border-l-red-500'
       }`}
     >
-      {/* Header with symbol and remove button */}
       <div className="mb-4 flex items-start justify-between gap-2">
         <div className="min-w-0 flex-1">
           <Link
-            className="hover:text-custom-500 text-xl font-bold tracking-tight transition-colors"
+            className="hover:text-custom-500 text-xl font-semibold tracking-tight transition-colors"
             to="/"
           >
             {item.symbol}
@@ -46,11 +47,17 @@ function QuoteItem({
           icon="tabler:x"
           type="button"
           variant="plain"
-          onClick={() => removeFromWatchlist(item.symbol)}
+          onClick={() =>
+            open(ConfirmationModal, {
+              title: 'Remove from Watchlist',
+              description:
+                'Are you sure you want to remove this stock from your watchlist?',
+              onConfirm: async () => removeFromWatchlist(item.symbol)
+            })
+          }
         />
       </div>
 
-      {/* Quote data */}
       {quote === 'error' ? (
         <div className="flex items-center gap-2 rounded-lg bg-red-500/10 px-3 py-2 text-sm text-red-500">
           <Icon className="size-4" icon="tabler:alert-circle" />
@@ -58,14 +65,12 @@ function QuoteItem({
         </div>
       ) : quote ? (
         <div className="flex items-end justify-between">
-          {/* Price */}
           <div>
-            <div className="text-3xl font-bold tracking-tight">
+            <div className="text-3xl font-semibold tracking-tight">
               ${quote.price.toFixed(2)}
             </div>
           </div>
 
-          {/* Change badge */}
           <div
             className={`flex items-center gap-1 rounded-full px-3 py-1.5 text-sm font-semibold ${
               isPositive
@@ -89,7 +94,6 @@ function QuoteItem({
         </div>
       )}
 
-      {/* Absolute change - shown below the main content */}
       {quote && quote !== 'error' && (
         <div
           className={`mt-3 border-t pt-3 text-sm ${

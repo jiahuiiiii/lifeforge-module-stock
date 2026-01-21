@@ -13,8 +13,10 @@ function getScoreLevel(
   maxScore: number
 ): 'high' | 'medium' | 'low' {
   const ratio = score / maxScore
+
   if (ratio >= 0.7) return 'high'
   if (ratio >= 0.4) return 'medium'
+
   return 'low'
 }
 

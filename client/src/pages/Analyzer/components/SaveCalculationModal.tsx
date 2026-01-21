@@ -59,7 +59,7 @@ export default function SaveCalculationModal({
             />
           </div>
           <div>
-            <h2 className="text-lg font-bold">Save Calculation</h2>
+            <h2 className="text-lg font-semibold">Save Calculation</h2>
             <p className="text-bg-500 text-sm">
               Enter stock information to save this calculation
             </p>

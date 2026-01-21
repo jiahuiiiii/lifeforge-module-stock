@@ -9,7 +9,131 @@
     "analyzer": "Penganalisis",
     "logbook": "Buku Log",
     "settings": "Tetapan",
-    "guide": "Panduan"
+    "guide": "Panduan",
+    "diary": "Diari"
+  },
+  "subsectionsTitleAndDesc": {
+    "dashboard": {
+      "title": "Papan Pemuka",
+      "description": "Jejak saham, urus senarai pantau, dan bina portfolio anda."
+    },
+    "watchlist": {
+      "title": "Senarai Pantau",
+      "description": "Pantau saham kegemaran anda dan prestasi masa nyata."
+    },
+    "portfolio": {
+      "title": "Portfolio",
+      "description": "Urus pegangan anda dan jejak prestasi pelaburan."
+    },
+    "calculators": {
+      "title": "Kalkulator",
+      "description": "Kira metrik kewangan utama untuk analisis saham."
+    },
+    "analyzer": {
+      "title": "Penganalisis",
+      "description": "Analisis saham menggunakan metodologi pelaburan Cold Eye."
+    },
+    "logbook": {
+      "title": "Buku Log",
+      "description": "Rekod dan semak sejarah analisis saham anda."
+    },
+    "settings": {
+      "title": "Tetapan",
+      "description": "Konfigurasi ambang skor dan parameter analisis."
+    },
+    "guide": {
+      "title": "Panduan Pelaburan",
+      "description": "Pelajari falsafah dan strategi pelaburan Cold Eye."
+    },
+    "diary": {
+      "title": "Diari",
+      "description": "Rekod pemikiran pelaburan dan pemerhatian pasaran anda."
+    }
+  },
+  "titles": {
+    "portfolio": "Portfolio"
+  },
+  "buttons": {
+    "createPortfolio": "Cipta Portfolio",
+    "addHolding": "Tambah Pegangan"
+  },
+  "modals": {
+    "portfolio": {
+      "create": "Cipta Portfolio",
+      "update": "Update Portfolio",
+      "delete": "Padam Portfolio",
+      "deleteConfirmation": "Adakah anda pasti mahu memadam portfolio \"{{name}}\"? Tindakan ini tidak boleh dibatalkan."
+    },
+    "holding": {
+      "create": "Tambah Pegangan",
+      "update": "Edit Pegangan",
+      "remove": "Buang Pegangan",
+      "removeConfirmation": "Buang {{symbol}} dari portfolio? Tindakan ini tidak boleh dibatalkan."
+    },
+    "diary": {
+      "create": "Tambah Diari",
+      "update": "Edit Diari",
+      "remove": "Buang Diari",
+      "removeConfirmation": "Buang {{symbol}} dari portfolio? Tindakan ini tidak boleh dibatalkan."
+    }
+  },
+  "inputs": {
+    "portfolioName": "Nama Portfolio",
+    "symbol": "Simbol",
+    "companyName": "Nama Syarikat",
+    "shares": "Bilangan Saham",
+    "avgCost": "Kos Purata Sesaham",
+    "dateAdded": "Tarikh Ditambah",
+    "compare": "Bandingkan",
+    "timeRange": "Julat Masa",
+    "closingTime": "Waktu Penutupan",
+    "date": "Tarikh",
+    "diaryTitle": "Judul Diari",
+    "feeling": "Perasaan",
+    "notes": "Nota",
+    "image": "Gambar"
+  },
+  "placeholders": {
+    "portfolioName": "Portfolio Saya",
+    "symbol": "AAPL",
+    "companyName": "Apple"
+  },
+  "widgets": {
+    "totalValue": "Jumlah Nilai",
+    "totalCost": "Jumlah Kos",
+    "totalPL": "Jumlah U/R",
+    "dayChange": "Perubahan Harian",
+    "performanceVs": "Prestasi vs <benchmark></benchmark>"
+  },
+  "table": {
+    "symbol": "Simbol",
+    "addedOn": "Tarikh Ditambah",
+    "shares": "Saham",
+    "avgCost": "Kos Purata",
+    "currentPrice": "Harga Semasa",
+    "marketValue": "Nilai Pasaran",
+    "pl": "U/R",
+    "plPercent": "U/R %",
+    "actions": "Tindakan"
+  },
+  "portfolio": {
+    "holdingsCount": "{{count}} pegangan",
+    "holdingsValuing": "{{count}} Pegangan bernilai ${{value}}"
+  },
+  "errors": {
+    "portfolio": {
+      "createFailed": "Gagal mencipta portfolio",
+      "renameFailed": "Gagal menamakan semula portfolio",
+      "deleteFailed": "Gagal memadam portfolio"
+    },
+    "holding": {
+      "createFailed": "Gagal menambah pegangan",
+      "updateFailed": "Gagal mengemaskini pegangan",
+      "removeFailed": "Gagal membuang pegangan"
+    }
+  },
+  "common": {
+    "loading": "Memuatkan..."
   },
   "empty": {
     "stock": {
@@ -27,6 +151,34 @@
     "portfolio": {
       "title": "Portfolio kosong",
       "description": "Cari dan tambah saham dari Papan Pemuka untuk memantaunya di sini."
+    },
+    "diary": {
+      "title": "Diari kosong",
+      "description": "Tambah diari baru untuk bermula!"
+    },
+    "holding": {
+      "title": "Tiada pegangan dalam portfolio",
+      "description": "Mula bina portfolio maya anda dengan menambah pegangan saham pertama."
     }
+  },
+  "diary": {
+    "sidebar": {
+      "allEntries": "Semua Entri",
+      "moods": "Suasana"
+    },
+    "headers": {
+      "all": "Semua",
+      "allEntries": "Semua Entri"
+    },
+    "moods": {
+      "bullish": "Yakin Naik",
+      "neutral": "Neutral",
+      "bearish": "Yakin Turun",
+      "excited": "Teruja",
+      "anxious": "Cemas"
+    }
+  },
+  "items": {
+    "diary": "Entri Diari"
   }
 }

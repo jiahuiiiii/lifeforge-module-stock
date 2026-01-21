@@ -1,3 +1,4 @@
+import { TextInput } from 'lifeforge-ui'
 import { useEffect, useMemo, useState } from 'react'
 
 import { calculateProfitMargin, getScore } from '../../calculators'
@@ -5,18 +6,14 @@ import { useAnalyzerStore } from '../../store'
 import CalculatorCard from '../CalculatorCard'
 import ScoreBadge from '../ScoreBadge'
 
-// Parse shorthand numbers like 100k, 1M, 2B (also handles negatives like -100k)
 function parseShorthand(value: string): number {
   if (!value) return NaN
 
-  // Remove commas and whitespace, convert to lowercase
   const cleaned = value.replace(/,/g, '').replace(/\s/g, '').toLowerCase()
 
   if (!cleaned) return NaN
 
-  // Handle negative sign
   let isNegative = false
-
   let numStr = cleaned
 
   if (cleaned.startsWith('-')) {
@@ -24,7 +21,6 @@ function parseShorthand(value: string): number {
     numStr = cleaned.slice(1)
   }
 
-  // Check for suffix (k, m, b)
   const lastChar = numStr.slice(-1)
 
   const multipliers: Record<string, number> = {
@@ -42,23 +38,20 @@ function parseShorthand(value: string): number {
 
     result = isNaN(num) ? NaN : num * multipliers[lastChar]
   } else {
-    // No suffix, parse as regular number
     result = parseFloat(numStr)
   }
 
   return isNegative ? -result : result
 }
 
-interface ProfitMarginCalculatorProps {
-  onValueChange?: (value: number | null, score: number) => void
-}
-
 export default function ProfitMarginCalculator({
   onValueChange
-}: ProfitMarginCalculatorProps) {
-  const [netIncome, setNetIncome] = useState<string>('')
+}: {
+  onValueChange?: (value: number | null, score: number) => void
+}) {
+  const [netIncome, setNetIncome] = useState('')
 
-  const [revenue, setRevenue] = useState<string>('')
+  const [revenue, setRevenue] = useState('')
 
   const settings = useAnalyzerStore(s => s.settings)
 
@@ -78,7 +71,6 @@ export default function ProfitMarginCalculator({
     return { margin: marginValue, score: scoreValue }
   }, [netIncome, revenue, settings.margin])
 
-  // Report value changes to parent
   useEffect(() => {
     onValueChange?.(margin, score)
   }, [margin, score, onValueChange])
@@ -92,7 +84,7 @@ export default function ProfitMarginCalculator({
           <div className="flex items-center justify-between">
             <div>
               <div className="text-bg-500 text-sm">Profit Margin</div>
-              <div className="text-2xl font-bold">{margin.toFixed(2)}%</div>
+              <div className="text-2xl font-semibold">{margin.toFixed(2)}%</div>
             </div>
             <ScoreBadge maxScore={20} score={score} />
           </div>
@@ -104,26 +96,22 @@ export default function ProfitMarginCalculator({
       }
       title="Profit Margin Calculator"
     >
-      <div>
-        <label className="text-bg-500 mb-1 block text-sm">Net Income</label>
-        <input
-          className="border-bg-200 bg-bg-50 dark:border-bg-700 dark:bg-bg-900 w-full rounded-lg border px-3 py-2 text-sm"
-          placeholder="e.g., 50M, -10M, 2B"
-          type="text"
-          value={netIncome}
-          onChange={e => setNetIncome(e.target.value)}
-        />
-      </div>
-      <div>
-        <label className="text-bg-500 mb-1 block text-sm">Total Revenue</label>
-        <input
-          className="border-bg-200 bg-bg-50 dark:border-bg-700 dark:bg-bg-900 w-full rounded-lg border px-3 py-2 text-sm"
-          placeholder="e.g., 250M, 1B"
-          type="text"
-          value={revenue}
-          onChange={e => setRevenue(e.target.value)}
-        />
-      </div>
+      <TextInput
+        icon="tabler:wallet"
+        label="Net Income"
+        namespace="apps.jiahuiiiii$stock"
+        placeholder="e.g., 50M, -10M, 2B"
+        value={netIncome}
+        onChange={setNetIncome}
+      />
+      <TextInput
+        icon="tabler:cash"
+        label="Total Revenue"
+        namespace="apps.jiahuiiiii$stock"
+        placeholder="e.g., 250M, 1B"
+        value={revenue}
+        onChange={setRevenue}
+      />
     </CalculatorCard>
   )
 }
