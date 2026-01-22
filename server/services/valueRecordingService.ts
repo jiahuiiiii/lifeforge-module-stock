@@ -1,6 +1,6 @@
+import type { IPBService } from '@lifeforge/server-utils'
 import dayjs from 'dayjs'
 
-import type { IPBService } from '../../../../packages/lifeforge-server-utils/src'
 import { FMP_ENDPOINTS } from '../constants'
 import type schema from '../schema'
 

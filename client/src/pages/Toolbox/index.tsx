@@ -2,6 +2,7 @@ import { FAB, ModuleHeader, useModalStore } from 'lifeforge-ui'
 import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { AnalyzerSettingsProvider } from '../Analyzer/providers/useAnalyzerSettings'
 import { useAnalyzerStore } from '../Analyzer/store'
 import type { CalculatorLog } from '../Analyzer/types'
 import Calculator from './components/Calculator'
@@ -71,7 +72,7 @@ export default function Toolbox() {
     results.roe.roe !== null
 
   return (
-    <>
+    <AnalyzerSettingsProvider>
       <ModuleHeader
         icon="tabler:calculator"
         namespace="apps.jiahuiiiii$stock"
@@ -120,6 +121,6 @@ export default function Toolbox() {
           Save
         </FAB>
       )}
-    </>
+    </AnalyzerSettingsProvider>
   )
 }

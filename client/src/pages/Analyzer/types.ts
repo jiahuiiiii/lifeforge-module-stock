@@ -8,7 +8,6 @@ export interface ScoringTier {
 }
 
 export interface MetricConfig {
-  id: MetricId
   label: string
   unit: '%' | 'x' | 'pts'
   // For most metrics: higher value = lower threshold index
@@ -41,13 +40,6 @@ export const CASH_FLOW_OPTIONS: {
   { value: 'loss_inflow', label: 'Loss + Net Inflow' },
   { value: 'loss_outflow', label: 'Loss + Net Outflow' }
 ]
-
-export const DEFAULT_CASH_FLOW_SCORES: Record<CashFlowOption, number> = {
-  profit_inflow: 40,
-  profit_outflow: 30,
-  loss_inflow: 20,
-  loss_outflow: 1
-}
 
 export interface StockLog {
   id: string
@@ -84,7 +76,9 @@ export interface StockLog {
 
 export type Verdict = 'PASS' | 'NEUTRAL' | 'FAIL'
 
-export function getVerdict(gdpScore: number, prcScore: number): Verdict {
+export function getVerdict(gdpScore?: number, prcScore?: number): Verdict {
+  if (!gdpScore || !prcScore) return 'NEUTRAL'
+
   const gdpPass = gdpScore >= 50
 
   const prcPass = prcScore >= 50

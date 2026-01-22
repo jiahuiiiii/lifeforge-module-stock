@@ -6,7 +6,6 @@ import {
   WithQueryData,
   useModalStore
 } from 'lifeforge-ui'
-import { useTranslation } from 'react-i18next'
 
 import forgeAPI from '@/utils/forgeAPI'
 
@@ -22,8 +21,6 @@ export type Holding = {
 }
 
 export default function Portfolio() {
-  const { t } = useTranslation('apps.jiahuiiiii$stock')
-
   const { open } = useModalStore()
 
   const handleCreate = () => {

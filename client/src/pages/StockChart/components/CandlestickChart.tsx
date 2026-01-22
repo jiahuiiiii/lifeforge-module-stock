@@ -161,7 +161,6 @@ function Candlestick(props: any) {
 
 export default function CandlestickChart({
   data,
-  symbol
 }: CandlestickChartProps) {
   const { bgTempPalette, derivedTheme } = usePersonalization()
 

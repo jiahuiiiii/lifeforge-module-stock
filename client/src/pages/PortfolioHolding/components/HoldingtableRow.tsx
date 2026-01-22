@@ -97,7 +97,7 @@ function HoldingtableRow({
       <td className="px-4 py-3">
         <div className="flex justify-center gap-1">
           <Button
-            icon="tabler:edit"
+            icon="tabler:pencil"
             variant="plain"
             onClick={() =>
               open(ModifyHoldingModal, {

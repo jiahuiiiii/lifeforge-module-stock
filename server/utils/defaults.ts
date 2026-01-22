@@ -1,9 +1,33 @@
-import type { ScoringSettings } from './types'
+export interface ScoringTier {
+  threshold: number
+  score: number
+}
+
+export type CashFlowOption =
+  | 'profit_inflow'
+  | 'profit_outflow'
+  | 'loss_inflow'
+  | 'loss_outflow'
+
+export interface MetricConfig {
+  label: string
+  unit: '%' | 'x' | 'pts'
+  isInverse?: boolean
+  tiers: ScoringTier[] | Record<CashFlowOption, number>
+}
+
+export interface ScoringSettings {
+  cagr: MetricConfig
+  dy: MetricConfig
+  pe: MetricConfig
+  margin: MetricConfig
+  roe: MetricConfig
+  cashflow: MetricConfig
+}
 
 // Default "Cold Eye" scoring thresholds
 export const DEFAULT_SETTINGS: ScoringSettings = {
   cagr: {
-    id: 'cagr',
     label: 'CAGR (Growth)',
     unit: '%',
     tiers: [
@@ -14,7 +38,6 @@ export const DEFAULT_SETTINGS: ScoringSettings = {
     ]
   },
   dy: {
-    id: 'dy',
     label: 'Dividend Yield',
     unit: '%',
     tiers: [
@@ -25,7 +48,6 @@ export const DEFAULT_SETTINGS: ScoringSettings = {
     ]
   },
   pe: {
-    id: 'pe',
     label: 'PE Ratio',
     unit: 'x',
     isInverse: true, // Lower PE is better
@@ -33,11 +55,10 @@ export const DEFAULT_SETTINGS: ScoringSettings = {
       { threshold: 9, score: 30 },
       { threshold: 15, score: 20 },
       { threshold: 24, score: 10 },
-      { threshold: Infinity, score: 0 }
+      { threshold: 999999, score: 0 }
     ]
   },
   margin: {
-    id: 'margin',
     label: 'Net Profit Margin',
     unit: '%',
     tiers: [
@@ -48,7 +69,6 @@ export const DEFAULT_SETTINGS: ScoringSettings = {
     ]
   },
   roe: {
-    id: 'roe',
     label: 'ROE',
     unit: '%',
     tiers: [
@@ -59,12 +79,13 @@ export const DEFAULT_SETTINGS: ScoringSettings = {
     ]
   },
   cashflow: {
-    id: 'cashflow',
     label: 'Cash Flow Status',
     unit: 'pts',
-    tiers: [
-      // Cash flow uses dropdown selection, not threshold-based scoring
-      { threshold: 0, score: 40 }
-    ]
+    tiers: {
+      profit_inflow: 40,
+      profit_outflow: 30,
+      loss_inflow: 20,
+      loss_outflow: 1
+    }
   }
 }

@@ -1,25 +1,9 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
-import { DEFAULT_SETTINGS } from './defaults'
-import type {
-  CalculatorLog,
-  CashFlowOption,
-  MetricConfig,
-  MetricId,
-  ScoringSettings,
-  StockLog
-} from './types'
-import { DEFAULT_CASH_FLOW_SCORES } from './types'
+import type { CalculatorLog, StockLog } from './types'
 
 interface AnalyzerState {
-  // Configuration (The Rules)
-  settings: ScoringSettings
-  cashFlowScores: Record<CashFlowOption, number>
-  updateMetricConfig: (metricId: MetricId, newConfig: MetricConfig) => void
-  updateCashFlowScore: (option: CashFlowOption, score: number) => void
-  resetToDefaults: () => void
-
   // Data Persistence (The History)
   logs: StockLog[]
   addLog: (log: StockLog) => void
@@ -35,34 +19,7 @@ interface AnalyzerState {
 export const useAnalyzerStore = create<AnalyzerState>()(
   persist(
     set => ({
-      // Initial state
-      settings: DEFAULT_SETTINGS,
-      cashFlowScores: DEFAULT_CASH_FLOW_SCORES,
       logs: [],
-
-      // Settings actions
-      updateMetricConfig: (metricId, newConfig) =>
-        set(state => ({
-          settings: {
-            ...state.settings,
-            [metricId]: newConfig
-          }
-        })),
-
-      updateCashFlowScore: (option, score) =>
-        set(state => ({
-          cashFlowScores: {
-            ...state.cashFlowScores,
-            [option]: score
-          }
-        })),
-
-      resetToDefaults: () =>
-        set(() => ({
-          settings: DEFAULT_SETTINGS,
-          cashFlowScores: DEFAULT_CASH_FLOW_SCORES
-        })),
-
       // Log actions
       addLog: log =>
         set(state => ({

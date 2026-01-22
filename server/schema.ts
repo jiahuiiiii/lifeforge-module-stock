@@ -321,6 +321,94 @@ export const schemas = {
       indexes: [],
       system: false
     }
+  },
+  analyzer_settings: {
+    schema: z.object({
+      metricId: z.string(),
+      label: z.string(),
+      unit: z.enum(['%', 'pts', 'x']),
+      isInverse: z.boolean(),
+      tiers: z.any()
+    }),
+    raw: {
+      listRule: '@request.auth.id != ""',
+      viewRule: '@request.auth.id != ""',
+      createRule: '@request.auth.id != ""',
+      updateRule: '@request.auth.id != ""',
+      deleteRule: '@request.auth.id != ""',
+      name: 'jiahuiiiii___stock__analyzer_settings',
+      type: 'base',
+      fields: [
+        {
+          autogeneratePattern: '[a-z0-9]{15}',
+          hidden: false,
+          max: 15,
+          min: 15,
+          name: 'id',
+          pattern: '^[a-z0-9]+$',
+          presentable: false,
+          primaryKey: true,
+          required: true,
+          system: true,
+          type: 'text'
+        },
+        {
+          autogeneratePattern: '',
+          hidden: false,
+          max: 0,
+          min: 0,
+          name: 'metricId',
+          pattern: '',
+          presentable: false,
+          primaryKey: false,
+          required: false,
+          system: false,
+          type: 'text'
+        },
+        {
+          autogeneratePattern: '',
+          hidden: false,
+          max: 0,
+          min: 0,
+          name: 'label',
+          pattern: '',
+          presentable: false,
+          primaryKey: false,
+          required: false,
+          system: false,
+          type: 'text'
+        },
+        {
+          hidden: false,
+          maxSelect: 1,
+          name: 'unit',
+          presentable: false,
+          required: true,
+          system: false,
+          type: 'select',
+          values: ['%', 'pts', 'x']
+        },
+        {
+          hidden: false,
+          name: 'isInverse',
+          presentable: false,
+          required: false,
+          system: false,
+          type: 'bool'
+        },
+        {
+          hidden: false,
+          maxSize: 0,
+          name: 'tiers',
+          presentable: false,
+          required: false,
+          system: false,
+          type: 'json'
+        }
+      ],
+      indexes: [],
+      system: false
+    }
   }
 }
 

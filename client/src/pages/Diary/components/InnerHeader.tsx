@@ -9,7 +9,7 @@ function InnerHeader({ totalItemsCount }: { totalItemsCount: number }) {
 
   const { setIsSidebarOpen } = useModuleSidebarState()
 
-  const { filterMood, setFilterMood } = useFilter()
+  const { filterMood } = useFilter()
 
   return (
     <>

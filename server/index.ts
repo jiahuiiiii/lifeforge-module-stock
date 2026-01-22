@@ -1,5 +1,6 @@
 import { forgeRouter } from '@lifeforge/server-utils'
 
+import * as analyzerSettingsRoutes from './routes/analyzerSettings'
 import * as dataRoutes from './routes/data'
 import * as diaryRoutes from './routes/diary'
 import * as portfolioHoldingsRoutes from './routes/portfolioHoldings'
@@ -11,5 +12,8 @@ export default forgeRouter({
     ...portfoliosRoutes,
     holdings: portfolioHoldingsRoutes
   },
-  diary: diaryRoutes
+  diary: diaryRoutes,
+  analyzer: {
+    settings: analyzerSettingsRoutes
+  }
 })

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 
-import { useAnalyzerStore } from '../../../Analyzer/store'
+import { useAnalyzerSettings } from '@/pages/Analyzer/providers/useAnalyzerSettings'
+
 import type { CalculatorConfig } from '../../utils/calculatorFactory'
 import CalculatorField from './components/CalculatorField'
 import CalculatorWrapper from './components/CalculatorWrapper'
@@ -16,7 +17,7 @@ function Calculator({
   color: string
   onResultChange: (result: Record<string, unknown>) => void
 }) {
-  const settings = useAnalyzerStore(s => s.settings)
+  const settings = useAnalyzerSettings()
 
   const fieldEntries = Object.entries(config.fieldConfigs)
 

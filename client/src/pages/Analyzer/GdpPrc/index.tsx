@@ -12,6 +12,10 @@ import { v4 as uuid } from 'uuid'
 
 import ScoreBadge from '../../Toolbox/components/ScoreBadge'
 import { getScore } from '../calculators'
+import {
+  useAnalyzerSettings,
+  useCashFlowScores
+} from '../providers/useAnalyzerSettings'
 import { useAnalyzerStore } from '../store'
 import {
   CASH_FLOW_OPTIONS,
@@ -85,9 +89,9 @@ export default function GdpPrc() {
   // For Zulu/PE checks
   const [avgPE, setAvgPE] = useState('')
 
-  const settings = useAnalyzerStore(s => s.settings)
+  const settings = useAnalyzerSettings()
 
-  const cashFlowScores = useAnalyzerStore(s => s.cashFlowScores)
+  const cashFlowScores = useCashFlowScores()
 
   const addLog = useAnalyzerStore(s => s.addLog)
 
@@ -96,6 +100,8 @@ export default function GdpPrc() {
   const allQualitativePass = Object.values(qualitative).every(Boolean)
 
   const scores = useMemo(() => {
+    if (!settings) return null
+
     const cagr = parseFloat(cagrValue) || 0
 
     const dy = parseFloat(dyValue) || 0
@@ -118,7 +124,7 @@ export default function GdpPrc() {
 
     const roeScore = getScore(roe, settings.roe)
 
-    const cashFlowScore = cashFlowScores[cashFlowOption]
+    const cashFlowScore = cashFlowScores?.[cashFlowOption] ?? 0
 
     const gdpScore = cagrScore + dyScore + peScore
 
@@ -155,9 +161,11 @@ export default function GdpPrc() {
     settings
   ])
 
-  const verdict = getVerdict(scores.gdpScore, scores.prcScore)
+  const verdict = getVerdict(scores?.gdpScore, scores?.prcScore)
 
   const handleSaveLog = () => {
+    if (!scores) return
+
     const log: StockLog = {
       id: uuid(),
       ticker: ticker.toUpperCase(),
@@ -201,6 +209,8 @@ export default function GdpPrc() {
     setCashFlowOption('profit_inflow')
     setAvgPE('')
   }
+
+  if (!settings || !cashFlowScores || !scores) return null
 
   return (
     <div className="mx-auto max-w-4xl animate-[fadeSlideIn_0.3s_ease-out] space-y-6">

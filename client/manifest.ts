@@ -13,7 +13,7 @@ export default {
     '/analyzer/gdp-prc': lazy(() => import('@/pages/Analyzer/GdpPrc')),
     '/analyzer/logbook': lazy(() => import('@/pages/AnalyzerLogbook')),
     '/analyzer/settings': lazy(() => import('@/pages/Analyzer/Settings')),
-    '/analyzer/guide': lazy(() => import('@/pages/Analyzer/Guide'))
+    '/analyzer/guide': lazy(() => import('@/pages/AnalyzerGuide'))
   },
   subsection: [
     { label: 'Dashboard', icon: 'tabler:dashboard', path: '' },
