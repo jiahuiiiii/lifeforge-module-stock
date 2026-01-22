@@ -9,13 +9,9 @@ import {
 } from 'lifeforge-ui'
 import COLORS from 'tailwindcss/colors'
 
-import { useAnalyzerStore } from '../../Analyzer/store'
-import {
-  CASH_FLOW_OPTIONS,
-  type StockLog,
-  VERDICTS,
-  getVerdict
-} from '../../Analyzer/types'
+import { CASH_FLOW_OPTIONS, VERDICTS, getVerdict } from '../../Analyzer/types'
+import { useAnalyzerStore } from '../store'
+import type { StockLog } from '../types'
 
 function AnalysisItem({ log }: { log: StockLog }) {
   const { open } = useModalStore()

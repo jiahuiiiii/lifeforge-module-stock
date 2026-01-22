@@ -6,14 +6,20 @@ import type {
 import { useQuery } from '@tanstack/react-query'
 import { WithQuery } from 'lifeforge-ui'
 import { type ReactNode, createContext, useContext, useMemo } from 'react'
+import type { InferOutput } from 'shared'
 
 import forgeAPI from '@/utils/forgeAPI'
 
-interface AnalyzerMetricConfig extends Omit<MetricConfig, 'tiers'> {
-  tiers: ScoringTier[]
-}
+type AnalyzerMetricConfigResponse = InferOutput<
+  typeof forgeAPI.analyzer.settings.list
+>
 
-interface AnalyzerSettingsContextValue {
+export type AnalyzerMetricConfig =
+  AnalyzerMetricConfigResponse[keyof AnalyzerMetricConfigResponse] & {
+    tiers: ScoringTier[]
+  }
+
+export interface AnalyzerSettingsContextValue {
   settings: Record<string, AnalyzerMetricConfig> | null
   cashFlowScores: Record<CashFlowOption, number> | null
 }

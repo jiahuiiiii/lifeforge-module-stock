@@ -1,10 +1,10 @@
 import { ModuleHeader, Tabs } from 'lifeforge-ui'
 import { useState } from 'react'
 
-import { useAnalyzerStore } from '../Analyzer/store'
 import AnalysisItem from './components/AnalysisItem'
 import CalculatorItem from './components/CalculatorItem'
 import ItemListing from './components/ItemListing'
+import { useAnalyzerStore } from './store'
 
 export default function Logbook() {
   const logs = useAnalyzerStore(s => s.logs)

@@ -1,7 +1,7 @@
 import { Icon } from '@iconify/react'
 import z from 'zod'
 
-import { calculatePEG } from '@/pages/Analyzer/calculators'
+import { calculatePEG } from '@/pages/Toolbox/utils/calcFuncs'
 
 import createCalculator from '../utils/calculatorFactory'
 

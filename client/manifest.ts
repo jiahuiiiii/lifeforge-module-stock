@@ -12,7 +12,7 @@ export default {
     '/analyzer/toolbox': lazy(() => import('@/pages/Toolbox')),
     '/analyzer/gdp-prc': lazy(() => import('@/pages/Analyzer/GdpPrc')),
     '/analyzer/logbook': lazy(() => import('@/pages/AnalyzerLogbook')),
-    '/analyzer/settings': lazy(() => import('@/pages/Analyzer/Settings')),
+    '/analyzer/settings': lazy(() => import('@/pages/AnalyzerSettings')),
     '/analyzer/guide': lazy(() => import('@/pages/AnalyzerGuide'))
   },
   subsection: [

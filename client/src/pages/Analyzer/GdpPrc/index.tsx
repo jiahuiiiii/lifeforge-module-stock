@@ -10,17 +10,18 @@ import {
 import { useMemo, useState } from 'react'
 import { v4 as uuid } from 'uuid'
 
-import ScoreBadge from '../../Toolbox/components/ScoreBadge'
-import { getScore } from '../calculators'
+import type { StockLog } from '@/pages/AnalyzerLogbook/types'
+
 import {
   useAnalyzerSettings,
   useCashFlowScores
-} from '../providers/useAnalyzerSettings'
-import { useAnalyzerStore } from '../store'
+} from '../../../providers/useAnalyzerSettings'
+import { useAnalyzerStore } from '../../AnalyzerLogbook/store'
+import ScoreBadge from '../../Toolbox/components/ScoreBadge'
+import { getScore } from '../../Toolbox/utils/calcFuncs'
 import {
   CASH_FLOW_OPTIONS,
   type CashFlowOption,
-  type StockLog,
   VERDICTS,
   getVerdict
 } from '../types'

@@ -1,7 +1,7 @@
 import type { CurrencyInput, NumberInput, TextInput } from 'lifeforge-ui'
 import type z from 'zod'
 
-import type { ScoringSettings } from '../../Analyzer/types'
+import type { AnalyzerSettingsContextValue } from '@/providers/useAnalyzerSettings'
 
 type NumberInputProps = Omit<
   React.ComponentProps<typeof NumberInput>,
@@ -50,7 +50,7 @@ export default function createCalculator(icon: string) {
           calculate: (
             calculateFn: (
               fields: z.infer<TFields>,
-              settings: ScoringSettings
+              settings: NonNullable<AnalyzerSettingsContextValue['settings']>
             ) => z.infer<TResult>
           ) => ({
             displayResult: (

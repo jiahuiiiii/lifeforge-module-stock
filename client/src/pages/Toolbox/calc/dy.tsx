@@ -1,6 +1,9 @@
 import z from 'zod'
 
-import { calculateDividendYield, getScore } from '@/pages/Analyzer/calculators'
+import {
+  calculateDividendYield,
+  getScore
+} from '@/pages/Toolbox/utils/calcFuncs'
 
 import ScoreBadge from '../components/ScoreBadge'
 import createCalculator from '../utils/calculatorFactory'

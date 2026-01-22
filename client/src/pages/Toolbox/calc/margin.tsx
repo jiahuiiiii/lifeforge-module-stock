@@ -2,12 +2,12 @@ import z from 'zod'
 
 import {
   calculateProfitMargin,
-  getScore,
-  parseShorthand
-} from '@/pages/Analyzer/calculators'
+  getScore
+} from '@/pages/Toolbox/utils/calcFuncs'
 
 import ScoreBadge from '../components/ScoreBadge'
 import createCalculator from '../utils/calculatorFactory'
+import parseShorthand from '../utils/parseShorthand'
 
 export default createCalculator('tabler:chart-pie')
   .fields(

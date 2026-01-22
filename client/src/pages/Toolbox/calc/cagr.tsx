@@ -1,13 +1,10 @@
 import z from 'zod'
 
-import {
-  calculateCAGR,
-  getScore,
-  parseShorthand
-} from '@/pages/Analyzer/calculators'
+import { calculateCAGR, getScore } from '@/pages/Toolbox/utils/calcFuncs'
 
 import ScoreBadge from '../components/ScoreBadge'
 import createCalculator from '../utils/calculatorFactory'
+import parseShorthand from '../utils/parseShorthand'
 
 export default createCalculator('tabler:trending-up')
   .fields(

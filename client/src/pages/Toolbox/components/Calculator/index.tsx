@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 
-import { useAnalyzerSettings } from '@/pages/Analyzer/providers/useAnalyzerSettings'
+import { useAnalyzerSettings } from '@/providers/useAnalyzerSettings'
 
 import type { CalculatorConfig } from '../../utils/calculatorFactory'
 import CalculatorField from './components/CalculatorField'

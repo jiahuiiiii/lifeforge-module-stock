@@ -1,6 +1,6 @@
 import z from 'zod'
 
-import { calculatePERatio, getScore } from '@/pages/Analyzer/calculators'
+import { calculatePERatio, getScore } from '@/pages/Toolbox/utils/calcFuncs'
 
 import ScoreBadge from '../components/ScoreBadge'
 import createCalculator from '../utils/calculatorFactory'

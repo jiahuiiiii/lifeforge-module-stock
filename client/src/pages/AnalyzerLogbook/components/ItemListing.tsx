@@ -2,7 +2,7 @@
 import { EmptyStateScreen } from 'lifeforge-ui'
 import React from 'react'
 
-import type { CalculatorLog, StockLog } from '../../Analyzer/types'
+import type { CalculatorLog, StockLog } from '../types'
 
 function ItemListing({
   logs,

@@ -8,8 +8,8 @@ import {
   useModalStore
 } from 'lifeforge-ui'
 
-import { useAnalyzerStore } from '../../Analyzer/store'
-import type { CalculatorLog } from '../../Analyzer/types'
+import { useAnalyzerStore } from '../store'
+import type { CalculatorLog } from '../types'
 
 function CalculatorItem({ log }: { log: CalculatorLog }) {
   const { open } = useModalStore()

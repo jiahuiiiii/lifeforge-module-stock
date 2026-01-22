@@ -1,13 +1,10 @@
 import z from 'zod'
 
-import {
-  calculateROE,
-  getScore,
-  parseShorthand
-} from '@/pages/Analyzer/calculators'
+import { calculateROE, getScore } from '@/pages/Toolbox/utils/calcFuncs'
 
 import ScoreBadge from '../components/ScoreBadge'
 import createCalculator from '../utils/calculatorFactory'
+import parseShorthand from '../utils/parseShorthand'
 
 export default createCalculator('tabler:activity')
   .fields(
