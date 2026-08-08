@@ -1,4 +1,3 @@
-
 node_modules/
 .pnp/
 .pnp.js
@@ -57,3 +56,5 @@ coverage/
 .vercel/
 *.local
 Thumbs.db
+
+node_modules
