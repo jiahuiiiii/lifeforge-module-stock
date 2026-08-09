@@ -1,6 +1,6 @@
 # 📈 Stock Module
 
-A comprehensive stock tracking and analysis module for LifeForge. Track your investments, manage watchlists, build virtual portfolios, and analyze stocks using the Cold Eye Investment Strategy.
+A comprehensive stock tracking and analysis module for ![LifeForge](https://github.com/Lifeforge-app/lifeforge). Track your investments, manage watchlists, build virtual portfolios, and analyze stocks using the Cold Eye Investment Strategy.
 
 ## ✨ Features
 
@@ -141,4 +141,4 @@ This module requires a **Financial Modeling Prep (FMP)** API key for:
 
 ## 📄 License
 
-Part of the LifeForge ecosystem. See main repository for license details.
+Part of the ![LifeForge](https://github.com/Lifeforge-app/lifeforge) ecosystem. See main repository for license details.
