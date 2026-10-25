@@ -1,44 +1,102 @@
-import { forgeRouter } from '@lifeforge/server-utils'
 import z from 'zod'
 
 import { FMP_ENDPOINTS } from '../constants'
 import forge from '../forge'
 
-interface SearchResults {
-  bestMatches: BestMatch[]
-}
+const searchResultDto = z.object({
+  symbol: z.string(),
+  name: z.string(),
+  type: z.string(),
+  region: z.string(),
+  currency: z.string(),
+  exchange: z.string()
+})
 
-interface BestMatch {
-  '1. symbol': string
-  '2. name': string
-  '3. type': string
-  '4. region': string
-  '5. marketOpen': string
-  '6. marketClose': string
-  '7. timezone': string
-  '8. currency': string
-  '9. matchScore': string
-}
-
-// FMP API search endpoint
-export const search = forge
-  .query()
-  .description('Fetch a list of stock for search bar.')
-  .input({
-    query: z.object({
-      keywords: z.string()
+const stockDataDto = z.object({
+  symbol: z.string(),
+  last_refreshed: z.string(),
+  data: z.array(
+    z.object({
+      date: z.string(),
+      open: z.number(),
+      high: z.number(),
+      low: z.number(),
+      close: z.number(),
+      volume: z.number()
     })
+  )
+})
+
+const quoteDto = z.object({
+  symbol: z.string(),
+  price: z.number(),
+  change: z.number(),
+  change_percent: z.number()
+})
+
+interface FmpSearchResult {
+  symbol?: string
+  name?: string
+  currency?: string
+  exchangeShortName?: string
+}
+
+interface FmpHistoricalResult {
+  date?: string
+  open?: number
+  high?: number
+  low?: number
+  close?: number
+  volume?: number
+}
+
+interface FmpQuoteResult {
+  symbol?: string
+  price?: number
+  change?: number
+  changePercentage?: number
+}
+
+function resolveSecurityType(item: FmpSearchResult) {
+  const name = (item.name ?? '').toUpperCase()
+
+  const exchange = item.exchangeShortName ?? ''
+
+  if (name.includes('ETF')) return 'ETF'
+
+  if (name.includes('FUND')) return 'Mutual Fund'
+
+  if (['NASDAQ', 'NYSE', 'AMEX', 'NYSE ARCA', 'BATS'].includes(exchange)) {
+    return 'Equity'
+  }
+
+  return 'Equity'
+}
+
+export const search = forge
+  .query({
+    description: 'Search stocks by symbol or company name.',
+    input: {
+      query: z.object({
+        keywords: z.string()
+      })
+    },
+    output: {
+      OK: z.object({
+        results: z.array(searchResultDto)
+      })
+    }
   })
   .callback(
     async ({
       query: { keywords },
-      pb,
       core: {
         logging,
         api: { getAPIKey }
-      }
+      },
+      response
     }) => {
-      const apiKey = await getAPIKey('fmp', pb)
+      const apiKey = await getAPIKey('fmp')
 
       const [symbolResults, nameResults] = await Promise.all([
         fetch(FMP_ENDPOINTS.searchSymbol(keywords, apiKey)).then(res =>
@@ -49,197 +107,179 @@ export const search = forge
         )
       ])
 
-      logging.info(
-        `FMP Symbol Search Response: ${JSON.stringify(symbolResults)}`
-      )
-      logging.info(`FMP Name Search Response: ${JSON.stringify(nameResults)}`)
-
-      const combinedResults: Record<string, unknown>[] = []
+      const combined: FmpSearchResult[] = []
 
       const seenSymbols = new Set<string>()
 
-      if (Array.isArray(symbolResults)) {
-        for (const item of symbolResults) {
-          const symbol = (item.symbol as string) || ''
+      for (const list of [symbolResults, nameResults]) {
+        if (!Array.isArray(list)) continue
 
-          if (symbol && !seenSymbols.has(symbol)) {
-            seenSymbols.add(symbol)
-            combinedResults.push(item as Record<string, unknown>)
-          }
+        for (const item of list as FmpSearchResult[]) {
+          const symbol = item.symbol ?? ''
+
+          if (!symbol || seenSymbols.has(symbol)) continue
+
+          seenSymbols.add(symbol)
+          combined.push(item)
         }
       }
 
-      if (Array.isArray(nameResults)) {
-        for (const item of nameResults) {
-          const symbol = (item.symbol as string) || ''
+      logging.info(`Found ${combined.length} matches for "${keywords}"`)
 
-          if (symbol && !seenSymbols.has(symbol)) {
-            seenSymbols.add(symbol)
-            combinedResults.push(item as Record<string, unknown>)
-          }
-        }
-      }
-
-      if (combinedResults.length === 0) {
-        logging.info(`No results for query: ${keywords}`)
-
-        return { bestMatches: [] } as SearchResults
-      }
-
-      const bestMatches: BestMatch[] = combinedResults.map(
-        (item: Record<string, unknown>) => {
-          const itemName = (item.name as string) || ''
-
-          const itemSymbol = (item.symbol as string) || ''
-
-          const itemCurrency = (item.currency as string) || 'USD'
-
-          const itemExchange = (item.exchangeShortName as string) || ''
-
-          let securityType = 'Equity'
-
-          if (itemName.toUpperCase().includes('ETF')) {
-            securityType = 'ETF'
-          } else if (itemName.toUpperCase().includes('FUND')) {
-            securityType = 'Mutual Fund'
-          } else if (
-            ['NASDAQ', 'NYSE', 'AMEX', 'NYSE ARCA', 'BATS'].includes(
-              itemExchange
-            )
-          ) {
-            securityType = 'Equity'
-          }
+      return response.ok({
+        results: combined.map(item => {
+          const currency = item.currency ?? 'USD'
 
           return {
-            '1. symbol': itemSymbol,
-            '2. name': itemName,
-            '3. type': securityType,
-            '4. region': itemCurrency === 'USD' ? 'United States' : 'Other',
-            '5. marketOpen': '09:30',
-            '6. marketClose': '16:00',
-            '7. timezone': 'US/Eastern',
-            '8. currency': itemCurrency,
-            '9. matchScore': '1.0000'
+            symbol: item.symbol ?? '',
+            name: item.name ?? '',
+            type: resolveSecurityType(item),
+            region: currency === 'USD' ? 'United States' : 'Other',
+            currency,
+            exchange: item.exchangeShortName ?? ''
           }
-        }
-      )
-
-      logging.info(`Found ${bestMatches.length} matches`)
-
-      return { bestMatches } as SearchResults
+        })
+      })
     }
   )
 
 export const getStock = forge
-  .query()
-  .description('Fetch daily time series data for a stock symbol.')
-  .input({
-    query: z.object({
-      symbol: z.string()
-    })
+  .query({
+    description: 'Fetch daily time series data for a stock symbol.',
+    input: {
+      query: z.object({
+        symbol: z.string()
+      })
+    },
+    output: {
+      OK: stockDataDto
+    }
   })
   .callback(
     async ({
       query: { symbol },
-      pb,
       core: {
         logging,
         api: { getAPIKey }
-      }
+      },
+      response
     }) => {
-      const apiKey = await getAPIKey('fmp', pb)
+      const apiKey = await getAPIKey('fmp')
 
-      const response = await fetch(
+      const apiResponse = await fetch(
         FMP_ENDPOINTS.historicalPrice(symbol, apiKey)
       )
 
-      const responseText = await response.text()
+      const responseText = await apiResponse.text()
 
       if (responseText.startsWith('Premium')) {
-        throw new Error(
+        return response.badRequest(
           'API_PLAN_LIMIT: This stock is not available on your current API plan'
         )
       }
 
-      const results = JSON.parse(responseText)
+      let results: unknown
 
-      if (results.Error || results['Error Message']) {
-        const errorMsg = results.Error || results['Error Message']
-
-        throw new Error(errorMsg)
+      try {
+        results = JSON.parse(responseText)
+      } catch {
+        return response.badRequest(
+          `Invalid response from FMP API for symbol ${symbol}`
+        )
       }
 
       if (!Array.isArray(results) || results.length === 0) {
-        throw new Error(
-          `Error from FMP API: No data found for the given symbol ${symbol}`
+        return response.badRequest(
+          `No data found for the given symbol ${symbol}`
         )
       }
 
       logging.debug(
-        `FMP Historical Response: ${JSON.stringify(results).substring(0, 500)}`
+        `FMP Historical Response: ${responseText.substring(0, 500)}`
       )
 
-      const data = results.map((item: any) => ({
-        date: item.date,
-        open: item.open,
-        high: item.high,
-        low: item.low,
-        close: item.close,
-        volume: item.volume
-      }))
+      const data = (results as FmpHistoricalResult[])
+        .filter(
+          item =>
+            typeof item.date === 'string' &&
+            [item.open, item.high, item.low, item.close, item.volume].every(
+              value => typeof value === 'number' && Number.isFinite(value)
+            )
+        )
+        .map(item => ({
+          date: item.date!,
+          open: item.open!,
+          high: item.high!,
+          low: item.low!,
+          close: item.close!,
+          volume: item.volume!
+        }))
 
-      return {
-        symbol: symbol,
-        lastRefreshed:
-          results[0]?.date || new Date().toISOString().split('T')[0],
-        data
+      if (data.length === 0) {
+        return response.badRequest(
+          `No valid data found for the given symbol ${symbol}`
+        )
       }
+
+      return response.ok({
+        symbol,
+        last_refreshed: data[0]!.date,
+        data
+      })
     }
   )
 
 export const getQuote = forge
-  .query()
-  .description('Fetch real-time quote for a stock symbol.')
-  .input({
-    query: z.object({
-      symbol: z.string()
-    })
+  .query({
+    description: 'Fetch a real-time quote for a stock symbol.',
+    input: {
+      query: z.object({
+        symbol: z.string()
+      })
+    },
+    output: {
+      OK: quoteDto
+    }
   })
   .callback(
     async ({
       query: { symbol },
-      pb,
       core: {
         api: { getAPIKey }
-      }
+      },
+      response
     }) => {
-      const apikey = await getAPIKey('fmp', pb)
+      const apiKey = await getAPIKey('fmp')
 
-      const response = await fetch(FMP_ENDPOINTS.quote(symbol, apikey))
+      const apiResponse = await fetch(FMP_ENDPOINTS.quote(symbol, apiKey))
 
-      const results = await response.json()
+      const results = await apiResponse.json()
 
       if (!Array.isArray(results) || results.length === 0) {
-        if (results['Error Message']) {
-          throw new Error(`Error from FMP API: ${results['Error Message']}`)
-        }
-
-        throw new Error('Failed to fetch quote')
+        return response.badRequest(
+          `Failed to fetch quote for symbol ${symbol}`
+        )
       }
 
-      const quote = results[0]
+      const quote = results[0] as FmpQuoteResult
 
-      return {
-        symbol: quote.symbol,
-        price: quote.price,
-        change: quote.change,
-        changePercent: quote.changePercentage
+      const price = quote.price ?? 0
+
+      const change = quote.change ?? 0
+
+      const changePercent = quote.changePercentage ?? 0
+
+      if (![price, change, changePercent].every(Number.isFinite)) {
+        return response.badRequest(
+          `Invalid quote received for symbol ${symbol}`
+        )
       }
+
+      return response.ok({
+        symbol: quote.symbol ?? symbol,
+        price,
+        change,
+        change_percent: changePercent
+      })
     }
   )
-
-export default forgeRouter({
-  search,
-  getStock,
-  getQuote
-})

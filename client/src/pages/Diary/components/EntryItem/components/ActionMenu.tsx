@@ -1,59 +1,49 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useForgeMutation } from '@lifeforge/api'
+import { useModuleTranslation } from '@lifeforge/localization'
 import {
   ConfirmationModal,
   ContextMenu,
   ContextMenuItem,
   useModalStore
-} from 'lifeforge-ui'
-import { useCallback } from 'react'
-import { useTranslation } from 'react-i18next'
-import { toast } from 'react-toastify'
+} from '@lifeforge/ui'
 
-import forgeAPI from '@/utils/forgeAPI'
+import { forgeAPI } from '@/manifest'
 
 import type { DiaryEntry } from '../../..'
 import ModifyEntryModal from '../../ModifyEntryModal'
 
 function ActionMenu({ entry }: { entry: DiaryEntry }) {
-  const { t } = useTranslation('apps.jiahuiiiii$stock')
-
+  const { t } = useModuleTranslation()
   const { open } = useModalStore()
 
-  const queryClient = useQueryClient()
-
-  const deleteMutation = useMutation(
-    forgeAPI.diary.remove.input({ id: entry.id }).mutationOptions({
-      onSuccess: () => {
-        queryClient.invalidateQueries({
-          queryKey: ['jiahuiiiii--stock', 'diary']
-        })
-      },
-      onError: () => {
-        toast.error(t('errors.diary.removeFailed'))
-      }
-    })
+  const deleteMutation = useForgeMutation(
+    forgeAPI.diary.remove.input({ id: entry.id }),
+    {
+      action: 'delete',
+      queryKey: forgeAPI.diary.key
+    }
   )
 
-  const handleDeleteEntry = useCallback(() => {
+  function handleDeleteEntry() {
     open(ConfirmationModal, {
       title: t('modals.diary.remove'),
       description: t('modals.diary.removeConfirmation', { name: entry.title }),
       confirmationButton: 'delete',
       onConfirm: async () => {
-        await deleteMutation.mutateAsync({})
+        await deleteMutation.mutateAsync(undefined)
       }
     })
-  }, [entry])
+  }
 
-  const handleUpdateEntry = useCallback(() => {
+  function handleUpdateEntry() {
     open(ModifyEntryModal, {
       openType: 'update',
       initialData: entry
     })
-  }, [entry])
+  }
 
   return (
-    <ContextMenu classNames={{ wrapper: 'absolute right-3 top-3' }}>
+    <ContextMenu position="absolute" right="1em" top="1em">
       <ContextMenuItem
         icon="tabler:pencil"
         label="edit"

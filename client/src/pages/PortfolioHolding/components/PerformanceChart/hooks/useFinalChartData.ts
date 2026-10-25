@@ -27,45 +27,43 @@ function useFinalChartData(
   const chartData = useMemo(() => {
     if (portfolioData.length === 0) return []
 
-    const portfolioStart = portfolioData[0]?.value || 0
+    const portfolioStart = portfolioData[0]?.value ?? 0
 
-    const benchmarkStart = benchmarkData[0]?.value || 0
+    const benchmarkStart = benchmarkData[0]?.value ?? 0
 
     const dateMap = new Map<
       string,
       { portfolio?: number; benchmark?: number }
     >()
 
-    // Add portfolio data
     for (const item of portfolioData) {
-      const pctChange =
+      const percentageChange =
         portfolioStart > 0
           ? ((item.value - portfolioStart) / portfolioStart) * 100
           : 0
 
-      dateMap.set(item.date, { portfolio: pctChange })
+      dateMap.set(item.date, { portfolio: percentageChange })
     }
 
-    // Add benchmark data
     for (const item of benchmarkData) {
-      const pctChange =
+      const percentageChange =
         benchmarkStart > 0
           ? ((item.value - benchmarkStart) / benchmarkStart) * 100
           : 0
 
-      const existing = dateMap.get(item.date) || {}
-
-      dateMap.set(item.date, { ...existing, benchmark: pctChange })
+      dateMap.set(item.date, {
+        ...dateMap.get(item.date),
+        benchmark: percentageChange
+      })
     }
 
-    // Convert to array and sort by date
     return Array.from(dateMap.entries())
       .map(([date, values]) => ({
         date,
         portfolio: values.portfolio ?? null,
         benchmark: values.benchmark ?? null
       }))
-      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+      .sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0))
   }, [portfolioData, benchmarkData])
 
   return {

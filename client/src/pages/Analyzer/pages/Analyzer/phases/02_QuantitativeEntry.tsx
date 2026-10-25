@@ -1,22 +1,25 @@
-import { Icon } from '@iconify/react'
-import type { CashFlowOption } from '@server/utils/defaults'
+import { useModuleTranslation } from '@lifeforge/localization'
 import {
+  Box,
   Button,
+  COLORS,
+  Flex,
+  Grid,
+  Icon,
   ListboxInput,
   ListboxOption,
   NumberInput,
+  Stack,
+  Text,
   TextInput
-} from 'lifeforge-ui'
-import _ from 'lodash'
-import { useTranslation } from 'react-i18next'
-import COLORS from 'tailwindcss/colors'
+} from '@lifeforge/ui'
 
 import { CASH_FLOW_OPTIONS } from '@/pages/Analyzer/constants/cashFlow'
 
 import ScoreBadge from '../../Toolbox/components/ScoreBadge'
 import { useAnalyzer } from '../providers/AnalyzerProvider'
 
-function Header({
+function SectionHeader({
   color,
   title,
   children
@@ -25,24 +28,33 @@ function Header({
   title: string
   children?: React.ReactNode
 }) {
-  const { t } = useTranslation('apps.jiahuiiiii$stock')
+  const { t } = useModuleTranslation()
 
   return (
-    <header className="flex-between mb-4 w-full">
-      <h2 className="text-bg-500 flex items-center gap-2 font-semibold tracking-wide">
-        <span
-          className="h-6 w-1 rounded-full"
+    <Flex align="center" justify="between" mb="md" width="100%">
+      <Flex align="center" gap="sm">
+        <Box
+          flexShrink="0"
+          height="1.5em"
+          r="full"
           style={{ backgroundColor: color }}
+          width="0.25em"
         />
-        {t(`calculators.categories.${title}`)}
-      </h2>
-      <div className="text-bg-500 font-medium">{children}</div>
-    </header>
+        <Text color="muted" tracking="wide" weight="semibold">
+          {t(`calculators.categories.${title}`)}
+        </Text>
+      </Flex>
+      {children && (
+        <Text color="muted" weight="medium">
+          {children}
+        </Text>
+      )}
+    </Flex>
   )
 }
 
 function QuantitativeEntry() {
-  const { t } = useTranslation('apps.jiahuiiiii$stock')
+  const { t } = useModuleTranslation()
 
   const {
     baseInfo: { stockExchange, ticker, companyName },
@@ -60,296 +72,282 @@ function QuantitativeEntry() {
       )
     : null
 
+  function handleFetchFromLogbook() {
+    if (!matchingLog) return
+
+    const values = matchingLog.values_and_scores
+
+    setRawValues(previous => ({
+      ...previous,
+      ...(values.cagr?.value !== undefined
+        ? { cagr: Number(values.cagr.value.toFixed(2)) }
+        : {}),
+      ...(values.dy?.value !== undefined
+        ? { dy: Number(values.dy.value.toFixed(2)) }
+        : {}),
+      ...(values.pe?.value !== undefined
+        ? { pe: Number(values.pe.value.toFixed(2)) }
+        : {}),
+      ...(values.margin?.value !== undefined
+        ? { margin: Number(values.margin.value.toFixed(2)) }
+        : {}),
+      ...(values.roe?.value !== undefined
+        ? { roe: Number(values.roe.value.toFixed(2)) }
+        : {})
+    }))
+
+    if (!companyName && matchingLog.name) {
+      setBaseInfo(previous => ({ ...previous, companyName: matchingLog.name }))
+    }
+
+    if (!stockExchange && matchingLog.exchange) {
+      setBaseInfo(previous => ({
+        ...previous,
+        stockExchange: matchingLog.exchange
+      }))
+    }
+  }
+
   return (
     <>
-      <div className="flex-1 space-y-6">
-        <section className="mb-6 space-y-3">
-          <div className="flex flex-col items-center gap-3 sm:flex-row">
+      <Stack flex="1" gap="xl" mb="lg">
+        <Stack gap="sm">
+          <Flex direction={{ base: 'column', sm: 'row' }} gap="md">
             <TextInput
               required
               icon="tabler:tag"
-              label="stockTicker"
-              namespace="apps.jiahuiiiii$stock"
+              label="inputs.stockTicker"
               placeholder="e.g., AAPL"
               value={ticker}
-              onChange={e => setBaseInfo(data => ({ ...data, ticker: e }))}
+              onChange={value =>
+                setBaseInfo(data => ({ ...data, ticker: value }))
+              }
             />
             <TextInput
               icon="tabler:building"
-              label="stockExchange"
-              namespace="apps.jiahuiiiii$stock"
+              label="inputs.stockExchange"
               placeholder="e.g., NASDAQ"
               value={stockExchange}
-              onChange={e =>
-                setBaseInfo(data => ({ ...data, stockExchange: e }))
+              onChange={value =>
+                setBaseInfo(data => ({ ...data, stockExchange: value }))
               }
             />
-          </div>
+          </Flex>
           <TextInput
             icon="tabler:building-bank"
-            label="companyName"
-            namespace="apps.jiahuiiiii$stock"
+            label="inputs.companyName"
             placeholder="e.g., Apple Inc."
             value={companyName}
-            onChange={e => setBaseInfo(data => ({ ...data, companyName: e }))}
+            onChange={value =>
+              setBaseInfo(data => ({ ...data, companyName: value }))
+            }
           />
-        </section>
+        </Stack>
+
         {matchingLog && (
           <Button
-            className="mb-6 w-full"
             icon="tabler:file-import"
-            namespace="apps.jiahuiiiii$stock"
             type="button"
             variant="secondary"
-            onClick={() => {
-              if (matchingLog.values_and_scores.cagr) {
-                setRawValues(data => ({
-                  ...data,
-                  cagr:
-                    Number(
-                      matchingLog.values_and_scores.cagr.value?.toFixed(2)
-                    ) || 0
-                }))
-              }
-
-              if (matchingLog.values_and_scores.dy) {
-                setRawValues(data => ({
-                  ...data,
-                  dy:
-                    Number(
-                      matchingLog.values_and_scores.dy.value?.toFixed(2)
-                    ) || 0
-                }))
-              }
-
-              if (matchingLog.values_and_scores.pe) {
-                setRawValues(data => ({
-                  ...data,
-                  pe:
-                    Number(
-                      matchingLog.values_and_scores.pe.value?.toFixed(2)
-                    ) || 0
-                }))
-              }
-
-              if (matchingLog.values_and_scores.margin) {
-                setRawValues(data => ({
-                  ...data,
-                  margin:
-                    Number(
-                      matchingLog.values_and_scores.margin.value?.toFixed(2)
-                    ) || 0
-                }))
-              }
-
-              if (matchingLog.values_and_scores.roe) {
-                setRawValues(data => ({
-                  ...data,
-                  roe:
-                    Number(
-                      matchingLog.values_and_scores.roe.value?.toFixed(2)
-                    ) || 0
-                }))
-              }
-
-              // Also fill in stock info if empty
-              if (!companyName && matchingLog.name) {
-                setBaseInfo(data => ({
-                  ...data,
-                  companyName: matchingLog.name
-                }))
-              }
-
-              if (!stockExchange && matchingLog.exchange) {
-                setBaseInfo(data => ({
-                  ...data,
-                  stockExchange: matchingLog.exchange
-                }))
-              }
-            }}
+            width="100%"
+            onClick={handleFetchFromLogbook}
           >
             fetchFromLogbook
           </Button>
         )}
-        <section>
-          <Header color={COLORS.lime[500]} title="gdp">
+
+        <Box>
+          <SectionHeader color={COLORS['lime-500']} title="gdp">
             {t('analyzer.score')} {derivedValues.gdpScore}/100
-          </Header>
-          <div className="grid gap-4 sm:grid-cols-3">
-            <div>
-              <div className="text-bg-500 mb-1 flex items-center justify-between text-sm">
-                <span>{t('analyzer.metrics.gCagr')}</span>
+          </SectionHeader>
+          <Grid gap="md" templateCols={{ base: 1, sm: 3 }}>
+            <Stack gap="xs">
+              <Flex align="center" justify="between">
+                <Text color="muted" size="sm">
+                  {t('analyzer.metrics.gCagr')}
+                </Text>
                 <ScoreBadge maxScore={50} score={derivedValues.cagrScore} />
-              </div>
+              </Flex>
               <NumberInput
                 required
                 icon="tabler:trending-up"
-                label="cagr"
-                namespace="apps.jiahuiiiii$stock"
+                label="inputs.cagr"
                 placeholder="e.g., 15"
                 value={rawValues.cagr}
                 onChange={value =>
                   setRawValues(data => ({ ...data, cagr: value }))
                 }
               />
-            </div>
-            <div>
-              <div className="text-bg-500 mb-1 flex items-center justify-between text-sm">
-                <span>{t('analyzer.metrics.dDividendYield')}</span>
+            </Stack>
+            <Stack gap="xs">
+              <Flex align="center" justify="between">
+                <Text color="muted" size="sm">
+                  {t('analyzer.metrics.dDividendYield')}
+                </Text>
                 <ScoreBadge maxScore={40} score={derivedValues.dyScore} />
-              </div>
+              </Flex>
               <NumberInput
                 required
                 icon="tabler:percentage"
-                label="Dividend Yield"
-                namespace="apps.jiahuiiiii$stock"
+                label="inputs.dividendYield"
                 placeholder="e.g., 3"
                 value={rawValues.dy}
                 onChange={value =>
                   setRawValues(data => ({ ...data, dy: value }))
                 }
               />
-            </div>
-            <div>
-              <div className="text-bg-500 mb-1 flex items-center justify-between text-sm">
-                <span>{t('analyzer.metrics.pPeRatio')}</span>
+            </Stack>
+            <Stack gap="xs">
+              <Flex align="center" justify="between">
+                <Text color="muted" size="sm">
+                  {t('analyzer.metrics.pPeRatio')}
+                </Text>
                 <ScoreBadge maxScore={30} score={derivedValues.peScore} />
-              </div>
+              </Flex>
               <NumberInput
                 required
                 icon="tabler:chart-bar"
-                label="peRatio"
-                namespace="apps.jiahuiiiii$stock"
+                label="inputs.peRatio"
                 placeholder="e.g., 12"
                 value={rawValues.pe}
                 onChange={value =>
                   setRawValues(data => ({ ...data, pe: value }))
                 }
               />
-            </div>
-          </div>
-        </section>
+            </Stack>
+          </Grid>
+        </Box>
 
-        <section>
-          <Header color={COLORS.blue[500]} title="prc">
+        <Box>
+          <SectionHeader color={COLORS['blue-500']} title="prc">
             {t('analyzer.score')} {derivedValues.prcScore}/100
-          </Header>
-          <div className="grid gap-4 sm:grid-cols-3">
-            <div>
-              <div className="text-bg-500 mb-1 flex items-center justify-between text-sm">
-                <span>{t('analyzer.metrics.pProfitMargin')}</span>
+          </SectionHeader>
+          <Grid gap="md" templateCols={{ base: 1, sm: 3 }}>
+            <Stack gap="xs">
+              <Flex align="center" justify="between">
+                <Text color="muted" size="sm">
+                  {t('analyzer.metrics.pProfitMargin')}
+                </Text>
                 <ScoreBadge maxScore={20} score={derivedValues.marginScore} />
-              </div>
+              </Flex>
               <NumberInput
                 required
                 icon="tabler:chart-pie"
-                label="profit margin"
-                namespace="apps.jiahuiiiii$stock"
+                label="inputs.profitMargin"
                 placeholder="e.g., 20"
                 value={rawValues.margin}
                 onChange={value =>
                   setRawValues(data => ({ ...data, margin: value }))
                 }
               />
-            </div>
-            <div>
-              <div className="text-bg-500 mb-1 flex items-center justify-between text-sm">
-                <span>{t('analyzer.metrics.rRoe')}</span>
+            </Stack>
+            <Stack gap="xs">
+              <Flex align="center" justify="between">
+                <Text color="muted" size="sm">
+                  {t('analyzer.metrics.rRoe')}
+                </Text>
                 <ScoreBadge maxScore={20} score={derivedValues.roeScore} />
-              </div>
+              </Flex>
               <NumberInput
                 required
                 icon="tabler:activity"
-                label="roe"
-                namespace="apps.jiahuiiiii$stock"
+                label="inputs.roe"
                 placeholder="e.g., 18"
                 value={rawValues.roe}
                 onChange={value =>
                   setRawValues(data => ({ ...data, roe: value }))
                 }
               />
-            </div>
-            <div>
-              <div className="text-bg-500 mb-1 flex items-center justify-between text-sm">
-                <span>{t('analyzer.metrics.cCashFlow')}</span>
+            </Stack>
+            <Stack gap="xs">
+              <Flex align="center" justify="between">
+                <Text color="muted" size="sm">
+                  {t('analyzer.metrics.cCashFlow')}
+                </Text>
                 <ScoreBadge maxScore={40} score={derivedValues.cashFlowScore} />
-              </div>
+              </Flex>
               <ListboxInput
-                buttonContent={
-                  <span>
-                    {t(`settings.cashFlow.${_.camelCase(rawValues.cashFlow)}`)}
-                  </span>
-                }
                 icon="tabler:coin"
-                label="cashFlow"
-                namespace="apps.jiahuiiiii$stock"
+                label="inputs.cashFlow"
+                renderContent={value => (
+                  <Text>
+                    {t(
+                      `settings.cashFlow.${
+                        CASH_FLOW_OPTIONS.find(option => option.value === value)
+                          ?.labelKey ?? value
+                      }`
+                    )}
+                  </Text>
+                )}
                 value={rawValues.cashFlow}
                 onChange={value =>
                   setRawValues(data => ({
                     ...data,
-                    cashFlow: value as CashFlowOption
+                    cashFlow: value
                   }))
                 }
               >
-                {CASH_FLOW_OPTIONS.map(opt => (
+                {CASH_FLOW_OPTIONS.map(option => (
                   <ListboxOption
-                    key={opt.value}
-                    label={t(`settings.cashFlow.${_.camelCase(opt.value)}`)}
-                    value={opt.value}
+                    key={option.value}
+                    label={t(`settings.cashFlow.${option.labelKey}`)}
+                    value={option.value}
                   />
                 ))}
               </ListboxInput>
-            </div>
-          </div>
-        </section>
-        <section>
-          <Header color={COLORS.purple[500]} title="supplementary" />
+            </Stack>
+          </Grid>
+        </Box>
+
+        <Box>
+          <SectionHeader color={COLORS['purple-500']} title="supplementary" />
           <NumberInput
             icon="tabler:history"
-            label="tenYearAvgPe"
-            namespace="apps.jiahuiiiii$stock"
+            label="inputs.tenYearAvgPe"
             placeholder="e.g., 20"
             value={rawValues.avgPE}
             onChange={value =>
               setRawValues(data => ({ ...data, avgPE: value }))
             }
           />
-          <div className="mt-3 flex gap-4">
+          <Flex gap="md" mt="sm" wrap="wrap">
             {derivedValues.passedZulu && (
-              <div className="flex items-center gap-1.5 text-sm text-green-500">
-                <Icon icon="tabler:check" />
-                {t('analyzer.zuluPass')}
-              </div>
+              <Flex align="center" gap="xs">
+                <Icon color="green-500" icon="tabler:check" />
+                <Text color="green-500" size="sm">
+                  {t('analyzer.zuluPass')}
+                </Text>
+              </Flex>
             )}
-            {derivedValues.undervaluedPe && (
-              <div className="flex items-center gap-1.5 text-sm text-green-500">
-                <Icon icon="tabler:check" />
-                {t('analyzer.undervalued')}
-              </div>
+            {derivedValues.undervaluedPE && (
+              <Flex align="center" gap="xs">
+                <Icon color="green-500" icon="tabler:check" />
+                <Text color="green-500" size="sm">
+                  {t('analyzer.undervalued')}
+                </Text>
+              </Flex>
             )}
-          </div>
-        </section>
-      </div>
+          </Flex>
+        </Box>
+      </Stack>
 
-      <div className="flex gap-3">
+      <Flex gap="sm">
         <Button
           icon="tabler:arrow-left"
-          namespace="apps.jiahuiiiii$stock"
           variant="secondary"
           onClick={() => setPhase(1)}
         >
           back
         </Button>
         <Button
-          className="flex-1"
           disabled={!ticker.trim()}
+          flex="1"
           icon="tabler:arrow-right"
-          namespace="apps.jiahuiiiii$stock"
           onClick={() => setPhase(3)}
         >
           viewVerdict
         </Button>
-      </div>
+      </Flex>
     </>
   )
 }

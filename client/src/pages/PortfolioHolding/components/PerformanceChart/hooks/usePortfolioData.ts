@@ -1,7 +1,7 @@
 import { useQueries } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
-import forgeAPI from '@/utils/forgeAPI'
+import { forgeAPI } from '@/manifest'
 
 import type { HoldingEntry } from '../../..'
 
@@ -42,7 +42,7 @@ function usePortfolioData(
 
     // Get all dates and sort chronologically
     const allDates = Array.from(priceMap.keys()).sort(
-      (a, b) => new Date(a).getTime() - new Date(b).getTime()
+      (a, b) => (a < b ? -1 : a > b ? 1 : 0)
     )
 
     // Calculate portfolio value for each date
@@ -58,9 +58,9 @@ function usePortfolioData(
 
       for (const holding of holdings) {
         // Only count this holding if it was added on or before this date
-        const holdingDate = holding.dateAdded.split('T')[0]
+        const holdingDate = (holding.date_added ?? '').split('T')[0]
 
-        if (holdingDate <= date) {
+        if (holdingDate && holdingDate <= date) {
           const price = prices.get(holding.symbol)
 
           if (price !== undefined) {

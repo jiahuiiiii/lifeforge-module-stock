@@ -1,37 +1,26 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { EmptyStateScreen } from 'lifeforge-ui'
-import React from 'react'
+import type { ComponentType } from 'react'
 
-function ItemListing({
+import { EmptyStateScreen, Grid } from '@lifeforge/ui'
+
+function ItemListing<T extends { id: string }>({
   emptyStateId,
   logs,
-  component
+  component: Component
 }: {
   emptyStateId: string
-  logs: any[]
-  component: React.FC<{ log: any }>
+  logs: T[]
+  component: ComponentType<{ log: T }>
 }) {
-  const Component = component
-
-  if (logs.length === 0)
-    return (
-      <div className="flex-1">
-        <EmptyStateScreen
-          icon="tabler:book-off"
-          message={{
-            id: emptyStateId,
-            namespace: 'apps.jiahuiiiii$stock'
-          }}
-        />
-      </div>
-    )
+  if (logs.length === 0) {
+    return <EmptyStateScreen icon="tabler:book-off" message={{ id: emptyStateId }} />
+  }
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <Grid gap="md" templateCols={{ base: 1, md: 2, lg: 3 }}>
       {logs.map(log => (
         <Component key={log.id} log={log} />
       ))}
-    </div>
+    </Grid>
   )
 }
 

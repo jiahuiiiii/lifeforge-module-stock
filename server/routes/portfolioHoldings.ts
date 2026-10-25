@@ -1,60 +1,92 @@
+import { eq } from 'drizzle-orm'
 import z from 'zod'
 
 import forge from '../forge'
-import schema from '../schema'
+import { holdings, portfolios } from '../schema.drizzle'
+import { holdingDto } from '../utils/dto'
+
+const holdingInputDto = z.object({
+  symbol: z.string(),
+  name: z.string(),
+  shares: z.number(),
+  avg_cost: z.number(),
+  date_added: z.string()
+})
 
 export const create = forge
-  .mutation()
-  .description('Create a new holding entry for a portfolio')
-  .input({
-    query: z.object({
-      portfolioId: z.string()
-    }),
-    body: schema.holdings.omit({
-      portfolio: true
-    })
+  .mutation({
+    description: 'Create a new holding entry for a portfolio.',
+    input: {
+      query: z.object({
+        portfolioId: forge.existsIn(z.string(), portfolios)
+      }),
+      body: holdingInputDto
+    },
+    output: {
+      CREATED: holdingDto
+    }
   })
-  .callback(({ pb, body, query: { portfolioId } }) =>
-    pb.create
-      .collection('holdings')
-      .data({
-        ...body,
+  .callback(async ({ db, body, query: { portfolioId }, response }) => {
+    const [created] = await db
+      .insert(holdings)
+      .values({
+        symbol: body.symbol,
+        name: body.name,
+        shares: body.shares,
+        avg_cost: body.avg_cost,
+        date_added: new Date(body.date_added),
         portfolio: portfolioId
       })
-      .execute()
-  )
+      .returning()
+
+    return response.created(created!)
+  })
 
 export const update = forge
-  .mutation()
-  .description('Update a holding entry for a portfolio')
-  .input({
-    query: z.object({
-      id: z.string()
-    }),
-    body: schema.holdings.pick({
-      shares: true,
-      avgCost: true,
-      dateAdded: true
-    })
+  .mutation({
+    description: 'Update a holding entry for a portfolio.',
+    input: {
+      query: z.object({
+        id: forge.existsIn(z.string(), holdings)
+      }),
+      body: z.object({
+        shares: z.number(),
+        avg_cost: z.number(),
+        date_added: z.string()
+      })
+    },
+    output: {
+      OK: holdingDto
+    }
   })
-  .existenceCheck('query', {
-    id: 'holdings'
+  .callback(async ({ db, body, query: { id }, response }) => {
+    const [updated] = await db
+      .update(holdings)
+      .set({
+        shares: body.shares,
+        avg_cost: body.avg_cost,
+        date_added: new Date(body.date_added)
+      })
+      .where(eq(holdings.id, id))
+      .returning()
+
+    return response.ok(updated!)
   })
-  .callback(({ pb, body, query: { id } }) =>
-    pb.update.collection('holdings').id(id).data(body).execute()
-  )
 
 export const remove = forge
-  .mutation()
-  .description('Remove a holding entry for a portfolio')
-  .input({
-    query: z.object({
-      id: z.string()
-    })
+  .mutation({
+    description: 'Remove a holding entry from a portfolio.',
+    input: {
+      query: z.object({
+        id: forge.existsIn(z.string(), holdings)
+      })
+    },
+    output: {
+      NO_CONTENT: true
+    }
   })
-  .existenceCheck('query', {
-    id: 'holdings'
+  .callback(async ({ db, query: { id }, response }) => {
+    await db.delete(holdings).where(eq(holdings.id, id))
+
+    return response.noContent()
   })
-  .callback(({ pb, query: { id } }) =>
-    pb.delete.collection('holdings').id(id).execute()
-  )

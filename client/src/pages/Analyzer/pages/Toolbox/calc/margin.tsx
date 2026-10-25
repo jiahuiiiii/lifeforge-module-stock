@@ -1,5 +1,7 @@
 import z from 'zod'
 
+import { Flex, Stack, Text } from '@lifeforge/ui'
+
 import {
   calculateProfitMargin,
   getScore
@@ -37,27 +39,32 @@ export default createCalculator('tabler:chart-pie')
   .calculate(({ netIncome, revenue }, settings) => {
     const income = parseShorthand(netIncome)
 
-    const rev = parseShorthand(revenue)
+    const incomeRevenue = parseShorthand(revenue)
 
-    if (isNaN(income) || isNaN(rev) || rev <= 0) {
+    if (isNaN(income) || isNaN(incomeRevenue) || incomeRevenue <= 0) {
       return { margin: null, score: 0 }
     }
 
-    const marginValue = calculateProfitMargin(income, rev)
+    const marginValue = calculateProfitMargin(income, incomeRevenue)
 
-    const scoreValue = getScore(marginValue, settings.margin)
-
-    return { margin: marginValue, score: scoreValue }
+    return {
+      margin: marginValue,
+      score: getScore(marginValue, settings.margin)
+    }
   })
   .displayResult(
     ({ margin, score }) =>
       margin !== null && (
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="text-bg-500 text-sm">Profit Margin</div>
-            <div className="text-2xl font-semibold">{margin.toFixed(2)}%</div>
-          </div>
+        <Flex align="center" justify="between">
+          <Stack gap="xs">
+            <Text color="muted" size="sm">
+              Profit Margin
+            </Text>
+            <Text size="2xl" weight="semibold">
+              {margin.toFixed(2)}%
+            </Text>
+          </Stack>
           <ScoreBadge maxScore={20} score={score} />
-        </div>
+        </Flex>
       )
   )

@@ -1,7 +1,18 @@
-import { Icon } from '@iconify/react'
-import type { MetricConfig, ScoringTier } from '@server/utils/defaults'
-import { Button, Card, NumberInput, Widget } from 'lifeforge-ui'
-import { useTranslation } from 'react-i18next'
+import { useModuleTranslation } from '@lifeforge/localization'
+import {
+  Box,
+  Button,
+  Card,
+  Flex,
+  Icon,
+  NumberInput,
+  Stack,
+  Text,
+  Widget,
+  surface
+} from '@lifeforge/ui'
+
+import type { SettingsMap } from '..'
 
 export const METRIC_ICONS = {
   cagr: 'tabler:trending-up',
@@ -11,6 +22,10 @@ export const METRIC_ICONS = {
   roe: 'tabler:activity'
 } as const
 
+type MetricConfig = SettingsMap[string]
+
+type ScoringTier = { threshold: number; score: number }
+
 function MetricEditor({
   config,
   metricId,
@@ -19,31 +34,29 @@ function MetricEditor({
 }: {
   config: MetricConfig
   metricId: keyof typeof METRIC_ICONS
-  localSettings: Record<string, MetricConfig>
-  setLocalSettings: (settings: Record<string, MetricConfig>) => void
+  localSettings: SettingsMap
+  setLocalSettings: (settings: SettingsMap) => void
 }) {
-  const { t } = useTranslation('apps.jiahuiiiii$stock')
+  const { t } = useModuleTranslation()
 
-  function updateConfig(newConfig: MetricConfig) {
+  function updateTiers(tiers: ScoringTier[]) {
     setLocalSettings({
       ...localSettings,
-      [metricId]: newConfig
+      [metricId]: { ...config, tiers }
     })
   }
 
   function handleTierChange(
     index: number,
     field: 'threshold' | 'score',
-    value: string
+    value: number
   ) {
     if (!Array.isArray(config.tiers)) return
 
-    const numValue = parseFloat(value) || 0
+    const tiers = [...config.tiers]
 
-    const newTiers = [...config.tiers]
-
-    newTiers[index] = { ...newTiers[index], [field]: numValue }
-    updateConfig({ ...config, tiers: newTiers })
+    tiers[index] = { ...tiers[index]!, [field]: value }
+    updateTiers(tiers)
   }
 
   function handleAddTier() {
@@ -51,89 +64,98 @@ function MetricEditor({
 
     const lastTier = config.tiers[config.tiers.length - 1]
 
-    const newTier: ScoringTier = {
-      threshold: lastTier ? lastTier.threshold - 5 : 0,
-      score: lastTier ? Math.max(0, lastTier.score - 10) : 0
-    }
-
-    updateConfig({ ...config, tiers: [...config.tiers, newTier] })
+    updateTiers([
+      ...config.tiers,
+      {
+        threshold: lastTier ? lastTier.threshold - 5 : 0,
+        score: lastTier ? Math.max(0, lastTier.score - 10) : 0
+      }
+    ])
   }
 
   function handleDeleteTier(index: number) {
-    if (!Array.isArray(config.tiers)) return
-    if (config.tiers.length <= 1) return
+    if (!Array.isArray(config.tiers) || config.tiers.length <= 1) return
 
-    const newTiers = config.tiers.filter((_, i) => i !== index)
-
-    updateConfig({ ...config, tiers: newTiers })
+    updateTiers(config.tiers.filter((_, tierIndex) => tierIndex !== index))
   }
 
   if (!Array.isArray(config.tiers)) return null
 
+  const tiers = config.tiers
+
   return (
     <Widget
       actionComponent={
-        <Button
-          icon="tabler:plus"
-          namespace="apps.jiahuiiiii$stock"
-          variant="plain"
-          onClick={handleAddTier}
-        >
+        <Button icon="tabler:plus" variant="plain" onClick={handleAddTier}>
           addTier
         </Button>
       }
       description={
-        config.isInverse
-          ? t('settings.metrics.lowerIsBetter')
-          : t('settings.metrics.higherIsBetter')
+        config.is_inverse
+          ? 'settings.metrics.lowerIsBetter'
+          : 'settings.metrics.higherIsBetter'
       }
       icon={METRIC_ICONS[metricId]}
       title={config.label}
     >
-      <div className="divide-bg-200 dark:divide-bg-700 divide-y">
-        {config.tiers.map((tier, index) => (
-          <Card key={index} className="flex-between">
-            <div className="flex items-center gap-2">
-              <span className="text-bg-500">{t('inputs.value')}</span>
-              <span className="font-medium">
-                {config.isInverse ? '≤' : '≥'}
-              </span>
-              <NumberInput
-                className="w-16"
-                placeholder="0"
-                size="small"
-                value={tier.threshold === Infinity ? 0 : tier.threshold}
-                variant="plain"
-                onChange={e =>
-                  handleTierChange(index, 'threshold', e.toString())
-                }
-              />
-              <span className="text-bg-500">{config.unit}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <NumberInput
-                className="w-16"
-                placeholder="0"
-                size="small"
-                value={tier.score}
-                variant="plain"
-                onChange={e => handleTierChange(index, 'score', e.toString())}
-              />
-              <span className="text-bg-500">{t('settings.metrics.pts')}</span>
+      <Stack gap="none">
+        {tiers.map((tier, index) => (
+          <Card
+            key={index}
+            align="center"
+            bg={{ base: 'bg-100', dark: 'bg-800' }}
+            direction="row"
+            justify="between"
+            mb="sm"
+          >
+            <Flex align="center" gap="sm">
+              <Text color="muted">{t('inputs.value')}</Text>
+              <Text weight="medium">{config.is_inverse ? '≤' : '≥'}</Text>
+              <Box width="4em">
+                <NumberInput
+                  icon="tabler:number"
+                  label=""
+                  placeholder="0"
+                  size="small"
+                  value={tier.threshold === Infinity ? 0 : tier.threshold}
+                  variant="plain"
+                  wrapperProps={{
+                    bg: surface.defaultInteractive
+                  }}
+                  onChange={value =>
+                    handleTierChange(index, 'threshold', value)
+                  }
+                />
+              </Box>
+              <Text color="muted">{config.unit}</Text>
+            </Flex>
+            <Flex align="center" gap="sm">
+              <Box width="4em">
+                <NumberInput
+                  icon="tabler:number"
+                  label=""
+                  placeholder="0"
+                  size="small"
+                  value={tier.score}
+                  variant="plain"
+                  wrapperProps={{
+                    bg: surface.defaultInteractive
+                  }}
+                  onChange={value => handleTierChange(index, 'score', value)}
+                />
+              </Box>
+              <Text color="muted">{t('settings.metrics.pts')}</Text>
               <Button
-                className="ml-4 p-2!"
-                disabled={
-                  !Array.isArray(config.tiers) || config.tiers.length <= 1
-                }
+                disabled={tiers.length <= 1}
                 variant="plain"
                 onClick={() => handleDeleteTier(index)}
               >
-                <Icon className="size-4" icon="tabler:x" />
+                <Icon icon="tabler:x" />
               </Button>
-            </div>
+            </Flex>
           </Card>
         ))}
-      </div>
+      </Stack>
     </Widget>
   )
 }

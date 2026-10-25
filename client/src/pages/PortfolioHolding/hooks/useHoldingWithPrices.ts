@@ -1,12 +1,11 @@
 import { useQueries } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
-import forgeAPI from '@/utils/forgeAPI'
+import { forgeAPI } from '@/manifest'
 
 import type { HoldingEntry } from '..'
 
 function useHoldingWithPrices(holdings: HoldingEntry[]) {
-  // Fetch quotes for all holdings
   const quoteQueries = useQueries({
     queries: holdings.map(holding =>
       forgeAPI.data.getQuote.input({ symbol: holding.symbol }).queryOptions({
@@ -17,21 +16,20 @@ function useHoldingWithPrices(holdings: HoldingEntry[]) {
     )
   })
 
-  // Merge holdings with price data
-  const holdingsWithPrices = useMemo(() => {
-    return holdings.map((holding, index) => {
-      const query = quoteQueries[index]
+  const holdingsWithPrices = useMemo(
+    () =>
+      holdings.map((holding, index) => {
+        const quote = quoteQueries[index]?.data
 
-      const quote = query?.data
-
-      return {
-        ...holding,
-        currentPrice: quote?.price ?? holding.avgCost,
-        change: quote?.change ?? 0,
-        changePercent: quote?.changePercent ?? 0
-      }
-    })
-  }, [holdings, quoteQueries])
+        return {
+          ...holding,
+          currentPrice: quote?.price ?? holding.avg_cost,
+          change: quote?.change ?? 0,
+          changePercent: quote?.change_percent ?? 0
+        }
+      }),
+    [holdings, quoteQueries]
+  )
 
   return {
     holdingsWithPrices,

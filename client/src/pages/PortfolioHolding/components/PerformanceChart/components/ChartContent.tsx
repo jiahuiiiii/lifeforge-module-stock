@@ -1,4 +1,5 @@
-import { LoadingScreen } from 'lifeforge-ui'
+import { useModuleTranslation } from '@lifeforge/localization'
+import { Flex, LoadingScreen, Text } from '@lifeforge/ui'
 
 import type { HoldingEntry } from '@/pages/PortfolioHolding'
 import useFinalChartData from '@/pages/PortfolioHolding/components/PerformanceChart/hooks/useFinalChartData'
@@ -17,8 +18,10 @@ function ChartContent({
   portfolioName: string
   timeRange: string
 }) {
+  const { t } = useModuleTranslation()
+
   const benchmarkSymbol =
-    BENCHMARKS.find(b => b.symbol === selectedBenchmark)?.name ??
+    BENCHMARKS.find(benchmark => benchmark.symbol === selectedBenchmark)?.name ??
     selectedBenchmark
 
   const { chartData, isLoading, error } = useFinalChartData(
@@ -31,34 +34,36 @@ function ChartContent({
     const isPlanLimit = error.message.includes('API_PLAN_LIMIT')
 
     return (
-      <div className="flex-center h-64 flex-col gap-2 text-center">
-        <div className="font-medium text-red-500">
+      <Flex align="center" direction="column" gap="sm" height="16em" justify="center">
+        <Text color="red-500" weight="medium">
           {isPlanLimit
-            ? `Benchmark unavailable: ${benchmarkSymbol}`
-            : 'Failed to load benchmark data'}
-        </div>
-        <div className="text-bg-500 max-w-sm text-sm">
+            ? t('performance.benchmarkUnavailable', {
+                symbol: benchmarkSymbol
+              })
+            : t('performance.benchmarkLoadFailed')}
+        </Text>
+        <Text align="center" color="muted" size="sm">
           {isPlanLimit
-            ? 'This index is not available on your current API plan. Please upgrade to view comparison data.'
+            ? t('performance.planLimitDescription')
             : error.message}
-        </div>
-      </div>
+        </Text>
+      </Flex>
     )
   }
 
   if (isLoading) {
     return (
-      <div className="flex-center h-64">
-        <LoadingScreen message="Loading performance data..." />
-      </div>
+      <Flex align="center" height="16em" justify="center">
+        <LoadingScreen message={t('performance.loading')} />
+      </Flex>
     )
   }
 
   if (chartData.length === 0) {
     return (
-      <div className="flex-center h-64">
-        <div className="text-bg-500">No performance data available</div>
-      </div>
+      <Flex align="center" height="16em" justify="center">
+        <Text color="muted">{t('performance.noData')}</Text>
+      </Flex>
     )
   }
 

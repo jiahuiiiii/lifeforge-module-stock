@@ -1,36 +1,47 @@
-import { Card, TagChip } from 'lifeforge-ui'
-import { type InferOutput, Link } from 'shared'
+import { Link } from 'react-router'
 
-import type forgeAPI from '@/utils/forgeAPI'
+import type { InferOutput } from '@lifeforge/api'
+import { Card, Flex, Icon, Stack, TagChip, Text, surface } from '@lifeforge/ui'
 
-import type { WatchlistItem } from '../index'
+import { forgeAPI } from '@/manifest'
 
-type BestMatch = InferOutput<typeof forgeAPI.data.search>['bestMatches'][number]
+type SearchResult = InferOutput<typeof forgeAPI.data.search>['results'][number]
 
-function SearchResultItem({ match }: { match: BestMatch }) {
+function SearchResultItem({ match }: { match: SearchResult }) {
+  const isInWatchlist = (
+    JSON.parse(localStorage.getItem('stock_watchlist') ?? '[]') as {
+      symbol: string
+    }[]
+  ).some(item => item.symbol === match.symbol)
+
   return (
     <Card
-      key={match['1. symbol']}
       isInteractive
+      align="center"
       as={Link}
-      className="flex-between"
-      to={`./chart/${match['1. symbol']}||${match['2. name']}`}
+      bg={surface.lightInteractive}
+      direction="row"
+      gap="md"
+      justify="between"
+      to={`chart/${match.symbol}||${match.name}`}
     >
-      <div>
-        <div>
-          <div className="text-custom-500 text-sm">{match['1. symbol']}</div>
-          <div className="flex items-center gap-2">
-            <div className="text-lg font-medium">{match['2. name']}</div>
-            {JSON.parse(localStorage.getItem('stock_watchlist') || '[]').some(
-              (item: WatchlistItem) => item.symbol === match['1. symbol']
-            ) && (
-              <span className="iconify tabler--star-filled text-yellow-500" />
-            )}
-          </div>
-        </div>
-        <div className="text-bg-500 text-sm">{match['4. region']}</div>
-      </div>
-      <TagChip label={match['3. type']} />
+      <Stack gap="xs" minWidth="0">
+        <Text color="primary" size="sm" weight="medium">
+          {match.symbol}
+        </Text>
+        <Flex align="center" gap="sm">
+          <Text truncate size="lg" weight="medium">
+            {match.name}
+          </Text>
+          {isInWatchlist && (
+            <Icon color="yellow-500" icon="tabler:star-filled" />
+          )}
+        </Flex>
+        <Text color="muted" size="sm">
+          {match.region}
+        </Text>
+      </Stack>
+      <TagChip flexShrink="0" label={match.type} />
     </Card>
   )
 }

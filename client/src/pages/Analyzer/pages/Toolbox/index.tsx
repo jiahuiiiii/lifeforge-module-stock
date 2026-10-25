@@ -1,6 +1,17 @@
-import { FAB, ModuleHeader, useModalStore } from 'lifeforge-ui'
 import { useCallback, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+
+import { useModuleTranslation } from '@lifeforge/localization'
+import {
+  Box,
+  COLORS,
+  FAB,
+  Flex,
+  Grid,
+  ModuleHeader,
+  Stack,
+  Text,
+  useModalStore
+} from '@lifeforge/ui'
 
 import { AnalyzerSettingsProvider } from '../../providers/useAnalyzerSettings'
 import Calculator from './components/Calculator'
@@ -11,9 +22,8 @@ import createInitialResults from './utils/initialResultsInference'
 
 type Results = InitialResults<typeof CALCULATORS>
 
-export default function Toolbox() {
-  const { t } = useTranslation('apps.jiahuiiiii$stock')
-
+function Toolbox() {
+  const { t } = useModuleTranslation()
   const { open } = useModalStore()
 
   const [results, setResults] = useState<Results>(() =>
@@ -21,8 +31,8 @@ export default function Toolbox() {
   )
 
   const handleResultChange = useCallback(
-    <K extends keyof Results>(key: K, result: Results[K]) => {
-      setResults(prev => ({ ...prev, [key]: result }))
+    <Key extends keyof Results>(key: Key, result: Results[Key]) => {
+      setResults(previous => ({ ...previous, [key]: result }))
     },
     []
   )
@@ -34,25 +44,60 @@ export default function Toolbox() {
     results.margin.margin !== null ||
     results.roe.roe !== null
 
+  function handleSave() {
+    open(SaveCalculationModal, {
+      results: {
+        values_and_scores: {
+          cagr: {
+            value: results.cagr.cagr ?? undefined,
+            score: results.cagr.score
+          },
+          dy: {
+            value: results.dy.dyield ?? undefined,
+            score: results.dy.score
+          },
+          pe: {
+            value: results.pe.peRatio ?? undefined,
+            score: results.pe.score
+          },
+          margin: {
+            value: results.margin.margin ?? undefined,
+            score: results.margin.score
+          },
+          roe: {
+            value: results.roe.roe ?? undefined,
+            score: results.roe.score
+          }
+        },
+        total_score:
+          results.cagr.score +
+          results.dy.score +
+          results.pe.score +
+          results.margin.score +
+          results.roe.score
+      }
+    })
+  }
+
   return (
     <AnalyzerSettingsProvider>
-      <ModuleHeader
-        icon="tabler:calculator"
-        namespace="apps.jiahuiiiii$stock"
-        title="toolbox"
-        tKey="subsectionsTitleAndDesc"
-      />
-      <div className="mb-12 space-y-6">
+      <ModuleHeader icon="tabler:calculator" title="toolbox" />
+      <Stack gap="lg" mb="2xl">
         {CALCULATORS.map(section => (
-          <section key={section.title}>
-            <h2 className="text-bg-500 mb-3 flex items-center gap-2 font-semibold tracking-wide">
-              <span
-                className="h-6 w-1 rounded-full"
-                style={{ backgroundColor: section.color }}
+          <Stack key={section.title} gap="sm">
+            <Flex align="center" gap="sm">
+              <Box
+                flexShrink="0"
+                height="1.5em"
+                r="full"
+                style={{ backgroundColor: COLORS[section.color] }}
+                width="0.25em"
               />
-              {t(`calculators.categories.${section.title}`)}
-            </h2>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              <Text color="muted" tracking="wide" weight="semibold">
+                {t(`calculators.categories.${section.title}`)}
+              </Text>
+            </Flex>
+            <Grid gap="md" templateCols={{ base: 1, md: 2, lg: 3 }}>
               {Object.entries(section.children).map(([key, config]) => (
                 <Calculator
                   key={key}
@@ -67,52 +112,15 @@ export default function Toolbox() {
                   }
                 />
               ))}
-            </div>
-          </section>
+            </Grid>
+          </Stack>
         ))}
-      </div>
+      </Stack>
       {hasAnyValue && (
-        <FAB
-          icon="tabler:device-floppy"
-          visibilityBreakpoint={false}
-          onClick={() =>
-            open(SaveCalculationModal, {
-              results: {
-                values_and_scores: {
-                  cagr: {
-                    value: results.cagr.cagr ?? undefined,
-                    score: results.cagr.score
-                  },
-                  dy: {
-                    value: results.dy.dyield ?? undefined,
-                    score: results.dy.score
-                  },
-                  pe: {
-                    value: results.pe.peRatio ?? undefined,
-                    score: results.pe.score
-                  },
-                  margin: {
-                    value: results.margin.margin ?? undefined,
-                    score: results.margin.score
-                  },
-                  roe: {
-                    value: results.roe.roe ?? undefined,
-                    score: results.roe.score
-                  }
-                },
-                total_score:
-                  results.cagr.score +
-                  results.dy.score +
-                  results.pe.score +
-                  results.margin.score +
-                  results.roe.score
-              }
-            })
-          }
-        >
-          Save
-        </FAB>
+        <FAB icon="tabler:device-floppy" visibilityBreakpoint={false} onClick={handleSave} />
       )}
     </AnalyzerSettingsProvider>
   )
 }
+
+export default Toolbox

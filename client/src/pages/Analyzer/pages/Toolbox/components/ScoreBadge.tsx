@@ -1,6 +1,4 @@
-import clsx from 'clsx'
-import { TagChip } from 'lifeforge-ui'
-import COLORS from 'tailwindcss/colors'
+import { COLORS, TagChip } from '@lifeforge/ui'
 
 interface ScoreBadgeProps {
   score: number
@@ -20,9 +18,9 @@ function getScoreLevel(
 }
 
 const COLOR_MAP = {
-  high: COLORS['green'][500],
-  medium: COLORS['yellow'][500],
-  low: COLORS['red'][500]
+  high: COLORS['green-500'],
+  medium: COLORS['yellow-500'],
+  low: COLORS['red-500']
 }
 
 const ICON_MAP = {
@@ -36,12 +34,10 @@ export default function ScoreBadge({ score, maxScore = 50 }: ScoreBadgeProps) {
 
   return (
     <TagChip
-      className={clsx(
-        'inline-flex items-center gap-1.5 rounded-full border font-semibold'
-      )}
       color={COLOR_MAP[level]}
       icon={ICON_MAP[level]}
       label={`${score} pts`}
+      size="sm"
     />
   )
 }

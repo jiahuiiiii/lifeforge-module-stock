@@ -1,17 +1,16 @@
-import { Widget } from 'lifeforge-ui'
-import { useTranslation } from 'react-i18next'
-import COLORS from 'tailwindcss/colors'
+import { useModuleTranslation } from '@lifeforge/localization'
+import { Text, Widget } from '@lifeforge/ui'
 
 function OpportunityCost() {
-  const { t } = useTranslation('apps.jiahuiiiii$stock')
+  const { t } = useModuleTranslation()
 
   return (
     <Widget
       icon="tabler:scale"
-      iconColor={COLORS.orange[500]}
-      title={t('guide.opportunityCost.title')}
+      iconColor="orange-500"
+      title="guide.opportunityCost.title"
     >
-      <p className="text-bg-500">{t('guide.opportunityCost.desc')}</p>
+      <Text color="muted">{t('guide.opportunityCost.desc')}</Text>
     </Widget>
   )
 }

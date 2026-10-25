@@ -1,12 +1,14 @@
+import { Stack } from '@lifeforge/ui'
+
 import BlindSpots from './sections/BlindSpots'
 import TargetAudience from './sections/TargetAudience'
 
 function LimitationsTab() {
   return (
-    <div className="space-y-6">
+    <Stack gap="lg">
       <BlindSpots />
       <TargetAudience />
-    </div>
+    </Stack>
   )
 }
 

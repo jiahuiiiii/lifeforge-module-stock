@@ -1,7 +1,5 @@
-import { Widget } from 'lifeforge-ui'
-import { useTranslation } from 'react-i18next'
-import { usePersonalization } from 'shared'
-import COLORS from 'tailwindcss/colors'
+import { useModuleTranslation } from '@lifeforge/localization'
+import { Card, Grid, Icon, Stack, Text, Widget, surface } from '@lifeforge/ui'
 
 const QUALITATIVE_IDS = [
   'valueChain',
@@ -18,30 +16,30 @@ const QUALITATIVE_ICONS = {
 }
 
 function SleepStrategy() {
-  const { t } = useTranslation('apps.jiahuiiiii$stock')
-  const { derivedThemeColor } = usePersonalization()
+  const { t } = useModuleTranslation()
 
   return (
     <Widget
       icon="tabler:moon"
-      iconColor={COLORS.purple[500]}
-      title={t('guide.sleepStrategy.title')}
+      iconColor="purple-500"
+      title="guide.sleepStrategy.title"
     >
-      <p className="text-bg-500">{t('guide.sleepStrategy.intro')}</p>
-      <div className="grid gap-3 sm:grid-cols-2">
-        {QUALITATIVE_IDS.map(id => (
-          <Widget
-            key={id}
-            className="component-bg-lighter"
-            description={
-              <p className="text-base">{t(`guide.qualitative.${id}.desc`)}</p>
-            }
-            icon={QUALITATIVE_ICONS[id]}
-            iconColor={derivedThemeColor}
-            title={t(`guide.qualitative.${id}.title`)}
-          />
-        ))}
-      </div>
+      <Stack gap="md">
+        <Text color="muted">{t('guide.sleepStrategy.intro')}</Text>
+        <Grid gap="sm" templateCols={{ base: 1, sm: 2 }}>
+          {QUALITATIVE_IDS.map(id => (
+            <Card key={id} bg={surface.light} gap="sm">
+              <Icon color="primary" icon={QUALITATIVE_ICONS[id]} size="1.5em" />
+              <Text weight="semibold">
+                {t(`guide.qualitative.${id}.title`)}
+              </Text>
+              <Text color="muted" size="sm">
+                {t(`guide.qualitative.${id}.desc`)}
+              </Text>
+            </Card>
+          ))}
+        </Grid>
+      </Stack>
     </Widget>
   )
 }

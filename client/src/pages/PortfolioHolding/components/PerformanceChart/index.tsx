@@ -1,17 +1,28 @@
+import { useState } from 'react'
+
 import {
+  Box,
+  Flex,
   ListboxInput,
   ListboxOption,
-  ViewModeSelector,
-  Widget
-} from 'lifeforge-ui'
-import { useState } from 'react'
-import { Trans } from 'react-i18next'
+  Text,
+  Widget,
+  createViewMode
+} from '@lifeforge/ui'
 
 import type { HoldingWithPrice } from '../HoldingsTable'
 import ChartContent from './components/ChartContent'
 import { BENCHMARKS, TIME_RANGES } from './constants/constants'
 
-export default function PerformanceChart({
+const TimeRangeViewMode = createViewMode({
+  modes: TIME_RANGES.map(range => ({ value: range, text: range })),
+  defaultValue: '1M',
+  persistInLocalStorage: false,
+  useNuqs: false,
+  namespace: false
+})
+
+function PerformanceChart({
   portfolioName,
   holdings
 }: {
@@ -19,62 +30,47 @@ export default function PerformanceChart({
   holdings: HoldingWithPrice[]
 }) {
   const [selectedBenchmark, setSelectedBenchmark] = useState('SPY')
-
   const [timeRange, setTimeRange] = useState('1M')
 
+  const selectedBenchmarkName =
+    BENCHMARKS.find(benchmark => benchmark.symbol === selectedBenchmark)
+      ?.name ?? selectedBenchmark
+
   return (
-    <>
+    <TimeRangeViewMode.Root currentMode={timeRange} onModeChange={setTimeRange}>
       <Widget
         actionComponent={
-          <ViewModeSelector
-            className="component-bg-lighter"
-            currentMode={timeRange}
-            options={TIME_RANGES.map(range => ({
-              value: range,
-              text: range
-            }))}
-            size="small"
-            onModeChange={setTimeRange}
-          />
-        }
-        className="h-min"
-        icon="tabler:chart-line"
-        namespace={false}
-        title={
-          <span className="flex items-center gap-2">
-            <Trans
-              components={{
-                benchmark: (
-                  <ListboxInput
-                    buttonContent={
-                      <div className="text-base! font-medium">
-                        {
-                          BENCHMARKS.find(b => b.symbol === selectedBenchmark)
-                            ?.name
-                        }
-                      </div>
-                    }
-                    className="!min-w-40 flex-0!"
-                    size="small"
-                    value={selectedBenchmark}
-                    variant="plain"
-                    onChange={setSelectedBenchmark}
-                  >
-                    {BENCHMARKS.map(b => (
-                      <ListboxOption
-                        key={b.symbol}
-                        label={b.name}
-                        value={b.symbol}
-                      />
-                    ))}
-                  </ListboxInput>
-                )
+          <Flex align="center" gap="sm">
+            <ListboxInput
+              renderContent={value => (
+                <Box asChild minWidth="min-content">
+                  <Text size="base" weight="medium" whiteSpace="nowrap">
+                    {value}
+                  </Text>
+                </Box>
+              )}
+              size="small"
+              value={selectedBenchmarkName}
+              variant="plain"
+              onChange={value => {
+                const benchmark = BENCHMARKS.find(item => item.name === value)
+
+                setSelectedBenchmark(benchmark?.symbol ?? value)
               }}
-              i18nKey="widgets.performanceVs"
-              ns="apps.jiahuiiiii$stock"
-            />
-          </span>
+            >
+              {BENCHMARKS.map(benchmark => (
+                <ListboxOption
+                  key={benchmark.symbol}
+                  label={benchmark.name}
+                  value={benchmark.name}
+                />
+              ))}
+            </ListboxInput>
+            <TimeRangeViewMode.Selector size="small" />
+          </Flex>
         }
+        icon="tabler:chart-line"
+        title="widgets.performanceVsLabel"
       >
         <ChartContent
           holdings={holdings}
@@ -83,6 +79,8 @@ export default function PerformanceChart({
           timeRange={timeRange}
         />
       </Widget>
-    </>
+    </TimeRangeViewMode.Root>
   )
 }
+
+export default PerformanceChart

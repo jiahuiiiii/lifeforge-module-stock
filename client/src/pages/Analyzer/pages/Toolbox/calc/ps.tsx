@@ -1,5 +1,6 @@
-import { Icon } from '@iconify/react'
 import z from 'zod'
+
+import { Flex, Icon, Stack, Text } from '@lifeforge/ui'
 
 import { calculatePSRatio } from '@/pages/Analyzer/pages/Toolbox/utils/calcFuncs'
 
@@ -17,13 +18,11 @@ export default createCalculator('tabler:receipt')
       type: 'currency',
       icon: 'tabler:chart-pie',
       label: 'Market Cap',
-      placeholder: 'e.g., 1000000'
     },
     totalSales: {
       type: 'currency',
       icon: 'tabler:receipt',
       label: 'Total Sales',
-      placeholder: 'e.g., 500000'
     }
   })
   .result(
@@ -42,25 +41,24 @@ export default createCalculator('tabler:receipt')
     ({ psRatio }) =>
       psRatio !== null &&
       isFinite(psRatio) && (
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="text-bg-500 text-sm">P/S Ratio</div>
-              <div className="text-2xl font-semibold">
+        <Stack gap="sm">
+          <Flex align="center" justify="between">
+            <Stack gap="xs">
+              <Text color="muted" size="sm">
+                P/S Ratio
+              </Text>
+              <Text size="2xl" weight="semibold">
                 {psRatio.toFixed(2)}x
-              </div>
-            </div>
-          </div>
-          <div className="text-bg-500 flex items-start gap-2 text-sm">
-            <Icon
-              className="mt-0.5 size-4 shrink-0"
-              icon="tabler:info-circle"
-            />
-            <span>
+              </Text>
+            </Stack>
+          </Flex>
+          <Flex align="start" gap="sm">
+            <Icon icon="tabler:info-circle" size="1em" style={{ marginTop: '0.125em' }} />
+            <Text color="muted" size="sm">
               P/S ratio alone is not sufficient. Must combine with Profit Margin
               check for meaningful analysis.
-            </span>
-          </div>
-        </div>
+            </Text>
+          </Flex>
+        </Stack>
       )
   )

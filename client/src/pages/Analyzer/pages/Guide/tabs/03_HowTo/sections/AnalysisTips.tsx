@@ -1,7 +1,5 @@
-import { Widget } from 'lifeforge-ui'
-import { useTranslation } from 'react-i18next'
-import { usePersonalization } from 'shared'
-import COLORS from 'tailwindcss/colors'
+import { useModuleTranslation } from '@lifeforge/localization'
+import { Card, Grid, Icon, Text, Widget, surface } from '@lifeforge/ui'
 
 const TIP_KEYS = [
   'calculator',
@@ -22,30 +20,28 @@ const TIP_ICONS = {
 }
 
 function AnalysisTips() {
-  const { t } = useTranslation('apps.jiahuiiiii$stock')
-  const { derivedThemeColor } = usePersonalization()
+  const { t } = useModuleTranslation()
 
   return (
     <Widget
       icon="tabler:bulb"
-      iconColor={COLORS.yellow[500]}
-      title={t('guide.howto.tipsTitle')}
+      iconColor="yellow-500"
+      title="guide.howto.tipsTitle"
     >
-      <div className="grid gap-3 sm:grid-cols-2">
+      <Grid gap="sm" templateCols={{ base: 1, sm: 2 }}>
         {TIP_KEYS.map(key => (
-          <Widget
+          <Card
             key={key}
-            className="component-bg-lighter"
-            icon={TIP_ICONS[key]}
-            iconColor={derivedThemeColor}
-            title={
-              <div className="text-bg-500 font-normal">
-                {t(`guide.howto.tips.${key}`)}
-              </div>
-            }
-          />
+            align="center"
+            bg={surface.light}
+            direction="row"
+            gap="sm"
+          >
+            <Icon color="primary" icon={TIP_ICONS[key]} />
+            <Text color="muted">{t(`guide.howto.tips.${key}`)}</Text>
+          </Card>
         ))}
-      </div>
+      </Grid>
     </Widget>
   )
 }

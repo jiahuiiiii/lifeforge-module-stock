@@ -1,5 +1,6 @@
-import { Icon } from '@iconify/react'
 import z from 'zod'
+
+import { COLORS, Flex, Icon, Stack, Text } from '@lifeforge/ui'
 
 import { calculatePEG } from '@/pages/Analyzer/pages/Toolbox/utils/calcFuncs'
 
@@ -39,27 +40,37 @@ export default createCalculator('tabler:scale')
 
     const pegValue = calculatePEG(peRatio, cagr)
 
-    return { peg: pegValue, isPass: pegValue <= 1.0 }
+    return { peg: pegValue, isPass: pegValue <= 1 }
   })
   .displayResult(
     ({ peg, isPass }) =>
       peg !== null &&
       isFinite(peg) && (
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="text-bg-500 text-sm">PEG Ratio</div>
-            <div className="text-2xl font-semibold">{peg.toFixed(2)}</div>
-          </div>
-          <div
-            className={`flex items-center gap-2 rounded-full border px-3 py-1 text-sm font-semibold ${
-              isPass
-                ? 'border-green-500/50 bg-green-500/20 text-green-500'
-                : 'border-red-500/50 bg-red-500/20 text-red-500'
-            }`}
+        <Flex align="center" justify="between">
+          <Stack gap="xs">
+            <Text color="muted" size="sm">
+              PEG Ratio
+            </Text>
+            <Text size="2xl" weight="semibold">
+              {peg.toFixed(2)}
+            </Text>
+          </Stack>
+          <Flex
+            align="center"
+            gap="sm"
+            px="sm"
+            py="xs"
+            r="full"
+            style={{
+              border: `1px solid ${isPass ? COLORS['green-500'] : COLORS['red-500']}`,
+              color: isPass ? COLORS['green-500'] : COLORS['red-500']
+            }}
           >
             <Icon icon={isPass ? 'tabler:check' : 'tabler:x'} />
-            {isPass ? 'Excellent (Zulu Pass)' : 'Overvalued'}
-          </div>
-        </div>
+            <Text size="sm" weight="semibold">
+              {isPass ? 'Excellent (Zulu Pass)' : 'Overvalued'}
+            </Text>
+          </Flex>
+        </Flex>
       )
   )

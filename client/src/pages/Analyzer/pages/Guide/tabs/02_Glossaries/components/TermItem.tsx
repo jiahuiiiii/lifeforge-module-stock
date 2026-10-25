@@ -1,5 +1,4 @@
-import { Widget } from 'lifeforge-ui'
-import COLORS from 'tailwindcss/colors'
+import { Stack, type WidgetProps, Text, Widget } from '@lifeforge/ui'
 
 import Formula from './Formlula'
 
@@ -13,13 +12,15 @@ function TermItem({
   term: string
   description: string
   latex: string
-  color: keyof typeof COLORS
+  color: NonNullable<WidgetProps['iconColor']>
   icon: string
 }) {
   return (
-    <Widget icon={icon} iconColor={COLORS[color][500]} title={term}>
-      <p className="text-bg-500">{description}</p>
-      <Formula latex={latex} />
+    <Widget icon={icon} iconColor={color} title={term}>
+      <Stack gap="sm">
+        <Text color="muted">{description}</Text>
+        <Formula latex={latex} />
+      </Stack>
     </Widget>
   )
 }

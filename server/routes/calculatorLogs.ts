@@ -1,8 +1,10 @@
+import { eq } from 'drizzle-orm'
 import z from 'zod'
 
 import forge from '../forge'
+import { calculatorLogs } from '../schema.drizzle'
 
-const valueAndScoreSchema = z.record(
+const valueAndScoreDto = z.record(
   z.string(),
   z.object({
     value: z.number().optional(),
@@ -10,90 +12,125 @@ const valueAndScoreSchema = z.record(
   })
 )
 
+const calculatorLogDto = z.object({
+  id: z.string(),
+  ticker: z.string(),
+  name: z.string(),
+  exchange: z.string(),
+  date: z.date(),
+  values_and_scores: valueAndScoreDto,
+  total_score: z.number()
+})
+
+const calculatorLogInputDto = z.object({
+  ticker: z.string(),
+  name: z.string(),
+  exchange: z.string(),
+  date: z.string(),
+  values_and_scores: valueAndScoreDto,
+  total_score: z.number()
+})
+
 export const list = forge
-  .query()
-  .description('List all calculator logs')
-  .input({})
-  .callback(async ({ pb }) => {
-    return (
-      await pb.getFullList
-        .collection('calculator_logs')
-        .sort(['-date'])
-        .execute()
-    ).map(log => ({
-      ...log,
-      values_and_scores: log.values_and_scores as Record<
-        string,
-        { value?: number; score: number }
-      >
-    }))
+  .query({
+    description: 'List all calculator logs, newest first.',
+    output: {
+      OK: z.array(calculatorLogDto)
+    }
   })
+  .callback(async ({ db, response }) =>
+    response.ok(
+      await db.query.calculator_logs.findMany({
+        orderBy: { date: 'desc' }
+      })
+    )
+  )
 
 export const create = forge
-  .mutation()
-  .description('Create a new calculator log')
-  .input({
-    body: z.object({
-      ticker: z.string(),
-      name: z.string().optional().default(''),
-      exchange: z.string().optional().default(''),
-      date: z.string(),
-      values_and_scores: valueAndScoreSchema,
-      total_score: z.number()
-    })
+  .mutation({
+    description: 'Create a new calculator log.',
+    input: {
+      body: calculatorLogInputDto
+    },
+    output: {
+      CREATED: calculatorLogDto
+    }
   })
-  .callback(async ({ pb, body }) =>
-    pb.create.collection('calculator_logs').data(body).execute()
-  )
+  .callback(async ({ db, body, response }) => {
+    const [created] = await db
+      .insert(calculatorLogs)
+      .values({
+        ticker: body.ticker,
+        name: body.name,
+        exchange: body.exchange,
+        date: new Date(body.date),
+        values_and_scores: body.values_and_scores,
+        total_score: body.total_score
+      })
+      .returning()
+
+    return response.created(created!)
+  })
 
 export const update = forge
-  .mutation()
-  .description('Update a calculator log')
-  .input({
-    query: z.object({
-      id: z.string()
-    }),
-    body: z.object({
-      ticker: z.string().optional(),
-      name: z.string().optional(),
-      exchange: z.string().optional(),
-      date: z.string().optional(),
-      values_and_scores: valueAndScoreSchema.optional(),
-      total_score: z.number().optional()
-    })
+  .mutation({
+    description: 'Update a calculator log.',
+    input: {
+      query: z.object({
+        id: forge.existsIn(z.string(), calculatorLogs)
+      }),
+      body: calculatorLogInputDto.partial()
+    },
+    output: {
+      OK: calculatorLogDto
+    }
   })
-  .existenceCheck('query', {
-    id: 'calculator_logs'
+  .callback(async ({ db, body, query: { id }, response }) => {
+    const { date, ...rest } = body
+
+    const [updated] = await db
+      .update(calculatorLogs)
+      .set({
+        ...rest,
+        ...(date ? { date: new Date(date) } : {})
+      })
+      .where(eq(calculatorLogs.id, id))
+      .returning()
+
+    return response.ok(updated!)
   })
-  .callback(async ({ pb, body, query }) =>
-    pb.update.collection('calculator_logs').id(query.id).data(body).execute()
-  )
 
 export const remove = forge
-  .mutation()
-  .description('Delete a calculator log')
-  .input({
-    query: z.object({
-      id: z.string()
-    })
+  .mutation({
+    description: 'Delete a calculator log.',
+    input: {
+      query: z.object({
+        id: forge.existsIn(z.string(), calculatorLogs)
+      })
+    },
+    output: {
+      NO_CONTENT: true
+    }
   })
-  .existenceCheck('query', {
-    id: 'calculator_logs'
+  .callback(async ({ db, query: { id }, response }) => {
+    await db.delete(calculatorLogs).where(eq(calculatorLogs.id, id))
+
+    return response.noContent()
   })
-  .callback(async ({ pb, query }) =>
-    pb.delete.collection('calculator_logs').id(query.id).execute()
-  )
 
 export const clearAll = forge
-  .mutation()
-  .description('Delete all calculator logs')
-  .input({})
-  .callback(async ({ pb }) => {
-    const logs = await pb.getFullList.collection('calculator_logs').execute()
-
-    for (const log of logs) {
-      await pb.delete.collection('calculator_logs').id(log.id).execute()
+  .mutation({
+    description: 'Delete all calculator logs.',
+    output: {
+      OK: z.object({
+        deleted: z.number()
+      })
     }
+  })
+  .callback(async ({ db, response }) => {
+    const deleted = await db
+      .delete(calculatorLogs)
+      .returning({ id: calculatorLogs.id })
 
-    return { deleted: logs.length }
+    return response.ok({ deleted: deleted.length })
   })

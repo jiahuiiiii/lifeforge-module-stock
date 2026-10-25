@@ -1,35 +1,38 @@
-import { Button, useModuleSidebarState } from 'lifeforge-ui'
-import { useTranslation } from 'react-i18next'
+import { useModuleTranslation } from '@lifeforge/localization'
+import {
+  Button,
+  Flex,
+  Text,
+  useModuleSidebarState
+} from '@lifeforge/ui'
 
 import { MOOD_CONFIG } from '../constants'
 import useFilter from '../hooks/useFilter'
 
 function InnerHeader({ totalItemsCount }: { totalItemsCount: number }) {
-  const { t } = useTranslation('apps.jiahuiiiii$stock')
-
+  const { t } = useModuleTranslation()
   const { setIsSidebarOpen } = useModuleSidebarState()
-
   const { filterMood } = useFilter()
 
   return (
-    <>
-      <header className="flex-between flex w-full">
-        <div className="flex min-w-0 items-end">
-          <h1 className="truncate text-2xl font-semibold xl:text-3xl">
-            {filterMood === 'all'
-              ? t('diary.headers.allEntries')
-              : t(MOOD_CONFIG[filterMood].labelKey)}
-          </h1>
-          <span className="text-bg-500 mr-8 ml-2">({totalItemsCount})</span>
-        </div>
-        <Button
-          className="lg:hidden"
-          icon="tabler:menu"
-          variant="plain"
-          onClick={() => setIsSidebarOpen(true)}
-        />
-      </header>
-    </>
+    <Flex justify="between">
+      <Text as="h1" weight="semibold">
+        <Text size="3xl">
+          {filterMood === 'all'
+            ? t('diary.headers.allEntries')
+            : t(MOOD_CONFIG[filterMood].labelKey)}{' '}
+        </Text>
+        <Text as="span" color="muted" size="base">
+          ({totalItemsCount})
+        </Text>
+      </Text>
+      <Button
+        display={{ base: 'flex', lg: 'none' }}
+        icon="tabler:menu"
+        variant="plain"
+        onClick={() => setIsSidebarOpen(true)}
+      />
+    </Flex>
   )
 }
 

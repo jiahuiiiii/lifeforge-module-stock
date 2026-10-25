@@ -1,12 +1,11 @@
-import { SidebarDivider, SidebarItem, SidebarWrapper } from 'lifeforge-ui'
-import { useTranslation } from 'react-i18next'
+import { useModuleTranslation } from '@lifeforge/localization'
+import { SidebarDivider, SidebarItem, SidebarWrapper } from '@lifeforge/ui'
 
 import useFilter from '../../hooks/useFilter'
 import MoodSection from './components/MoodSection'
 
 function Sidebar() {
-  const { t } = useTranslation('apps.jiahuiiiii$stock')
-
+  const { t } = useModuleTranslation()
   const { filterMood, setFilterMood } = useFilter()
 
   return (
@@ -14,7 +13,7 @@ function Sidebar() {
       <SidebarItem
         active={filterMood === 'all'}
         icon="tabler:list"
-        label={t('diary.sidebar.allEntries')}
+        label="diary.sidebar.allEntries"
         onClick={() => setFilterMood('all')}
       />
       <SidebarDivider />

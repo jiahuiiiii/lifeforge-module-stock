@@ -1,9 +1,20 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { zodResolver } from '@hookform/resolvers/zod'
 import dayjs from 'dayjs'
-import { FormModal, defineForm } from 'lifeforge-ui'
-import { toast } from 'react-toastify'
+import { useForm } from 'react-hook-form'
+import z from 'zod'
 
-import forgeAPI from '@/utils/forgeAPI'
+import { useForgeMutation } from '@lifeforge/api'
+import { useModuleTranslation } from '@lifeforge/localization'
+import { DateField, FormModal, TextField } from '@lifeforge/ui'
+
+import { forgeAPI } from '@/manifest'
+
+const schema = z.object({
+  ticker: z.string().min(1),
+  name: z.string(),
+  exchange: z.string(),
+  date: z.date()
+})
 
 export default function SaveCalculationModal({
   onClose,
@@ -23,78 +34,78 @@ export default function SaveCalculationModal({
     }
   }
 }) {
-  const queryClient = useQueryClient()
+  const { t } = useModuleTranslation()
 
-  const mutation = useMutation(
-    forgeAPI.analyzer.logs.calculator.create.mutationOptions({
-      onSuccess: () => {
-        queryClient.invalidateQueries({
-          queryKey: forgeAPI.analyzer.logs.calculator.list.key
-        })
-      },
-      onError: error => {
-        console.error('Error saving calculation log:', error)
-        toast.error('Failed to save calculation log.')
-      }
-    })
+  const createMutation = useForgeMutation(
+    forgeAPI.analyzer.logs.calculator.create,
+    {
+      action: 'create',
+      queryKey: forgeAPI.analyzer.logs.calculator.key
+    }
   )
 
-  const { formProps } = defineForm<{
-    ticker: string
-    name: string
-    exchange: string
-    date: string
-  }>({
-    icon: 'tabler:device-floppy',
-    onClose,
-    title: 'Save Calculation',
-    submitButton: {
-      icon: 'tabler:device-floppy',
-      children: 'Save'
-    },
-    namespace: 'apps.jiahuiiiii$stock'
-  })
-    .typesMap({
-      ticker: 'text',
-      name: 'text',
-      exchange: 'text',
-      date: 'datetime'
-    })
-    .setupFields({
-      ticker: {
-        label: 'Stock Ticker',
-        icon: 'tabler:currency-dollar',
-        placeholder: 'e.g., AAPL',
-        required: true
-      },
-      name: {
-        label: 'Company Name',
-        icon: 'tabler:building',
-        placeholder: 'e.g., Apple Inc.'
-      },
-      exchange: {
-        label: 'Stock Exchange',
-        icon: 'tabler:status-change',
-        placeholder: 'e.g., NASDAQ'
-      },
-      date: {
-        label: 'Date',
-        icon: 'tabler:calendar',
-        required: true
-      }
-    })
-    .autoFocusField('ticker')
-    .initialData({
+  const form = useForm({
+    defaultValues: {
+      ticker: '',
+      name: '',
+      exchange: '',
       date: dayjs().toDate()
-    })
-    .onSubmit(async data => {
-      await mutation.mutateAsync({
-        ...data,
-        values_and_scores: results.values_and_scores,
-        total_score: results.total_score
-      })
-    })
-    .build()
+    },
+    resolver: zodResolver(schema)
+  })
 
-  return <FormModal {...formProps} />
+  return (
+    <FormModal
+      form={form}
+      submissionConfig={{
+        label: 'Save',
+        icon: 'tabler:device-floppy',
+        handler: async (data: z.infer<typeof schema>) => {
+          await createMutation.mutateAsync({
+            ticker: data.ticker,
+            name: data.name,
+            exchange: data.exchange,
+            date: data.date.toISOString(),
+            values_and_scores: results.values_and_scores,
+            total_score: results.total_score
+          })
+        }
+      }}
+      uiConfig={{
+        icon: 'tabler:device-floppy',
+        title: t('modals.saveCalculation'),
+        onClose
+      }}
+    >
+      <TextField
+        required
+        control={form.control}
+        icon="tabler:currency-dollar"
+        label="stockTicker"
+        name="ticker"
+        placeholder={t('placeholders.symbol')}
+      />
+      <TextField
+        control={form.control}
+        icon="tabler:building"
+        label="companyName"
+        name="name"
+        placeholder={t('placeholders.companyName')}
+      />
+      <TextField
+        control={form.control}
+        icon="tabler:status-change"
+        label="stockExchange"
+        name="exchange"
+        placeholder="e.g., NASDAQ"
+      />
+      <DateField
+        required
+        control={form.control}
+        icon="tabler:calendar"
+        label="date"
+        name="date"
+      />
+    </FormModal>
+  )
 }

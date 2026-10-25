@@ -4,6 +4,10 @@ import 'dayjs/locale/en'
 import 'dayjs/locale/zh-cn'
 import 'dayjs/locale/zh-tw'
 import relativeTime from 'dayjs/plugin/relativeTime'
+import { useMemo } from 'react'
+
+import type { InferOutput } from '@lifeforge/api'
+import { useModuleTranslation } from '@lifeforge/localization'
 import {
   Button,
   ContentWrapperWithSidebar,
@@ -12,14 +16,14 @@ import {
   LayoutWithSidebar,
   ModuleHeader,
   Scrollbar,
+  Stack,
+  Text,
   WithQuery,
-  useModalStore
-} from 'lifeforge-ui'
-import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import { type InferOutput, usePersonalization } from 'shared'
+  useModalStore,
+  usePersonalization
+} from '@lifeforge/ui'
 
-import forgeAPI from '@/utils/forgeAPI'
+import { forgeAPI } from '@/manifest'
 
 import EntryItem from './components/EntryItem'
 import InnerHeader from './components/InnerHeader'
@@ -32,14 +36,10 @@ export type DiaryEntry = InferOutput<typeof forgeAPI.diary.list>[number]
 dayjs.extend(relativeTime)
 
 function Diary() {
-  const { t } = useTranslation('apps.jiahuiiiii$stock')
-
+  const { t } = useModuleTranslation()
   const { language } = usePersonalization()
-
   const { open } = useModalStore()
-
   const entriesQuery = useQuery(forgeAPI.diary.list.queryOptions())
-
   const { filterMood } = useFilter()
 
   const filteredEntries = useMemo(() => {
@@ -47,35 +47,34 @@ function Diary() {
 
     return filterMood === 'all'
       ? entriesQuery.data
-      : entriesQuery.data.filter(e => e.feel === filterMood)
+      : entriesQuery.data.filter(entry => entry.feel === filterMood)
   }, [entriesQuery.data, filterMood])
 
-  const groupedEntries = filteredEntries.reduce(
-    (acc, entry) => {
-      const monthYear = dayjs(entry.date).locale(language).format('MMMM YYYY')
+  const groupedEntries = useMemo(
+    () =>
+      filteredEntries.reduce<Record<string, DiaryEntry[]>>((groups, entry) => {
+        const monthYear = dayjs(entry.date).locale(language).format('MMMM YYYY')
 
-      if (!acc[monthYear]) {
-        acc[monthYear] = []
-      }
-      acc[monthYear].push(entry)
+        groups[monthYear] = [...(groups[monthYear] ?? []), entry]
 
-      return acc
-    },
-    {} as Record<string, DiaryEntry[]>
+        return groups
+      }, {}),
+    [filteredEntries, language]
   )
 
-  const handleCreateEntry = () => {
+  function handleCreateEntry() {
     open(ModifyEntryModal, { openType: 'create' })
   }
 
   return (
     <>
       <ModuleHeader
-        actionButton={
+        icon="tabler:notebook"
+        title="diary"
+        trailing={
           <Button
-            className="hidden md:flex"
+            display={{ base: 'none', md: 'flex' }}
             icon="tabler:plus"
-            namespace="apps.jiahuiiiii$stock"
             tProps={{
               item: t('items.diary')
             }}
@@ -84,10 +83,6 @@ function Diary() {
             new
           </Button>
         }
-        icon="tabler:notebook"
-        namespace="apps.jiahuiiiii$stock"
-        title="diary"
-        tKey="subsectionsTitleAndDesc"
       />
       <LayoutWithSidebar>
         <Sidebar />
@@ -96,32 +91,35 @@ function Diary() {
           <WithQuery query={entriesQuery}>
             {() =>
               filteredEntries.length > 0 ? (
-                <Scrollbar className="mt-6">
-                  <div className="mb-8 space-y-6">
+                <Scrollbar>
+                  <Stack gap="lg" mt="lg">
                     {Object.entries(groupedEntries).map(
                       ([monthYear, monthEntries]) => (
-                        <div key={monthYear}>
-                          <h2 className="text-bg-500 mb-3 font-semibold tracking-wider uppercase">
+                        <Stack key={monthYear} gap="sm">
+                          <Text
+                            color="muted"
+                            size="sm"
+                            tracking="wider"
+                            transform="uppercase"
+                            weight="semibold"
+                          >
                             {monthYear}
-                          </h2>
-                          <div className="space-y-4">
+                          </Text>
+                          <Stack gap="sm">
                             {monthEntries.map(entry => (
                               <EntryItem key={entry.id} entry={entry} />
                             ))}
-                          </div>
-                        </div>
+                          </Stack>
+                        </Stack>
                       )
                     )}
-                  </div>
+                  </Stack>
                   <FAB visibilityBreakpoint="md" onClick={handleCreateEntry} />
                 </Scrollbar>
               ) : (
                 <EmptyStateScreen
                   icon="tabler:notebook-off"
-                  message={{
-                    id: 'diary',
-                    namespace: 'apps.jiahuiiiii$stock'
-                  }}
+                  message={{ id: 'diary' }}
                 />
               )
             }

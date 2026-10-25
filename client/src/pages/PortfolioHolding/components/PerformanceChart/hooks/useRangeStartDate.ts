@@ -1,37 +1,27 @@
+import dayjs from 'dayjs'
 import { useMemo } from 'react'
 
 function useRangeStartDate(timeRange: string) {
-  const rangeStartDate = useMemo(() => {
-    const now = new Date()
-
-    const start = new Date()
+  return useMemo(() => {
+    const now = dayjs()
 
     switch (timeRange) {
       case '1W':
-        start.setDate(now.getDate() - 7)
-        break
+        return now.subtract(7, 'day').format('YYYY-MM-DD')
       case '1M':
-        start.setMonth(now.getMonth() - 1)
-        break
+        return now.subtract(1, 'month').format('YYYY-MM-DD')
       case '3M':
-        start.setMonth(now.getMonth() - 3)
-        break
+        return now.subtract(3, 'month').format('YYYY-MM-DD')
       case 'YTD':
-        start.setMonth(0, 1) // Jan 1st of current year
-        break
+        return now.startOf('year').format('YYYY-MM-DD')
       case '1Y':
-        start.setFullYear(now.getFullYear() - 1)
-        break
+        return now.subtract(1, 'year').format('YYYY-MM-DD')
       case 'ALL':
-        return null // No start date filter
+        return null
       default:
-        start.setMonth(now.getMonth() - 1)
+        return now.subtract(1, 'month').format('YYYY-MM-DD')
     }
-
-    return start.toISOString().split('T')[0]
   }, [timeRange])
-
-  return rangeStartDate
 }
 
 export default useRangeStartDate

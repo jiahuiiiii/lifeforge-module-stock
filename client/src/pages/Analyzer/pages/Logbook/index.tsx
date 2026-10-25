@@ -1,9 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
-import { ModuleHeader, Tabs, WithQuery } from 'lifeforge-ui'
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
 
-import forgeAPI from '@/utils/forgeAPI'
+import { useModuleTranslation } from '@lifeforge/localization'
+import { ModuleHeader, Tabs, WithQuery } from '@lifeforge/ui'
+
+import { forgeAPI } from '@/manifest'
 
 import AnalysisItem from './components/AnalysisItem'
 import CalculatorItem from './components/CalculatorItem'
@@ -20,12 +21,12 @@ const TAB_CONFIG = {
   calculators: {
     icon: 'tabler:calculator',
     component: CalculatorItem,
-    emptyStateId: 'savedCalculatorLog'
+    emptyStateId: 'savedCalculatorLogs'
   }
 }
 
 export default function Logbook() {
-  const { t } = useTranslation('apps.jiahuiiiii$stock')
+  const { t } = useModuleTranslation()
 
   const calculatorLogsQuery = useQuery(
     forgeAPI.analyzer.logs.calculator.list.queryOptions()
@@ -45,14 +46,8 @@ export default function Logbook() {
 
   return (
     <>
-      <ModuleHeader
-        icon="tabler:book"
-        namespace="apps.jiahuiiiii$stock"
-        title="logbook"
-        tKey="subsectionsTitleAndDesc"
-      />
+      <ModuleHeader icon="tabler:book" title="logbook" />
       <Tabs
-        className="mb-4"
         currentTab={activeTab}
         enabled={[...TAB_KEYS]}
         items={TAB_KEYS.map(key => ({
@@ -61,17 +56,30 @@ export default function Logbook() {
           icon: TAB_CONFIG[key].icon,
           amount: queries[key].data?.length
         }))}
+        mb="md"
         onTabChange={setActiveTab}
       />
-      <WithQuery query={queries[activeTab] as never}>
-        {logs => (
-          <ItemListing
-            component={TAB_CONFIG[activeTab].component}
-            emptyStateId={TAB_CONFIG[activeTab].emptyStateId}
-            logs={logs as never}
-          />
-        )}
-      </WithQuery>
+      {activeTab === 'analyses' ? (
+        <WithQuery query={analyzerLogsQuery}>
+          {logs => (
+            <ItemListing
+              component={AnalysisItem}
+              emptyStateId={TAB_CONFIG.analyses.emptyStateId}
+              logs={logs}
+            />
+          )}
+        </WithQuery>
+      ) : (
+        <WithQuery query={calculatorLogsQuery}>
+          {logs => (
+            <ItemListing
+              component={CalculatorItem}
+              emptyStateId={TAB_CONFIG.calculators.emptyStateId}
+              logs={logs}
+            />
+          )}
+        </WithQuery>
+      )}
     </>
   )
 }

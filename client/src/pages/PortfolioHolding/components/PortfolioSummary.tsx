@@ -1,130 +1,121 @@
-import { Widget } from 'lifeforge-ui'
 import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
+
+import { Flex, Grid, Text, Widget } from '@lifeforge/ui'
 
 import type { HoldingWithPrice } from './HoldingsTable'
 
-export default function PortfolioSummary({
+function PortfolioSummary({
   holdingsWithPrices
 }: {
   holdingsWithPrices: HoldingWithPrice[]
 }) {
-  const { t } = useTranslation('apps.jiahuiiiii$stock')
 
-  const {
-    totalValue,
-    totalCost,
-    dayChange,
-    dayChangePercent,
-    totalPL,
-    totalPLPercent,
-    isPositive,
-    isDayPositive
-  } = useMemo(() => {
+  const summary = useMemo(() => {
     let totalValue = 0
     let totalCost = 0
     let dayChange = 0
 
     for (const holding of holdingsWithPrices) {
       totalValue += holding.shares * holding.currentPrice
-      totalCost += holding.shares * holding.avgCost
+      totalCost += holding.shares * holding.avg_cost
       dayChange += holding.shares * holding.change
     }
 
     const dayChangePercent =
       totalValue > 0 ? (dayChange / (totalValue - dayChange)) * 100 : 0
 
-    const totalPL = totalValue - totalCost
+    const totalProfitLoss = totalValue - totalCost
 
-    const totalPLPercent = totalCost > 0 ? (totalPL / totalCost) * 100 : 0
-
-    const isPositive = totalPL >= 0
-
-    const isDayPositive = dayChange >= 0
+    const totalProfitLossPercent =
+      totalCost > 0 ? (totalProfitLoss / totalCost) * 100 : 0
 
     return {
       totalValue,
       totalCost,
       dayChange,
       dayChangePercent,
-      totalPL,
-      totalPLPercent,
-      isPositive,
-      isDayPositive
+      totalProfitLoss,
+      totalProfitLossPercent,
+      isPositive: totalProfitLoss >= 0,
+      isDayPositive: dayChange >= 0
     }
   }, [holdingsWithPrices])
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <Grid gap="md" templateCols={{ base: 1, sm: 2, lg: 4 }}>
       <Widget
-        className="flex flex-col"
         icon="tabler:currency-dollar"
-        namespace={false}
-        title={t('widgets.totalValue')}
+        title="widgets.totalValue"
         variant="large-icon"
       >
-        <div className="text-3xl font-semibold">
-          ${totalValue.toLocaleString('en-US', { minimumFractionDigits: 2 })}
-        </div>
+        <Text size="3xl" weight="semibold">
+          ${summary.totalValue.toLocaleString('en-US', {
+            minimumFractionDigits: 2
+          })}
+        </Text>
       </Widget>
 
       <Widget
-        className="flex flex-col"
         icon="tabler:currency-dollar"
-        namespace={false}
-        title={t('widgets.totalCost')}
+        title="widgets.totalCost"
         variant="large-icon"
       >
-        <div className="text-3xl font-semibold">
-          ${totalCost.toLocaleString('en-US', { minimumFractionDigits: 2 })}
-        </div>
+        <Text size="3xl" weight="semibold">
+          ${summary.totalCost.toLocaleString('en-US', {
+            minimumFractionDigits: 2
+          })}
+        </Text>
       </Widget>
 
       <Widget
-        className="flex flex-col"
-        icon={isPositive ? 'tabler:trending-up' : 'tabler:trending-down'}
-        namespace={false}
-        title={t('widgets.totalPL')}
+        icon={
+          summary.isPositive ? 'tabler:trending-up' : 'tabler:trending-down'
+        }
+        title="widgets.totalPL"
         variant="large-icon"
       >
-        <div
-          className={`flex items-center gap-2 text-3xl font-semibold ${isPositive ? 'text-green-500' : 'text-red-500'}`}
-        >
-          <span>
-            {isPositive ? '+' : ''}$
-            {Math.abs(totalPL).toLocaleString('en-US', {
+        <Flex align="center" gap="sm">
+          <Text
+            color={summary.isPositive ? 'green-500' : 'red-500'}
+            size="3xl"
+            weight="semibold"
+          >
+            {summary.isPositive ? '+' : '-'}$
+            {Math.abs(summary.totalProfitLoss).toLocaleString('en-US', {
               minimumFractionDigits: 2
             })}
-          </span>
-          <span className="text-sm">
-            ({isPositive ? '+' : ''}
-            {totalPLPercent.toFixed(2)}%)
-          </span>
-        </div>
+          </Text>
+          <Text size="sm">
+            ({summary.isPositive ? '+' : ''}
+            {summary.totalProfitLossPercent.toFixed(2)}%)
+          </Text>
+        </Flex>
       </Widget>
 
       <Widget
-        className="flex flex-col"
-        icon={isDayPositive ? 'tabler:arrow-up' : 'tabler:arrow-down'}
-        namespace={false}
-        title={t('widgets.dayChange')}
+        icon={summary.isDayPositive ? 'tabler:arrow-up' : 'tabler:arrow-down'}
+        title="widgets.dayChange"
         variant="large-icon"
       >
-        <div
-          className={`flex items-center gap-2 text-3xl font-semibold ${isDayPositive ? 'text-green-500' : 'text-red-500'}`}
-        >
-          <span>
-            {isDayPositive ? '+' : ''}$
-            {Math.abs(dayChange).toLocaleString('en-US', {
+        <Flex align="center" gap="sm">
+          <Text
+            color={summary.isDayPositive ? 'green-500' : 'red-500'}
+            size="3xl"
+            weight="semibold"
+          >
+            {summary.isDayPositive ? '+' : '-'}$
+            {Math.abs(summary.dayChange).toLocaleString('en-US', {
               minimumFractionDigits: 2
             })}
-          </span>
-          <span className="text-sm">
-            ({isDayPositive ? '+' : ''}
-            {dayChangePercent.toFixed(2)}%)
-          </span>
-        </div>
+          </Text>
+          <Text size="sm">
+            ({summary.isDayPositive ? '+' : ''}
+            {summary.dayChangePercent.toFixed(2)}%)
+          </Text>
+        </Flex>
       </Widget>
-    </div>
+    </Grid>
   )
 }
+
+export default PortfolioSummary

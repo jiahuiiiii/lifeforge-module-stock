@@ -2,17 +2,6 @@
   "title": "Stock",
   "description": "Track stocks, manage your watchlist, and build your portfolio.",
   "subsections": {
-    "dashboard": "Dashboard",
-    "watchlist": "Watchlist",
-    "portfolio": "Portfolio",
-    "calculators": "Calculators",
-    "analyzer": "Analyzer",
-    "logbook": "Logbook",
-    "settings": "Settings",
-    "guide": "Guide",
-    "diary": "Diary"
-  },
-  "subsectionsTitleAndDesc": {
     "dashboard": {
       "title": "Dashboard",
       "description": "Track stocks, manage your watchlist, and build your portfolio."
@@ -25,16 +14,20 @@
       "title": "Portfolio",
       "description": "Manage your holdings and track your investment performance."
     },
+    "diary": {
+      "title": "Diary",
+      "description": "Record your investment thoughts and market observations."
+    },
     "toolbox": {
-      "title": "Analyzer Toolbox",
-      "description": "Calculate key financial metrics for stock analysis."
+      "title": "Calculators",
+      "description": ""
     },
     "analyzer": {
       "title": "Analyzer",
       "description": "Analyze stocks using the Cold Eye investment methodology."
     },
     "logbook": {
-      "title": "Analysis Logbook",
+      "title": "Logbook",
       "description": "Record and review your stock analysis history."
     },
     "settings": {
@@ -42,12 +35,8 @@
       "description": "Configure scoring thresholds and analysis parameters."
     },
     "guide": {
-      "title": "Investment Guide",
+      "title": "Guide",
       "description": "Learn the Cold Eye philosophy and investment strategies."
-    },
-    "diary": {
-      "title": "Diary",
-      "description": "Record your investment thoughts and market observations."
     }
   },
   "titles": {
@@ -66,7 +55,9 @@
     "back": "Back",
     "viewVerdict": "View Verdict",
     "fetchFromLogbook": "Fetch from Logbook",
-    "saveToLogbook": "Save to Logbook"
+    "saveToLogbook": "Save to Logbook",
+    "addToWatchlist": "Add to Watchlist",
+    "removeFromWatchlist": "Remove from Watchlist"
   },
   "modals": {
     "portfolio": {
@@ -85,7 +76,7 @@
       "create": "Add Diary",
       "update": "Edit Diary",
       "remove": "Remove Diary",
-      "removeConfirmation": "Remove {{symbol}} from portfolio? This action cannot be undone."
+      "removeConfirmation": "Remove \"{{name}}\" from your diary? This action cannot be undone."
     },
     "resetToDefaults": {
       "title": "Reset to Defaults",
@@ -105,7 +96,11 @@
       "description": "Are you sure you want to delete this calculation for {{ticker}}?",
       "confirm": "Delete"
     },
-    "saveCalculation": "Save Calculation"
+    "saveCalculation": "Save Calculation",
+    "watchlist": {
+      "remove": "Remove from Watchlist",
+      "removeConfirmation": "Are you sure you want to remove {{symbol}} from your watchlist?"
+    }
   },
   "inputs": {
     "portfolioName": "Portfolio Name",
@@ -156,7 +151,8 @@
     "totalCost": "Total Cost",
     "totalPL": "Total P/L",
     "dayChange": "Day Change",
-    "performanceVs": "Performance vs <benchmark></benchmark>"
+    "performanceVs": "Performance vs <benchmark></benchmark>",
+    "performanceVsLabel": "Performance vs"
   },
   "table": {
     "symbol": "Symbol",
@@ -167,7 +163,8 @@
     "marketValue": "Market Value",
     "pl": "P/L",
     "plPercent": "P/L %",
-    "actions": "Actions"
+    "actions": "Actions",
+    "holdings": "Holdings"
   },
   "portfolio": {
     "holdingsCount": "{{count}} holdings",
@@ -247,7 +244,8 @@
     }
   },
   "items": {
-    "diary": "Diary Entry"
+    "diary": "Diary Entry",
+    "stocks": "Stock Entry"
   },
   "calculators": {
     "categories": {
@@ -588,5 +586,19 @@
       "zuluPass": "Zulu Pass",
       "undervalued": "Undervalued"
     }
+  },
+  "watchlist": {
+    "fetchFailed": "Unable to fetch data",
+    "changeToday": "{{amount}} today"
+  },
+  "holding": {
+    "sharesAt": "{{shares}} shares @ ${{cost}}"
+  },
+  "performance": {
+    "benchmarkUnavailable": "Benchmark unavailable: {{symbol}}",
+    "benchmarkLoadFailed": "Failed to load benchmark data",
+    "planLimitDescription": "This index is not available on your current API plan. Please upgrade to view comparison data.",
+    "loading": "Loading performance data...",
+    "noData": "No performance data available"
   }
 }

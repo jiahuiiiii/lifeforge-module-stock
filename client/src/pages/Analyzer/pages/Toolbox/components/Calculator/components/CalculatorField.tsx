@@ -1,4 +1,4 @@
-import { CurrencyInput, NumberInput, TextInput } from 'lifeforge-ui'
+import { CurrencyInput, NumberInput, TextInput } from '@lifeforge/ui'
 
 import type { CalculatorConfig } from '@/pages/Analyzer/pages/Toolbox/utils/calculatorFactory'
 
@@ -16,10 +16,9 @@ function CalculatorField({
       <TextInput
         icon={field.icon}
         label={field.label}
-        namespace="apps.jiahuiiiii$stock"
-        placeholder={field.placeholder || 'Enter a value'}
+        placeholder={field.placeholder ?? 'Enter a value'}
         value={value as string}
-        onChange={v => onChange(v)}
+        onChange={onChange}
       />
     )
   }
@@ -29,10 +28,8 @@ function CalculatorField({
       <CurrencyInput
         icon={field.icon}
         label={field.label}
-        namespace="apps.jiahuiiiii$stock"
-        placeholder={field.placeholder || 'Enter a value'}
         value={value as number}
-        onChange={v => onChange(v)}
+        onChange={onChange}
       />
     )
   }
@@ -43,10 +40,9 @@ function CalculatorField({
       label={field.label}
       max={field.max}
       min={field.min}
-      namespace="apps.jiahuiiiii$stock"
       placeholder={field.placeholder}
       value={value as number}
-      onChange={v => onChange(v)}
+      onChange={onChange}
     />
   )
 }
