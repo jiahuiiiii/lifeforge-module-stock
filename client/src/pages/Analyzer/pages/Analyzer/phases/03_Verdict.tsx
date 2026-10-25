@@ -1,16 +1,49 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { Button } from 'lifeforge-ui'
-import { useTranslation } from 'react-i18next'
-import { toast } from 'react-toastify'
-import { type InferInput, anyColorToHex } from 'shared'
+import { useForgeMutation } from '@lifeforge/api'
+import { useModuleTranslation } from '@lifeforge/localization'
+import {
+  Button,
+  Flex,
+  Grid,
+  Stack,
+  Text,
+  colorWithOpacity
+} from '@lifeforge/ui'
 
 import { VERDICTS, getVerdict } from '@/pages/Analyzer/constants/verdict'
-import forgeAPI from '@/utils/forgeAPI'
+import { forgeAPI } from '@/manifest'
 
 import { useAnalyzer } from '../providers/AnalyzerProvider'
 
+function ScoreCard({
+  label,
+  score,
+  passed
+}: {
+  label: string
+  score: number
+  passed: boolean
+}) {
+  return (
+    <Flex
+      align="center"
+      bg={colorWithOpacity(passed ? 'green-500' : 'red-500', '10%')}
+      direction="column"
+      gap="xs"
+      p="md"
+      r="lg"
+    >
+      <Text color={passed ? 'green-500' : 'red-500'} size="sm" transform="uppercase" weight="semibold">
+        {label}
+      </Text>
+      <Text color={passed ? 'green-500' : 'red-500'} size="4xl" weight="bold">
+        {score}
+      </Text>
+    </Flex>
+  )
+}
+
 function Verdict() {
-  const { t } = useTranslation('apps.jiahuiiiii$stock')
+  const { t } = useModuleTranslation()
 
   const {
     setPhase,
@@ -21,28 +54,20 @@ function Verdict() {
     resetValues
   } = useAnalyzer()
 
-  const queryClient = useQueryClient()
-
-  const mutation = useMutation(
-    forgeAPI.analyzer.logs.analyzer.create.mutationOptions({
-      onSuccess: () => {
-        queryClient.invalidateQueries({
-          queryKey: forgeAPI.analyzer.logs.analyzer.list.key
-        })
-      },
-      onError: error => {
-        console.error('Failed to save log:', error)
-        toast.error(t('errors.analyzer.saveFailed'))
-      }
-    })
+  const saveLogMutation = useForgeMutation(
+    forgeAPI.analyzer.logs.analyzer.create,
+    {
+      action: 'create',
+      queryKey: forgeAPI.analyzer.logs.analyzer.key
+    }
   )
 
   const verdict = getVerdict(derivedValues.gdpScore, derivedValues.prcScore)
 
-  const handleSaveLog = async () => {
-    const log: InferInput<
-      typeof forgeAPI.analyzer.logs.analyzer.create
-    >['body'] = {
+  const verdictConfig = VERDICTS[verdict]
+
+  async function handleSaveLog() {
+    await saveLogMutation.mutateAsync({
       ticker: baseInfo.ticker.toUpperCase(),
       stock_exchange: baseInfo.stockExchange.toUpperCase(),
       company_name: baseInfo.companyName,
@@ -61,131 +86,112 @@ function Verdict() {
       },
       quantitative: {
         passedZulu: derivedValues.passedZulu,
-        undervaluedPe: derivedValues.undervaluedPe,
+        undervaluedPe: derivedValues.undervaluedPE,
         ...qualitative
       }
-    }
-
-    await mutation.mutateAsync(log)
+    })
 
     resetValues()
   }
 
   return (
     <>
-      <div className="flex flex-1 flex-col items-center justify-center">
-        <div
-          className="mb-8 flex flex-col items-center rounded-2xl border-2 px-10 py-6"
+      <Flex
+        align="center"
+        direction="column"
+        flex="1"
+        justify="center"
+        width="100%"
+      >
+        <Flex
+          align="center"
+          direction="column"
+          mb="xl"
+          px="xl"
+          py="lg"
+          r="2xl"
           style={{
-            borderColor: VERDICTS[verdict].color,
-            backgroundColor: `${anyColorToHex(VERDICTS[verdict].color)}20`
+            border: `2px solid ${verdictConfig.color}`,
+            backgroundColor: `${verdictConfig.color}20`
           }}
         >
-          <div
-            className={`text-6xl font-bold tracking-widest`}
-            style={{
-              color: VERDICTS[verdict].color
-            }}
-          >
+          <Text size="6xl" style={{ color: verdictConfig.color }} weight="bold">
             {verdict}
-          </div>
-          <div
-            className={`mt-1 text-xl font-semibold ${VERDICTS[verdict].color}`}
+          </Text>
+          <Text
+            size="xl"
+            style={{ color: verdictConfig.color }}
+            weight="semibold"
           >
             {t(`analyzer.verdicts.${verdict.toLowerCase()}.label`)}
-          </div>
-          <div className="text-bg-500 mt-1 text-center">
+          </Text>
+          <Text align="center" color="muted" mt="xs">
             {t(`analyzer.verdicts.${verdict.toLowerCase()}.description`)}
-          </div>
-        </div>
+          </Text>
+        </Flex>
 
-        {/* Stock Info */}
-        <div className="mb-6 text-center">
-          <div className="text-3xl font-semibold">
+        <Stack align="center" gap="xs" mb="lg">
+          <Text size="3xl" weight="semibold">
             {baseInfo.stockExchange &&
               `${baseInfo.stockExchange.toUpperCase()}:`}
             {baseInfo.ticker.toUpperCase()}
-          </div>
+          </Text>
           {baseInfo.companyName && (
-            <div className="text-bg-500 mt-1 text-lg font-medium">
+            <Text color="muted" size="lg" weight="medium">
               {baseInfo.companyName}
-            </div>
+            </Text>
           )}
-        </div>
+        </Stack>
 
-        {/* Score Cards */}
-        <div className="grid w-full grid-cols-3 gap-4">
-          <div
-            className={`rounded-xl p-5 text-center transition-colors ${
-              derivedValues.gdpScore >= 50
-                ? 'bg-green-500/10 text-green-500'
-                : 'bg-red-500/10 text-red-500'
-            }`}
+        <Grid gap="md" templateCols={3} width="100%">
+          <ScoreCard
+            label={t('analyzer.metrics.gdp')}
+            passed={derivedValues.gdpScore >= 50}
+            score={derivedValues.gdpScore}
+          />
+          <ScoreCard
+            label={t('analyzer.metrics.prc')}
+            passed={derivedValues.prcScore >= 50}
+            score={derivedValues.prcScore}
+          />
+          <Flex
+            align="center"
+            bg={{ base: 'bg-200', dark: 'bg-800' }}
+            direction="column"
+            gap="xs"
+            p="md"
+            r="lg"
           >
-            <div className="font-semibold tracking-wide uppercase">
-              {t('analyzer.metrics.gdp')}
-            </div>
-            <div className="mt-1 text-4xl font-bold">
-              {derivedValues.gdpScore}
-            </div>
-            <div className="mt-1 text-sm font-bold uppercase">
-              {derivedValues.gdpScore >= 50
-                ? t('analyzer.pass')
-                : t('analyzer.fail')}
-            </div>
-          </div>
-          <div
-            className={`rounded-xl p-5 text-center transition-colors ${
-              derivedValues.prcScore >= 50
-                ? 'bg-green-500/10 text-green-500'
-                : 'bg-red-500/10 text-red-500'
-            }`}
-          >
-            <div className="font-semibold tracking-wide uppercase">
-              {t('analyzer.metrics.prc')}
-            </div>
-            <div className="mt-1 text-4xl font-bold">
-              {derivedValues.prcScore}
-            </div>
-            <div className="mt-1 text-sm font-bold uppercase">
-              {derivedValues.prcScore >= 50
-                ? t('analyzer.pass')
-                : t('analyzer.fail')}
-            </div>
-          </div>
-          <div className="bg-bg-100 dark:bg-bg-800 rounded-xl p-5 text-center">
-            <div className="text-bg-500 font-semibold tracking-wide uppercase">
+            <Text color="muted" size="sm" transform="uppercase" weight="semibold">
               {t('analyzer.total')}
-            </div>
-            <div className="mt-1 text-4xl font-bold">
+            </Text>
+            <Text size="4xl" weight="bold">
               {derivedValues.gdpScore + derivedValues.prcScore}
-            </div>
-            <div className="text-bg-400 mt-1 text-sm font-bold uppercase">
+            </Text>
+            <Text color="muted" size="sm" transform="uppercase" weight="bold">
               {t('analyzer.points')}
-            </div>
-          </div>
-        </div>
-      </div>
+            </Text>
+          </Flex>
+        </Grid>
+      </Flex>
 
-      {/* Actions */}
-      <div className="mt-8 flex justify-center gap-3">
+      <Flex gap="sm" justify="center" mt="xl">
         <Button
           icon="tabler:arrow-left"
-          namespace="apps.jiahuiiiii$stock"
           variant="secondary"
           onClick={() => setPhase(2)}
         >
           back
         </Button>
         <Button
-          className="flex-1"
+          flex="1"
           icon="tabler:device-floppy"
-          namespace="apps.jiahuiiiii$stock"
+          loading={saveLogMutation.isPending}
           onClick={handleSaveLog}
         >
           saveToLogbook
         </Button>
-      </div>
+      </Flex>
     </>
   )
 }

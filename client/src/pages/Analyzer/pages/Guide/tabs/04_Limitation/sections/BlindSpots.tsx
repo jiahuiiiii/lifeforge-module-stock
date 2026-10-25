@@ -1,73 +1,81 @@
-import { Widget } from 'lifeforge-ui'
-import { useTranslation } from 'react-i18next'
-import COLORS from 'tailwindcss/colors'
+import { useModuleTranslation } from '@lifeforge/localization'
+import {
+  Bordered,
+  Card,
+  Grid,
+  Stack,
+  Text,
+  Widget,
+  surface
+} from '@lifeforge/ui'
 
 function BlindSpots() {
-  const { t } = useTranslation('apps.jiahuiiiii$stock')
+  const { t } = useModuleTranslation()
 
   return (
     <Widget
       icon="tabler:alert-triangle"
-      iconColor={COLORS.red[500]}
-      title={t('guide.limitations.blindSpots.title')}
+      iconColor="red-500"
+      title="guide.limitations.blindSpots.title"
     >
-      <Widget
-        className="component-bg-lighter"
-        icon="tabler:rocket-off"
-        iconColor={COLORS.red[500]}
-        title={t('guide.limitations.blindSpots.techGrowth.title')}
-      >
-        <div>
-          <p className="text-bg-500 mb-3">
+      <Stack gap="md">
+        <Card bg={surface.light} gap="sm">
+          <Text color="red-500" size="lg" weight="semibold">
+            {t('guide.limitations.blindSpots.techGrowth.title')}
+          </Text>
+          <Text color="muted">
             {t('guide.limitations.blindSpots.techGrowth.intro')}
-          </p>
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div className="bg-bg-50 dark:bg-bg-700/30 rounded p-3">
-              <div className="font-semibold">
+          </Text>
+          <Grid gap="sm" templateCols={{ base: 1, sm: 2 }}>
+            <Card gap="xs">
+              <Text weight="semibold">
                 {t(
                   'guide.limitations.blindSpots.techGrowth.dividendIssues.title'
                 )}
-              </div>
-              <p className="text-bg-500">
+              </Text>
+              <Text color="muted">
                 {t(
                   'guide.limitations.blindSpots.techGrowth.dividendIssues.desc'
                 )}
-              </p>
-            </div>
-            <div className="bg-bg-50 dark:bg-bg-700/30 rounded p-3">
-              <div className="font-semibold">
+              </Text>
+            </Card>
+            <Card gap="xs">
+              <Text weight="semibold">
                 {t('guide.limitations.blindSpots.techGrowth.peIssues.title')}
-              </div>
-              <p className="text-bg-500">
+              </Text>
+              <Text color="muted">
                 {t('guide.limitations.blindSpots.techGrowth.peIssues.desc')}
-              </p>
-            </div>
-          </div>
-          <p className="text-bg-500 mt-3 border-l-2 border-red-500 pl-2 italic">
-            {t('guide.limitations.blindSpots.techGrowth.result')}
-          </p>
-        </div>
-      </Widget>
-      <Widget
-        className="component-bg-lighter"
-        icon="tabler:history"
-        iconColor={COLORS.orange[500]}
-        title={t('guide.limitations.blindSpots.laggingIndicators.title')}
-      >
-        <p className="text-bg-500">
-          {t('guide.limitations.blindSpots.laggingIndicators.desc')}
-        </p>
-      </Widget>
-      <Widget
-        className="component-bg-lighter"
-        icon="tabler:coins"
-        iconColor={COLORS.yellow[500]}
-        title={t('guide.limitations.blindSpots.simplifiedCashFlow.title')}
-      >
-        <p className="text-bg-500">
-          {t('guide.limitations.blindSpots.simplifiedCashFlow.desc')}
-        </p>
-      </Widget>
+              </Text>
+            </Card>
+          </Grid>
+          <Bordered
+            borderColor="red-500"
+            borderSide="left"
+            borderWidth="2px"
+            pl="sm"
+          >
+            <Text color="muted" size="sm">
+              {t('guide.limitations.blindSpots.techGrowth.result')}
+            </Text>
+          </Bordered>
+        </Card>
+        <Card bg={surface.light} gap="xs">
+          <Text size="lg" weight="semibold">
+            {t('guide.limitations.blindSpots.laggingIndicators.title')}
+          </Text>
+          <Text color="muted">
+            {t('guide.limitations.blindSpots.laggingIndicators.desc')}
+          </Text>
+        </Card>
+        <Card bg={surface.light} gap="xs">
+          <Text size="lg" weight="semibold">
+            {t('guide.limitations.blindSpots.simplifiedCashFlow.title')}
+          </Text>
+          <Text color="muted">
+            {t('guide.limitations.blindSpots.simplifiedCashFlow.desc')}
+          </Text>
+        </Card>
+      </Stack>
     </Widget>
   )
 }

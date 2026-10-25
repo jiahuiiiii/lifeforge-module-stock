@@ -1,7 +1,10 @@
 import { lazy } from 'react'
-import type { ModuleConfig } from 'shared'
 
-export default {
+import { createForgeModule } from '@lifeforge/federation'
+
+import contract from './contract'
+
+const { forgeAPI, ...manifest } = createForgeModule({
   routes: {
     '/': lazy(() => import('@/pages/Dashboard')),
     '/watchlist': lazy(() => import('@/pages/Watchlist')),
@@ -10,9 +13,13 @@ export default {
     '/diary': lazy(() => import('@/pages/Diary')),
     '/chart/:symbolAndName': lazy(() => import('@/pages/StockChart')),
     '/analyzer/toolbox': lazy(() => import('@/pages/Analyzer/pages/Toolbox')),
-    '/analyzer/gdp-prc': lazy(() => import('@/pages/Analyzer/pages/Analyzer')),
+    '/analyzer/gdp-prc': lazy(
+      () => import('@/pages/Analyzer/pages/Analyzer')
+    ),
     '/analyzer/logbook': lazy(() => import('@/pages/Analyzer/pages/Logbook')),
-    '/analyzer/settings': lazy(() => import('@/pages/Analyzer/pages/Settings')),
+    '/analyzer/settings': lazy(
+      () => import('@/pages/Analyzer/pages/Settings')
+    ),
     '/analyzer/guide': lazy(() => import('@/pages/Analyzer/pages/Guide'))
   },
   subsection: [
@@ -21,7 +28,7 @@ export default {
     { label: 'Portfolio', icon: 'tabler:chart-line', path: 'portfolio' },
     { label: 'Diary', icon: 'tabler:notebook', path: 'diary' },
     {
-      label: 'Calculators',
+      label: 'Toolbox',
       icon: 'tabler:calculator',
       path: 'analyzer/toolbox'
     },
@@ -33,5 +40,10 @@ export default {
     { label: 'Logbook', icon: 'tabler:book', path: 'analyzer/logbook' },
     { label: 'Settings', icon: 'tabler:settings', path: 'analyzer/settings' },
     { label: 'Guide', icon: 'tabler:bulb', path: 'analyzer/guide' }
-  ]
-} satisfies ModuleConfig
+  ],
+  contract
+})
+
+export default manifest
+
+export { forgeAPI }

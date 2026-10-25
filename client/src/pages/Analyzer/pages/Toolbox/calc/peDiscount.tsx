@@ -1,5 +1,6 @@
-import { Icon } from '@iconify/react'
 import z from 'zod'
+
+import { COLORS, Flex, Icon, Stack, Text } from '@lifeforge/ui'
 
 import { calculatePEDiscount } from '@/pages/Analyzer/pages/Toolbox/utils/calcFuncs'
 
@@ -44,26 +45,32 @@ export default createCalculator('tabler:history')
   .displayResult(
     ({ discount, isUndervalued }) =>
       discount !== null && (
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="text-bg-500 text-sm">PE Discount</div>
-            <div className="text-2xl font-semibold">
+        <Flex align="center" justify="between">
+          <Stack gap="xs">
+            <Text color="muted" size="sm">
+              PE Discount
+            </Text>
+            <Text size="2xl" weight="semibold">
               {discount > 0 ? '+' : ''}
               {discount.toFixed(1)}%
-            </div>
-          </div>
-          <div
-            className={`flex items-center gap-2 rounded-full border px-3 py-1 text-sm font-semibold ${
-              isUndervalued
-                ? 'border-green-500/50 bg-green-500/20 text-green-500'
-                : 'border-yellow-500/50 bg-yellow-500/20 text-yellow-500'
-            }`}
+            </Text>
+          </Stack>
+          <Flex
+            align="center"
+            gap="sm"
+            px="sm"
+            py="xs"
+            r="full"
+            style={{
+              border: `1px solid ${isUndervalued ? COLORS['green-500'] : COLORS['yellow-500']}`,
+              color: isUndervalued ? COLORS['green-500'] : COLORS['yellow-500']
+            }}
           >
-            <Icon
-              icon={isUndervalued ? 'tabler:check' : 'tabler:alert-circle'}
-            />
-            {isUndervalued ? 'Undervalued (Buy Signal)' : 'No safety margin'}
-          </div>
-        </div>
+            <Icon icon={isUndervalued ? 'tabler:check' : 'tabler:alert-circle'} />
+            <Text size="sm" weight="semibold">
+              {isUndervalued ? 'Undervalued (Buy Signal)' : 'No safety margin'}
+            </Text>
+          </Flex>
+        </Flex>
       )
   )

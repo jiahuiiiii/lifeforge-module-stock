@@ -1,26 +1,37 @@
-import type {
-  CashFlowOption,
-  MetricConfig,
-  ScoringTier
-} from '@server/utils/defaults'
 import { useQuery } from '@tanstack/react-query'
-import { WithQuery } from 'lifeforge-ui'
 import { type ReactNode, createContext, useContext, useMemo } from 'react'
-import type { InferOutput } from 'shared'
 
-import forgeAPI from '@/utils/forgeAPI'
+import type { InferOutput } from '@lifeforge/api'
+import { WithQuery } from '@lifeforge/ui'
 
-type AnalyzerMetricConfigResponse = InferOutput<
-  typeof forgeAPI.analyzer.settings.list
->
+import { forgeAPI } from '@/manifest'
 
-export type AnalyzerMetricConfig =
-  AnalyzerMetricConfigResponse[keyof AnalyzerMetricConfigResponse] & {
-    tiers: ScoringTier[]
-  }
+import type { CashFlowOption } from '../constants/cashFlow'
+
+export interface ScoringTier {
+  threshold: number
+  score: number
+}
+
+export interface AnalyzerMetricConfig {
+  label: string
+  unit: '%' | 'x' | 'pts'
+  is_inverse: boolean
+  tiers: ScoringTier[]
+}
+
+type SettingsResponse = InferOutput<typeof forgeAPI.analyzer.settings.list>
+
+export type AnalyzerSettings = Record<string, AnalyzerMetricConfig> & {
+  cagr: AnalyzerMetricConfig
+  dy: AnalyzerMetricConfig
+  pe: AnalyzerMetricConfig
+  margin: AnalyzerMetricConfig
+  roe: AnalyzerMetricConfig
+}
 
 export interface AnalyzerSettingsContextValue {
-  settings: Record<string, AnalyzerMetricConfig> | null
+  settings: AnalyzerSettings | null
   cashFlowScores: Record<CashFlowOption, number> | null
 }
 
@@ -39,25 +50,28 @@ export function AnalyzerSettingsProvider({
   const settings = useMemo(() => {
     if (!query.data) return null
 
-    const data = query.data as Record<string, MetricConfig>
-
     const result: Record<string, AnalyzerMetricConfig> = {}
 
-    for (const [key, config] of Object.entries(data)) {
-      if (config && Array.isArray(config.tiers)) {
-        result[key] = config as AnalyzerMetricConfig
+    for (const [key, config] of Object.entries(
+      query.data as SettingsResponse
+    )) {
+      if (Array.isArray(config.tiers)) {
+        result[key] = {
+          label: config.label,
+          unit: config.unit,
+          is_inverse: config.is_inverse,
+          tiers: config.tiers
+        }
       }
     }
 
-    return result
+    return result as AnalyzerSettings
   }, [query.data])
 
   const cashFlowScores = useMemo(() => {
     if (!query.data) return null
 
-    const data = query.data as Record<string, MetricConfig>
-
-    const cashflow = data.cashflow
+    const cashflow = (query.data as SettingsResponse).cashflow
 
     if (!cashflow || Array.isArray(cashflow.tiers)) return null
 
@@ -72,9 +86,9 @@ export function AnalyzerSettingsProvider({
   return (
     <WithQuery query={query}>
       {() => (
-        <AnalyzerSettingsContext.Provider value={value}>
+        <AnalyzerSettingsContext value={value}>
           {children}
-        </AnalyzerSettingsContext.Provider>
+        </AnalyzerSettingsContext>
       )}
     </WithQuery>
   )

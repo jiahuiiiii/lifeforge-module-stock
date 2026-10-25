@@ -1,6 +1,6 @@
-import { Widget } from 'lifeforge-ui'
 import type { ReactNode } from 'react'
-import { useTranslation } from 'react-i18next'
+
+import { Bordered, Stack, Widget, type WidgetProps } from '@lifeforge/ui'
 
 export default function CalculatorWrapper({
   calculatorKey,
@@ -11,24 +11,24 @@ export default function CalculatorWrapper({
 }: {
   calculatorKey: string
   icon: string
-  color: string
+  color: NonNullable<WidgetProps['iconColor']>
   children: ReactNode
   result?: ReactNode
 }) {
-  const { t } = useTranslation('apps.jiahuiiiii$stock')
-
   return (
     <Widget
-      description={t(`calculators.items.${calculatorKey}.desc`)}
+      description={`calculators.items.${calculatorKey}.desc`}
       icon={icon}
       iconColor={color}
-      title={t(`calculators.items.${calculatorKey}.title`)}
+      title={`calculators.items.${calculatorKey}.title`}
     >
-      <div className="flex-1 space-y-3">{children}</div>
+      <Stack flex="1" gap="sm">
+        {children}
+      </Stack>
       {result && (
-        <div className="border-bg-200 dark:border-bg-700 border-t pt-4">
+        <Bordered borderSide="top" mt="md" pt="md">
           {result}
-        </div>
+        </Bordered>
       )}
     </Widget>
   )

@@ -2,12 +2,14 @@ import {
   Button,
   EmptyStateScreen,
   FAB,
+  Flex,
   ModuleHeader,
+  Stack,
   WithQueryData,
   useModalStore
-} from 'lifeforge-ui'
+} from '@lifeforge/ui'
 
-import forgeAPI from '@/utils/forgeAPI'
+import { forgeAPI } from '@/manifest'
 
 import ModifyPortfolioModal from './components/ModifyPortfolioModal'
 import PortfolioItem from './components/PortfolioItem'
@@ -16,59 +18,53 @@ export type Holding = {
   symbol: string
   name: string
   shares: number
-  avgCost: number
-  dateAdded: string
+  avg_cost: number
+  date_added: string
 }
 
-export default function Portfolio() {
+function Portfolio() {
   const { open } = useModalStore()
 
-  const handleCreate = () => {
+  function handleCreate() {
     open(ModifyPortfolioModal, {
       openType: 'create'
     })
   }
 
   return (
-    <div className="flex flex-1 animate-[fadeSlideIn_0.3s_ease-out] flex-col">
+    <Flex direction="column" flex="1" width="100%">
       <ModuleHeader
-        actionButton={
+        icon="tabler:briefcase"
+        title="portfolio"
+        trailing={
           <Button
-            className="hidden md:flex"
+            display={{ base: 'none', md: 'flex' }}
             icon="tabler:plus"
-            namespace="apps.jiahuiiiii$stock"
             onClick={handleCreate}
           >
             Create Portfolio
           </Button>
         }
-        icon="tabler:briefcase"
-        namespace="apps.jiahuiiiii$stock"
-        title="portfolio"
-        tKey="subsectionsTitleAndDesc"
       />
-      <WithQueryData controller={forgeAPI.portfolios.list}>
-        {portfolios => (
-          <>
-            {portfolios.length > 0 ? (
-              <div className="space-y-3">
-                {portfolios.map(portfolio => (
-                  <PortfolioItem key={portfolio.id} portfolio={portfolio} />
-                ))}
-              </div>
-            ) : (
-              <EmptyStateScreen
-                icon="tabler:briefcase"
-                message={{
-                  id: 'portfolio',
-                  namespace: 'apps.jiahuiiiii$stock'
-                }}
-              />
-            )}
-          </>
-        )}
+      <WithQueryData contract={forgeAPI.portfolios.list}>
+        {portfolios =>
+          portfolios.length > 0 ? (
+            <Stack gap="md">
+              {portfolios.map(portfolio => (
+                <PortfolioItem key={portfolio.id} portfolio={portfolio} />
+              ))}
+            </Stack>
+          ) : (
+            <EmptyStateScreen
+              icon="tabler:briefcase"
+              message={{ id: 'portfolio' }}
+            />
+          )
+        }
       </WithQueryData>
       <FAB onClick={handleCreate} />
-    </div>
+    </Flex>
   )
 }
+
+export default Portfolio

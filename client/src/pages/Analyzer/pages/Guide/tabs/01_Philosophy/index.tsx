@@ -1,14 +1,16 @@
+import { Stack } from '@lifeforge/ui'
+
 import ColdEyePhilosophy from './sections/ColdEyePhilosophy'
 import OpportunityCost from './sections/OpportunityCost'
 import SleepStrategy from './sections/SleepStrategy'
 
 function PhilosophyTab() {
   return (
-    <div className="space-y-6">
+    <Stack gap="lg">
       <ColdEyePhilosophy />
       <SleepStrategy />
       <OpportunityCost />
-    </div>
+    </Stack>
   )
 }
 

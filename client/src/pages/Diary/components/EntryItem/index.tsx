@@ -1,6 +1,6 @@
-import { Card } from 'lifeforge-ui'
+import { Box, Card, Flex, Stack, Text } from '@lifeforge/ui'
 
-import forgeAPI from '@/utils/forgeAPI'
+import { forgeAPI } from '@/manifest'
 
 import type { DiaryEntry } from '../..'
 import ActionMenu from './components/ActionMenu'
@@ -9,26 +9,28 @@ import MoodIcon from './components/MoodIcon'
 
 function EntryItem({ entry }: { entry: DiaryEntry }) {
   return (
-    <Card className="group space-y-3">
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex items-center gap-3">
+    <Card gap="md">
+      <Flex align="start" gap="sm" justify="between">
+        <Flex align="center" gap="sm">
           <MoodIcon mood={entry.feel} />
           <EntryMeta entry={entry} />
-        </div>
+        </Flex>
         <ActionMenu entry={entry} />
-      </div>
+      </Flex>
       {entry.notes && (
-        <p className="text-bg-500 whitespace-pre-wrap">{entry.notes}</p>
+        <Stack>
+          <Text color="muted" whiteSpace="pre-wrap">
+            {entry.notes}
+          </Text>
+        </Stack>
       )}
       {entry.image && (
-        <img
+        <Box
           alt=""
-          className="w-full rounded-lg object-cover"
-          src={forgeAPI.getMedia({
-            collectionId: entry.collectionId,
-            recordId: entry.id,
-            fieldId: entry.image
-          })}
+          as="img"
+          r="lg"
+          src={forgeAPI.getMedia({ key: entry.image })}
+          style={{ objectFit: 'cover', width: '100%' }}
         />
       )}
     </Card>

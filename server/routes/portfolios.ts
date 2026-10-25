@@ -1,149 +1,161 @@
-import type { SchemaWithPB } from '@lifeforge/server-utils'
+import { eq } from 'drizzle-orm'
 import z from 'zod'
 
 import forge from '../forge'
+import { portfolios } from '../schema.drizzle'
+import { holdingDto, portfolioDto, valueHistoryDto } from '../utils/dto'
 
 export const getById = forge
-  .query()
-  .description('Get a portfolio by id')
-  .input({
-    query: z.object({
-      id: z.string()
-    })
-  })
-  .existenceCheck('query', {
-    id: 'portfolios'
-  })
-  .callback(async ({ pb, query }) => {
-    const target = await pb.getOne
-      .collection('portfolios')
-      .id(query.id)
-      .execute()
-
-    const holdings = await pb.getFullList
-      .collection('holdings')
-      .filter([
-        {
-          field: 'portfolio',
-          operator: '=',
-          value: query.id
-        }
-      ])
-      .sort(['-dateAdded'])
-      .execute()
-
-    const valueHistory = await pb.getFullList
-      .collection('portfolio_value_histories')
-      .filter([
-        {
-          field: 'portfolio',
-          operator: '=',
-          value: query.id
-        }
-      ])
-      .sort(['date'])
-      .execute()
-
-    return {
-      ...target,
-      holdings,
-      valueHistory
+  .query({
+    description: 'Get a portfolio by id, including its holdings and value history.',
+    input: {
+      query: z.object({
+        id: forge.existsIn(z.string(), portfolios)
+      })
+    },
+    output: {
+      OK: portfolioDto.extend({
+        holdings: z.array(holdingDto),
+        value_history: z.array(valueHistoryDto)
+      })
     }
+  })
+  .callback(async ({ db, query: { id }, response }) => {
+    const portfolio = await db.query.portfolios.findFirst({
+      where: { id }
+    })
+
+    if (!portfolio) {
+      return response.notFound()
+    }
+
+    const portfolioHoldings = await db.query.holdings.findMany({
+      where: { portfolio: id },
+      orderBy: { date_added: 'desc' }
+    })
+
+    const valueHistory = await db.query.portfolio_value_histories.findMany({
+      where: { portfolio: id },
+      orderBy: { date: 'asc' }
+    })
+
+    return response.ok({
+      ...portfolio,
+      holdings: portfolioHoldings,
+      value_history: valueHistory
+    })
   })
 
 export const list = forge
-  .query()
-  .description('List all portfolios')
-  .input({})
-  .callback(async ({ pb }) => {
-    const portfolios: SchemaWithPB<{
-      name: string
-      holdingCount: number
-      latestValue: number
-    }>[] = []
-
-    const allPortfolios = await pb.getFullList
-      .collection('portfolios')
-      .execute()
-
-    for (const portfolio of allPortfolios) {
-      const holdingCount = await pb.getList
-        .collection('holdings')
-        .filter([
-          {
-            field: 'portfolio',
-            operator: '=',
-            value: portfolio.id
-          }
-        ])
-        .execute()
-
-      const latestValue = await pb.getFirstListItem
-        .collection('portfolio_value_histories')
-        .filter([
-          {
-            field: 'portfolio',
-            operator: '=',
-            value: portfolio.id
-          }
-        ])
-        .sort(['-date'])
-        .execute()
-        .catch(() => null)
-
-      portfolios.push({
-        ...portfolio,
-        holdingCount: holdingCount.totalItems,
-        latestValue: latestValue?.value ?? 0
-      })
+  .query({
+    description: 'List all portfolios with their holding count and latest value.',
+    output: {
+      OK: z.array(
+        portfolioDto.extend({
+          holding_count: z.number(),
+          latest_value: z.number()
+        })
+      )
     }
-
-    return portfolios
   })
+  .callback(async ({ db, response }) => {
+    const allPortfolios = await db.query.portfolios.findMany({
+      orderBy: { name: 'asc' }
+    })
+
+    const allHoldings = await db.query.holdings.findMany()
+
+    const allHistories = await db.query.portfolio_value_histories.findMany({
+      orderBy: { date: 'asc' }
+    })
+
+    return response.ok(
+      allPortfolios.map(portfolio => {
+        const portfolioHoldings = allHoldings.filter(
+          holding => holding.portfolio === portfolio.id
+        )
+
+        const portfolioHistories = allHistories.filter(
+          history => history.portfolio === portfolio.id
+        )
+
+        return {
+          ...portfolio,
+          holding_count: portfolioHoldings.length,
+          latest_value:
+            portfolioHistories[portfolioHistories.length - 1]?.value ?? 0
+        }
+      })
+    )
+  })
+
+const portfolioInputDto = z.object({
+  name: z.string(),
+  closing_time: z.string()
+})
 
 export const create = forge
-  .mutation()
-  .description('Create a new portfolio')
-  .input({
-    body: z.object({
-      name: z.string(),
-      closingTime: z.string().transform(str => new Date(str))
-    })
+  .mutation({
+    description: 'Create a new portfolio.',
+    input: {
+      body: portfolioInputDto
+    },
+    output: {
+      CREATED: portfolioDto
+    }
   })
-  .callback(async ({ pb, body }) =>
-    pb.create.collection('portfolios').data(body).execute()
-  )
+  .callback(async ({ db, body, response }) => {
+    const [created] = await db
+      .insert(portfolios)
+      .values({
+        name: body.name,
+        closing_time: new Date(body.closing_time)
+      })
+      .returning()
+
+    return response.created(created!)
+  })
 
 export const update = forge
-  .mutation()
-  .description('Update a portfolio')
-  .input({
-    query: z.object({
-      id: z.string()
-    }),
-    body: z.object({
-      name: z.string(),
-      closingTime: z.string().transform(str => new Date(str))
-    })
+  .mutation({
+    description: 'Update a portfolio.',
+    input: {
+      query: z.object({
+        id: forge.existsIn(z.string(), portfolios)
+      }),
+      body: portfolioInputDto
+    },
+    output: {
+      OK: portfolioDto
+    }
   })
-  .existenceCheck('query', {
-    id: 'portfolios'
+  .callback(async ({ db, query: { id }, body, response }) => {
+    const [updated] = await db
+      .update(portfolios)
+      .set({
+        name: body.name,
+        closing_time: new Date(body.closing_time)
+      })
+      .where(eq(portfolios.id, id))
+      .returning()
+
+    return response.ok(updated!)
   })
-  .callback(async ({ pb, body, query }) =>
-    pb.update.collection('portfolios').id(query.id).data(body).execute()
-  )
 
 export const remove = forge
-  .mutation()
-  .description('Delete a portfolio')
-  .input({
-    query: z.object({
-      id: z.string()
-    })
+  .mutation({
+    description: 'Delete a portfolio.',
+    input: {
+      query: z.object({
+        id: forge.existsIn(z.string(), portfolios)
+      })
+    },
+    output: {
+      NO_CONTENT: true
+    }
   })
-  .existenceCheck('query', {
-    id: 'portfolios'
+  .callback(async ({ db, query: { id }, response }) => {
+    await db.delete(portfolios).where(eq(portfolios.id, id))
+
+    return response.noContent()
   })
-  .callback(async ({ pb, query }) =>
-    pb.delete.collection('portfolios').id(query.id).execute()
-  )

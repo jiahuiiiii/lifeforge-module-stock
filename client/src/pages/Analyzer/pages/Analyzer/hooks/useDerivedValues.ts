@@ -10,7 +10,6 @@ import type { DerivedValues, RawValues } from '../types'
 
 function useDerivedValues(rawValues: RawValues) {
   const settings = useAnalyzerSettings()
-
   const cashFlowScores = useCashFlowScores()
 
   return useMemo<DerivedValues>(() => {
@@ -25,7 +24,7 @@ function useDerivedValues(rawValues: RawValues) {
         gdpScore: 0,
         prcScore: 0,
         passedZulu: false,
-        undervaluedPe: false
+        undervaluedPE: false
       }
 
     const cagrScore = getScore(rawValues.cagr, settings.cagr)
@@ -48,7 +47,7 @@ function useDerivedValues(rawValues: RawValues) {
     const passedZulu =
       rawValues.cagr > 0 && rawValues.pe / rawValues.cagr <= 1.0
 
-    const undervaluedPe =
+    const undervaluedPE =
       rawValues.pe > 0 &&
       rawValues.avgPE > 0 &&
       (1 - rawValues.pe / rawValues.avgPE) * 100 >= 25
@@ -63,7 +62,7 @@ function useDerivedValues(rawValues: RawValues) {
       gdpScore,
       prcScore,
       passedZulu,
-      undervaluedPe
+      undervaluedPE
     }
   }, [rawValues, settings, cashFlowScores])
 }

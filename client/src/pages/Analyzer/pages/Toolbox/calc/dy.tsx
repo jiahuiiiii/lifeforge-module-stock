@@ -1,5 +1,7 @@
 import z from 'zod'
 
+import { Flex, Stack, Text } from '@lifeforge/ui'
+
 import {
   calculateDividendYield,
   getScore
@@ -20,13 +22,11 @@ export default createCalculator('tabler:coin')
       type: 'currency',
       icon: 'tabler:currency-dollar',
       label: 'Current Price',
-      placeholder: 'e.g., 100'
     },
     dividend: {
       type: 'currency',
       icon: 'tabler:coins',
       label: 'Annual Dividend',
-      placeholder: 'e.g., 4'
     }
   })
   .result(
@@ -42,19 +42,24 @@ export default createCalculator('tabler:coin')
 
     const yieldValue = calculateDividendYield(price, dividend)
 
-    const scoreValue = getScore(yieldValue, settings.dy)
-
-    return { dyield: yieldValue, score: scoreValue }
+    return {
+      dyield: yieldValue,
+      score: getScore(yieldValue, settings.dy)
+    }
   })
   .displayResult(
     ({ dyield, score }) =>
       dyield !== null && (
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="text-bg-500 text-sm">Dividend Yield</div>
-            <div className="text-2xl font-semibold">{dyield.toFixed(2)}%</div>
-          </div>
+        <Flex align="center" justify="between">
+          <Stack gap="xs">
+            <Text color="muted" size="sm">
+              Dividend Yield
+            </Text>
+            <Text size="2xl" weight="semibold">
+              {dyield.toFixed(2)}%
+            </Text>
+          </Stack>
           <ScoreBadge maxScore={40} score={score} />
-        </div>
+        </Flex>
       )
   )

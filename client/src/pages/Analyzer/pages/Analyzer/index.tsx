@@ -1,5 +1,7 @@
 import { createElement } from 'react'
-import { useTranslation } from 'react-i18next'
+
+import { useModuleTranslation } from '@lifeforge/localization'
+import { Flex, Stack, Text } from '@lifeforge/ui'
 
 import { AnalyzerSettingsProvider } from '../../providers/useAnalyzerSettings'
 import HorizontalStepper from './components/HorizontalStepper'
@@ -16,29 +18,30 @@ export const PHASE_KEYS = [
 
 export const PHASE_COMPONENTS = [QualitativeGate, QuantitativeEntry, Verdict]
 
-export function AnalyzerContent() {
-  const { t } = useTranslation('apps.jiahuiiiii$stock')
-
+function AnalyzerContent() {
+  const { t } = useModuleTranslation()
   const { phase } = useAnalyzer()
 
   const phaseKey = PHASE_KEYS[phase - 1]
 
   return (
-    <div className="flex flex-1 flex-col">
+    <Flex direction="column" flex="1" width="100%">
       <HorizontalStepper />
-      <p className="text-custom-500 font-semibold tracking-widest uppercase">
-        {t('analyzer.phase')} {phase}
-      </p>
-      <h2 className="mb-2 text-2xl font-semibold">
-        {t(`analyzer.phases.${phaseKey}.name`)}
-      </h2>
-      <p className="text-bg-500 mb-6">
-        {t(`analyzer.phases.${phaseKey}.description`)}
-      </p>
-      <div className="mb-12 flex flex-1 flex-col">
-        {createElement(PHASE_COMPONENTS[phase - 1])}
-      </div>
-    </div>
+      <Stack gap="xs" mb="lg">
+        <Text color="primary" size="sm" tracking="widest" transform="uppercase" weight="semibold">
+          {t('analyzer.phase')} {phase}
+        </Text>
+        <Text as="h2" size="2xl" weight="semibold">
+          {t(`analyzer.phases.${phaseKey}.name`)}
+        </Text>
+        <Text color="muted">
+          {t(`analyzer.phases.${phaseKey}.description`)}
+        </Text>
+      </Stack>
+      <Flex direction="column" flex="1" mb="2xl">
+        {createElement(PHASE_COMPONENTS[phase - 1]!)}
+      </Flex>
+    </Flex>
   )
 }
 

@@ -1,7 +1,5 @@
-import { Widget } from 'lifeforge-ui'
-import { useTranslation } from 'react-i18next'
-import { usePersonalization } from 'shared'
-import COLORS from 'tailwindcss/colors'
+import { useModuleTranslation } from '@lifeforge/localization'
+import { Card, Grid, Icon, Text, Widget, surface } from '@lifeforge/ui'
 
 const STEP_ICONS = [
   'tabler:checkbox',
@@ -15,29 +13,32 @@ const STEP_ICONS = [
 ]
 
 function StepByStep() {
-  const { t } = useTranslation('apps.jiahuiiiii$stock')
-  const { derivedThemeColor } = usePersonalization()
+  const { t } = useModuleTranslation()
 
   return (
     <Widget
       icon="tabler:list-numbers"
-      iconColor={COLORS.blue[500]}
-      title={t('guide.howto.stepByStep')}
+      iconColor="blue-500"
+      title="guide.howto.stepByStep"
     >
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        {[1, 2, 3, 4, 5, 6, 7, 8].map(step => (
-          <Widget
-            key={step}
-            className="component-bg-lighter"
-            icon={STEP_ICONS[step - 1]}
-            iconColor={derivedThemeColor}
-            title={`${step.toString().padStart(2, '0')}. ${t(`guide.howto.steps.${step}.title`)}`}
-            variant="large-icon"
-          >
-            <p className="text-bg-500">{t(`guide.howto.steps.${step}.desc`)}</p>
-          </Widget>
-        ))}
-      </div>
+      <Grid gap="sm" templateCols={{ base: 1, sm: 2, lg: 4 }}>
+        {STEP_ICONS.map((icon, index) => {
+          const step = index + 1
+
+          return (
+            <Card key={step} bg={surface.light} gap="sm">
+              <Icon color="primary" icon={icon} size="1.5em" />
+              <Text weight="semibold">
+                {step.toString().padStart(2, '0')}.{' '}
+                {t(`guide.howto.steps.${step}.title`)}
+              </Text>
+              <Text color="muted" size="sm">
+                {t(`guide.howto.steps.${step}.desc`)}
+              </Text>
+            </Card>
+          )
+        })}
+      </Grid>
     </Widget>
   )
 }

@@ -1,21 +1,24 @@
-import { Icon } from '@iconify/react'
-import clsx from 'clsx'
-import { useTranslation } from 'react-i18next'
-import { usePersonalization } from 'shared'
-import tinycolor from 'tinycolor2'
+import { useModuleTranslation } from '@lifeforge/localization'
+import {
+  Box,
+  Flex,
+  Icon,
+  Text,
+  Transition,
+  colorWithOpacity,
+  usePersonalization
+} from '@lifeforge/ui'
 
 import { PHASE_KEYS } from '..'
 import { useAnalyzer } from '../providers/AnalyzerProvider'
 
 function HorizontalStepper() {
-  const { t } = useTranslation('apps.jiahuiiiii$stock')
-
+  const { t } = useModuleTranslation()
   const { phase, setPhase } = useAnalyzer()
-
-  const { derivedThemeColor } = usePersonalization()
+  const { derivedThemeColor, getMostReadableColor } = usePersonalization()
 
   return (
-    <div className="mb-8 flex w-full items-center justify-center">
+    <Flex align="center" justify="center" mb="xl" width="100%">
       {PHASE_KEYS.map((key, index) => {
         const stepNumber = index + 1
 
@@ -24,52 +27,77 @@ function HorizontalStepper() {
         const isCurrent = phase === stepNumber
 
         return (
-          <div key={index} className="flex items-center">
-            <button
-              className="flex items-center gap-3"
+          <Flex key={key} align="center">
+            <Flex
+              align="center"
+              as="button"
+              gap="sm"
               onClick={() => setPhase(stepNumber)}
             >
-              <div
-                className={`relative flex size-10 shrink-0 items-center justify-center rounded-full font-semibold transition-all ${
-                  isCompleted
-                    ? 'bg-custom-500/20 text-custom-500'
-                    : isCurrent
-                      ? clsx(
-                          'bg-custom-500',
-                          tinycolor(derivedThemeColor).isDark()
-                            ? 'text-bg-100'
-                            : 'text-bg-900'
-                        )
-                      : 'bg-bg-200 text-bg-500 dark:bg-bg-700/50'
-                }`}
-              >
-                {isCompleted ? <Icon icon="tabler:check" /> : stepNumber}
-              </div>
-              <span
-                className={`hidden text-left font-medium transition-colors sm:block ${
-                  isCurrent
-                    ? 'text-custom-500'
-                    : isCompleted
-                      ? 'text-bg-800 dark:text-bg-100'
-                      : 'text-bg-500'
-                }`}
+              <Transition>
+                <Flex
+                  align="center"
+                  bg={
+                    isCompleted
+                      ? colorWithOpacity('custom-500', '20%')
+                      : isCurrent
+                        ? 'custom-500'
+                        : {
+                            base: 'bg-200',
+                            dark: colorWithOpacity('bg-700', '50%')
+                          }
+                  }
+                  flexShrink="0"
+                  height="2.5em"
+                  justify="center"
+                  r="full"
+                  style={{
+                    color: isCompleted
+                      ? 'var(--color-custom-500)'
+                      : isCurrent
+                        ? getMostReadableColor(derivedThemeColor)
+                        : undefined
+                  }}
+                  width="2.5em"
+                >
+                  {isCompleted ? (
+                    <Icon icon="tabler:check" />
+                  ) : (
+                    <Text weight="semibold">{stepNumber}</Text>
+                  )}
+                </Flex>
+              </Transition>
+              <Text
+                color={
+                  isCurrent ? 'primary' : isCompleted ? undefined : 'muted'
+                }
+                display={{ base: 'none', sm: 'block' }}
+                weight="medium"
               >
                 {t(`analyzer.phases.${key}.name`)}
-              </span>
-            </button>
+              </Text>
+            </Flex>
             {index < PHASE_KEYS.length - 1 && (
-              <div
-                className={`mx-4 h-0.5 w-12 transition-colors sm:w-16 ${
-                  isCompleted
-                    ? 'bg-custom-500/20'
-                    : 'bg-bg-200 dark:bg-bg-700/50'
-                }`}
-              />
+              <Transition>
+                <Box
+                  bg={
+                    isCompleted
+                      ? colorWithOpacity('custom-500', '20%')
+                      : {
+                          base: 'bg-200',
+                          dark: colorWithOpacity('bg-700', '50%')
+                        }
+                  }
+                  height="0.125em"
+                  mx="md"
+                  width={{ base: '3em', sm: '4em' }}
+                />
+              </Transition>
             )}
-          </div>
+          </Flex>
         )
       })}
-    </div>
+    </Flex>
   )
 }
 

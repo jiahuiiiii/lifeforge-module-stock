@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 
+import type { WidgetProps } from '@lifeforge/ui'
+
 import { useAnalyzerSettings } from '@/pages/Analyzer/providers/useAnalyzerSettings'
 
 import type { CalculatorConfig } from '../../utils/calculatorFactory'
@@ -14,7 +16,7 @@ function Calculator({
 }: {
   calculatorKey: string
   config: CalculatorConfig
-  color: string
+  color: NonNullable<WidgetProps['iconColor']>
   onResultChange: (result: Record<string, unknown>) => void
 }) {
   const settings = useAnalyzerSettings()
@@ -57,7 +59,7 @@ function Calculator({
           <CalculatorField
             key={name}
             field={field}
-            value={fieldValues[name]}
+            value={fieldValues[name] ?? ''}
             onChange={v => handleFieldChange(name, v)}
           />
         )

@@ -1,27 +1,47 @@
-import type { CashFlowOption, MetricConfig } from '@server/utils/defaults'
-import { Button, Card, NumberInput, Widget } from 'lifeforge-ui'
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
+
+import { useModuleTranslation } from '@lifeforge/localization'
+import {
+  Box,
+  Button,
+  Card,
+  Flex,
+  NumberInput,
+  Stack,
+  Text,
+  Widget,
+  surface
+} from '@lifeforge/ui'
+
+import type { SettingsMap } from '..'
+
+const CASH_FLOW_KEYS = [
+  { key: 'profit_inflow', labelKey: 'profitInflow' },
+  { key: 'profit_outflow', labelKey: 'profitOutflow' },
+  { key: 'loss_inflow', labelKey: 'lossInflow' },
+  { key: 'loss_outflow', labelKey: 'lossOutflow' }
+] as const
 
 function CashFlowMetricEditor({
   settings,
   localSettings,
   setLocalSettings
 }: {
-  settings: Record<CashFlowOption, number>
-  localSettings: Record<string, MetricConfig>
-  setLocalSettings: (settings: Record<string, MetricConfig>) => void
+  settings: Record<string, number>
+  localSettings: SettingsMap
+  setLocalSettings: (settings: SettingsMap) => void
 }) {
-  const { t } = useTranslation('apps.jiahuiiiii$stock')
+  const { t } = useModuleTranslation()
+  const [isLocked, setIsLocked] = useState(true)
 
-  const [isCashFlowLocked, setIsCashFlowLocked] = useState(true)
+  function updateTier(key: string, value: number) {
+    const cashflow = localSettings.cashflow!
 
-  function updateTiers(tiers: Record<CashFlowOption, number>) {
     setLocalSettings({
       ...localSettings,
       cashflow: {
-        ...localSettings.cashflow,
-        tiers
+        ...cashflow,
+        tiers: { ...settings, [key]: value } as SettingsMap['cashflow']['tiers']
       }
     })
   }
@@ -30,59 +50,48 @@ function CashFlowMetricEditor({
     <Widget
       actionComponent={
         <Button
-          icon={isCashFlowLocked ? 'tabler:lock' : 'tabler:lock-open'}
-          namespace="apps.jiahuiiiii$stock"
+          icon={isLocked ? 'tabler:lock' : 'tabler:lock-open'}
           variant="plain"
-          onClick={() => setIsCashFlowLocked(!isCashFlowLocked)}
+          onClick={() => setIsLocked(!isLocked)}
         >
-          {isCashFlowLocked ? 'unlock' : 'lock'}
+          {isLocked ? 'unlock' : 'lock'}
         </Button>
       }
-      description={t('settings.cashFlow.description')}
+      description="settings.cashFlow.description"
       icon="tabler:coin"
-      title={t('settings.cashFlow.title')}
+      title="settings.cashFlow.title"
     >
-      <div className="divide-bg-200 dark:divide-bg-700 divide-y">
-        {[
-          {
-            key: 'profit_inflow' as const,
-            label: t('settings.cashFlow.profitInflow')
-          },
-          {
-            key: 'profit_outflow' as const,
-            label: t('settings.cashFlow.profitOutflow')
-          },
-          {
-            key: 'loss_inflow' as const,
-            label: t('settings.cashFlow.lossInflow')
-          },
-          {
-            key: 'loss_outflow' as const,
-            label: t('settings.cashFlow.lossOutflow')
-          }
-        ].map(item => (
-          <Card key={item.key} className="flex items-center justify-between">
-            <span className="text-bg-500">{item.label}</span>
-            <div className="flex items-center gap-2">
-              <NumberInput
-                className="w-16"
-                disabled={isCashFlowLocked}
-                placeholder="0"
-                size="small"
-                value={settings[item.key]}
-                variant="plain"
-                onChange={e =>
-                  updateTiers({
-                    ...settings,
-                    [item.key]: e
-                  })
-                }
-              />
-              <span className="text-bg-500">{t('settings.metrics.pts')}</span>
-            </div>
+      <Stack gap="sm">
+        {CASH_FLOW_KEYS.map(item => (
+          <Card
+            key={item.key}
+            align="center"
+            bg={{ base: 'bg-100', dark: 'bg-800' }}
+            direction="row"
+            justify="between"
+          >
+            <Text color="muted">{t(`settings.cashFlow.${item.labelKey}`)}</Text>
+            <Flex align="center" gap="sm">
+              <Box width="4em">
+                <NumberInput
+                  disabled={isLocked}
+                  icon="tabler:number"
+                  label=""
+                  placeholder="0"
+                  size="small"
+                  value={settings[item.key] ?? 0}
+                  variant="plain"
+                  wrapperProps={{
+                    bg: surface.defaultInteractive
+                  }}
+                  onChange={value => updateTier(item.key, value)}
+                />
+              </Box>
+              <Text color="muted">{t('settings.metrics.pts')}</Text>
+            </Flex>
           </Card>
         ))}
-      </div>
+      </Stack>
     </Widget>
   )
 }

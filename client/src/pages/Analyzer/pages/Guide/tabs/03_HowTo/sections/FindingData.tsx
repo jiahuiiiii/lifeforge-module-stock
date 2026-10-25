@@ -1,64 +1,81 @@
-import { Icon } from '@iconify/react'
-import { Widget } from 'lifeforge-ui'
-import { useTranslation } from 'react-i18next'
-import COLORS from 'tailwindcss/colors'
+import { useModuleTranslation } from '@lifeforge/localization'
+import {
+  Card,
+  COLORS,
+  Flex,
+  Grid,
+  Icon,
+  Stack,
+  Text,
+  Widget
+} from '@lifeforge/ui'
+
+const REPORT_ITEMS = [
+  'incomeStatement',
+  'balanceSheet',
+  'cashFlowStatement'
+] as const
+
+const PROVIDERS = [
+  { name: 'Yahoo Finance', key: 'yahooFinance', color: COLORS['blue-500'], icon: 'tabler:world' },
+  { name: 'Morningstar', key: 'morningstar', color: COLORS['purple-500'], icon: 'tabler:star' },
+  { name: 'SEC EDGAR', key: 'secEdgar', color: COLORS['orange-500'], icon: 'tabler:file' }
+] as const
 
 function FindingData() {
-  const { t } = useTranslation('apps.jiahuiiiii$stock')
+  const { t } = useModuleTranslation()
 
   return (
     <Widget
       icon="tabler:search"
-      iconColor={COLORS.green[500]}
-      title={t('guide.howto.findingData.title')}
+      iconColor="green-500"
+      title="guide.howto.findingData.title"
     >
-      <p className="text-bg-500">{t('guide.howto.findingData.intro')}</p>
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div className="bg-bg-100 dark:bg-bg-800/50 rounded-lg p-4">
-          <h3 className="mb-2 text-lg font-semibold">
-            {t('guide.howto.findingData.annualReports.title')}
-          </h3>
-          <p className="text-bg-500 mb-2">
-            {t('guide.howto.findingData.annualReports.desc')}
-          </p>
-          <ul className="text-bg-500 space-y-1">
-            <li className="flex items-center gap-2">
-              <Icon className="text-custom-500 size-4" icon="tabler:check" />
-              {t('guide.howto.findingData.annualReports.incomeStatement')}
-            </li>
-            <li className="flex items-center gap-2">
-              <Icon className="text-custom-500 size-4" icon="tabler:check" />
-              {t('guide.howto.findingData.annualReports.balanceSheet')}
-            </li>
-            <li className="flex items-center gap-2">
-              <Icon className="text-custom-500 size-4" icon="tabler:check" />
-              {t('guide.howto.findingData.annualReports.cashFlowStatement')}
-            </li>
-          </ul>
-        </div>
-        <div className="bg-bg-100 dark:bg-bg-800/50 rounded-lg p-4">
-          <h3 className="mb-2 text-lg font-semibold">
-            {t('guide.howto.findingData.dataProviders.title')}
-          </h3>
-          <ul className="text-bg-500 space-y-2">
-            <li className="flex items-center gap-2">
-              <Icon className="size-4 text-blue-500" icon="tabler:world" />
-              <strong>Yahoo Finance</strong> -{' '}
-              {t('guide.howto.findingData.dataProviders.yahooFinance')}
-            </li>
-            <li className="flex items-center gap-2">
-              <Icon className="size-4 text-purple-500" icon="tabler:star" />
-              <strong>Morningstar</strong> -{' '}
-              {t('guide.howto.findingData.dataProviders.morningstar')}
-            </li>
-            <li className="flex items-center gap-2">
-              <Icon className="size-4 text-orange-500" icon="tabler:file" />
-              <strong>SEC EDGAR</strong> -{' '}
-              {t('guide.howto.findingData.dataProviders.secEdgar')}
-            </li>
-          </ul>
-        </div>
-      </div>
+      <Stack gap="md">
+        <Text color="muted">{t('guide.howto.findingData.intro')}</Text>
+        <Grid gap="md" templateCols={{ base: 1, sm: 2 }}>
+          <Card bg={{ base: 'bg-100', dark: 'bg-800' }} gap="sm">
+            <Text as="h3" size="lg" weight="semibold">
+              {t('guide.howto.findingData.annualReports.title')}
+            </Text>
+            <Text color="muted" size="sm">
+              {t('guide.howto.findingData.annualReports.desc')}
+            </Text>
+            <Stack gap="xs">
+              {REPORT_ITEMS.map(item => (
+                <Flex key={item} align="center" gap="sm">
+                  <Icon color="primary" icon="tabler:check" size="1em" />
+                  <Text color="muted">
+                    {t(`guide.howto.findingData.annualReports.${item}`)}
+                  </Text>
+                </Flex>
+              ))}
+            </Stack>
+          </Card>
+          <Card bg={{ base: 'bg-100', dark: 'bg-800' }} gap="sm">
+            <Text as="h3" size="lg" weight="semibold">
+              {t('guide.howto.findingData.dataProviders.title')}
+            </Text>
+            <Stack gap="sm">
+              {PROVIDERS.map(provider => (
+                <Flex key={provider.name} align="center" gap="sm">
+                  <Icon
+                    icon={provider.icon}
+                    size="1em"
+                    style={{ color: provider.color }}
+                  />
+                  <Text color="muted">
+                    <Text weight="semibold">{provider.name}</Text> -{' '}
+                    {t(
+                      `guide.howto.findingData.dataProviders.${provider.key}`
+                    )}
+                  </Text>
+                </Flex>
+              ))}
+            </Stack>
+          </Card>
+        </Grid>
+      </Stack>
     </Widget>
   )
 }

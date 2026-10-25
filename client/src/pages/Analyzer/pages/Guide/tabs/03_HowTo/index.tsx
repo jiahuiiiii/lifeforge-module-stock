@@ -1,14 +1,16 @@
+import { Stack } from '@lifeforge/ui'
+
 import AnalysisTips from './sections/AnalysisTips'
 import FindingData from './sections/FindingData'
 import StepByStep from './sections/StepByStep'
 
 function HowToTab() {
   return (
-    <div className="space-y-6">
+    <Stack gap="lg">
       <FindingData />
       <StepByStep />
       <AnalysisTips />
-    </div>
+    </Stack>
   )
 }
 

@@ -1,4 +1,4 @@
-import { forgeRouter } from '@lifeforge/server-utils'
+import { forgeRouter, writeContractFileToClient } from '@lifeforge/server-utils'
 
 import * as analyzerLogsRoutes from './routes/analyzerLogs'
 import * as analyzerSettingsRoutes from './routes/analyzerSettings'
@@ -8,7 +8,7 @@ import * as diaryRoutes from './routes/diary'
 import * as portfolioHoldingsRoutes from './routes/portfolioHoldings'
 import * as portfoliosRoutes from './routes/portfolios'
 
-export default forgeRouter({
+const routes = forgeRouter({
   data: dataRoutes,
   portfolios: {
     ...portfoliosRoutes,
@@ -23,3 +23,7 @@ export default forgeRouter({
     }
   }
 })
+
+writeContractFileToClient(routes, import.meta.dirname)
+
+export default routes

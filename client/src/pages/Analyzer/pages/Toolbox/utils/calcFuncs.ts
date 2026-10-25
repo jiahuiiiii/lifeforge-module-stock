@@ -114,9 +114,9 @@ export function calculatePSRatio(
  * Handles both normal (higher is better) and inverse (lower is better) metrics
  */
 export function getScore(value: number, config: AnalyzerMetricConfig): number {
-  const { tiers, isInverse } = config
+  const { tiers, is_inverse } = config
 
-  if (isInverse) {
+  if (is_inverse) {
     // For inverse metrics (like PE), lower value gets higher tier score
     // Tiers are ordered: [10->30, 15->20, 20->10, Infinity->0]
     // Value 8 should match first tier (<=10), value 12 should match second (<=15)

@@ -1,11 +1,15 @@
+import { useModuleTranslation } from '@lifeforge/localization'
 import {
   Button,
   Card,
   Checkbox,
   ConfirmationModal,
+  Flex,
+  Stack,
+  Text,
+  surface,
   useModalStore
-} from 'lifeforge-ui'
-import { useTranslation } from 'react-i18next'
+} from '@lifeforge/ui'
 
 import { useAnalyzer } from '../providers/AnalyzerProvider'
 
@@ -17,60 +21,67 @@ const QUALITATIVE_IDS = [
 ] as const
 
 function QualitativeGate() {
-  const { t } = useTranslation('apps.jiahuiiiii$stock')
-
+  const { t } = useModuleTranslation()
   const { open } = useModalStore()
-
   const { qualitative, setQualitative, setPhase } = useAnalyzer()
 
-  const allQualitativePass = Object.values(qualitative).every(v => v)
+  const allQualitativePass = Object.values(qualitative).every(Boolean)
+
+  function handleProceed() {
+    if (allQualitativePass) {
+      setPhase(2)
+
+      return
+    }
+
+    open(ConfirmationModal, {
+      title: t('modals.proceedWithCaution.title'),
+      description: t('modals.proceedWithCaution.description'),
+      onConfirm: () => {
+        setPhase(2)
+      }
+    })
+  }
 
   return (
     <>
-      <div className="flex-1">
-        <div className="mb-6 space-y-4">
-          {QUALITATIVE_IDS.map(id => (
-            <Card key={id} className="component-bg-lighter flex-between">
-              <div>
-                <div className="text-lg font-medium">
-                  {t(`analyzer.qualitative.${id}.label`)}
-                </div>
-                <div className="text-bg-500 text-sm">
-                  {t(`analyzer.qualitative.${id}.description`)}
-                </div>
-              </div>
+      <Stack flex="1" gap="md" mb="lg">
+        {QUALITATIVE_IDS.map(id => (
+          <Card
+            key={id}
+            align="center"
+            bg={surface.light}
+            direction="row"
+            justify="between"
+          >
+            <Stack gap="xs" minWidth="0">
+              <Text size="lg" weight="medium">
+                {t(`analyzer.qualitative.${id}.label`)}
+              </Text>
+              <Text color="muted" size="sm">
+                {t(`analyzer.qualitative.${id}.description`)}
+              </Text>
+            </Stack>
+            <Flex flexShrink="0">
               <Checkbox
                 checked={qualitative[id]}
                 onCheckedChange={checked =>
-                  setQualitative(prev => ({
-                    ...prev,
+                  setQualitative(previous => ({
+                    ...previous,
                     [id]: checked
                   }))
                 }
               />
-            </Card>
-          ))}
-        </div>
-      </div>
+            </Flex>
+          </Card>
+        ))}
+      </Stack>
       <Button
-        className="w-full"
         icon="tabler:arrow-right"
         iconPosition="end"
-        namespace="apps.jiahuiiiii$stock"
         variant={allQualitativePass ? 'primary' : 'secondary'}
-        onClick={() => {
-          if (allQualitativePass) {
-            setPhase(2)
-
-            return
-          }
-
-          open(ConfirmationModal, {
-            title: t('modals.proceedWithCaution.title'),
-            description: t('modals.proceedWithCaution.description'),
-            onConfirm: async () => setPhase(2)
-          })
-        }}
+        width="100%"
+        onClick={handleProceed}
       >
         {allQualitativePass ? 'proceed' : 'skip'}
       </Button>

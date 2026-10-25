@@ -1,16 +1,21 @@
-import { Icon } from '@iconify/react'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { Link } from 'react-router'
+
+import { type InferOutput, useForgeMutation } from '@lifeforge/api'
+import { useModuleTranslation } from '@lifeforge/localization'
 import {
   Card,
   ConfirmationModal,
   ContextMenu,
-  ContextMenuItem
-} from 'lifeforge-ui'
-import { useTranslation } from 'react-i18next'
-import { toast } from 'react-toastify'
-import { type InferOutput, Link, useModalStore } from 'shared'
+  ContextMenuItem,
+  Flex,
+  Icon,
+  Stack,
+  Text,
+  colorWithOpacity,
+  useModalStore
+} from '@lifeforge/ui'
 
-import forgeAPI from '@/utils/forgeAPI'
+import { forgeAPI } from '@/manifest'
 import numberToCurrency from '@/utils/numberToCurrency'
 
 import ModifyPortfolioModal from './ModifyPortfolioModal'
@@ -20,33 +25,25 @@ export type PortfolioListingItem = InferOutput<
 >[number]
 
 function PortfolioItem({ portfolio }: { portfolio: PortfolioListingItem }) {
-  const { t } = useTranslation('apps.jiahuiiiii$stock')
-
-  const queryClient = useQueryClient()
-
+  const { t } = useModuleTranslation()
   const { open } = useModalStore()
 
-  const deletePortfolioMutation = useMutation(
-    forgeAPI.portfolios.remove.input({ id: portfolio.id }).mutationOptions({
-      onSuccess: () => {
-        queryClient.invalidateQueries({
-          queryKey: ['jiahuiiiii--stock', 'portfolios']
-        })
-      },
-      onError: () => {
-        toast.error(t('errors.portfolio.deleteFailed'))
-      }
-    })
+  const deletePortfolioMutation = useForgeMutation(
+    forgeAPI.portfolios.remove.input({ id: portfolio.id }),
+    {
+      action: 'delete',
+      queryKey: forgeAPI.portfolios.key
+    }
   )
 
-  const handleUpdate = () => {
+  function handleUpdate() {
     open(ModifyPortfolioModal, {
       initialData: portfolio,
       openType: 'update'
     })
   }
 
-  const handleDelete = () => {
+  function handleDelete() {
     open(ConfirmationModal, {
       title: t('modals.portfolio.delete'),
       description: t('modals.portfolio.deleteConfirmation', {
@@ -54,7 +51,7 @@ function PortfolioItem({ portfolio }: { portfolio: PortfolioListingItem }) {
       }),
       confirmationButton: 'delete',
       onConfirm: async () => {
-        deletePortfolioMutation.mutateAsync({})
+        await deletePortfolioMutation.mutateAsync(undefined)
       }
     })
   }
@@ -62,23 +59,38 @@ function PortfolioItem({ portfolio }: { portfolio: PortfolioListingItem }) {
   return (
     <Card
       isInteractive
+      align="center"
       as={Link}
-      className="flex-between gap-3"
-      to={`./${portfolio.id}`}
+      direction="row"
+      gap="md"
+      justify="between"
+      to={portfolio.id}
     >
-      <div className="flex items-center gap-3">
-        <div className="bg-custom-500/10 flex-center size-14 rounded-md">
-          <Icon className="text-custom-500 size-7" icon="tabler:briefcase" />
-        </div>
-        <div>
-          <h3 className="text-xl font-medium">{portfolio.name}</h3>
-          <p className="text-bg-500">
-            {t('portfolio.holdingsCount', { count: portfolio.holdingCount })}
-          </p>
-        </div>
-      </div>
-      <div className="flex items-center gap-3">
-        <p className="text-xl">${numberToCurrency(portfolio.latestValue)}</p>
+      <Flex align="center" gap="md" minWidth="0">
+        <Flex
+          align="center"
+          bg={colorWithOpacity('custom-500', '10%')}
+          flexShrink="0"
+          height="3.5em"
+          justify="center"
+          r="md"
+          width="3.5em"
+        >
+          <Icon color="primary" icon="tabler:briefcase" size="1.75em" />
+        </Flex>
+        <Stack gap="xs" minWidth="0">
+          <Text size="xl" weight="medium">
+            {portfolio.name}
+          </Text>
+          <Text color="muted">
+            {t('portfolio.holdingsCount', {
+              count: portfolio.holding_count
+            })}
+          </Text>
+        </Stack>
+      </Flex>
+      <Flex align="center" gap="md">
+        <Text size="xl">${numberToCurrency(portfolio.latest_value)}</Text>
         <ContextMenu>
           <ContextMenuItem
             icon="tabler:pencil"
@@ -92,7 +104,7 @@ function PortfolioItem({ portfolio }: { portfolio: PortfolioListingItem }) {
             onClick={handleDelete}
           />
         </ContextMenu>
-      </div>
+      </Flex>
     </Card>
   )
 }

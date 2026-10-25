@@ -1,5 +1,7 @@
 import z from 'zod'
 
+import { Flex, Stack, Text } from '@lifeforge/ui'
+
 import {
   calculateCAGR,
   getScore
@@ -53,19 +55,21 @@ export default createCalculator('tabler:trending-up')
 
     const cagrValue = calculateCAGR(end, start, years)
 
-    const scoreValue = getScore(cagrValue, settings.cagr)
-
-    return { cagr: cagrValue, score: scoreValue }
+    return { cagr: cagrValue, score: getScore(cagrValue, settings.cagr) }
   })
   .displayResult(
     ({ cagr, score }) =>
       cagr !== null && (
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="text-bg-500 text-sm">Growth Rate</div>
-            <div className="text-2xl font-semibold">{cagr.toFixed(2)}%</div>
-          </div>
+        <Flex align="center" justify="between">
+          <Stack gap="xs">
+            <Text color="muted" size="sm">
+              Growth Rate
+            </Text>
+            <Text size="2xl" weight="semibold">
+              {cagr.toFixed(2)}%
+            </Text>
+          </Stack>
           <ScoreBadge maxScore={50} score={score} />
-        </div>
+        </Flex>
       )
   )

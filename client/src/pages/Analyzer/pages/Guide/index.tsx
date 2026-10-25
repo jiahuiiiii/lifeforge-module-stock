@@ -1,7 +1,8 @@
 import 'katex/dist/katex.min.css'
-import { ModuleHeader, Tabs } from 'lifeforge-ui'
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
+
+import { useModuleTranslation } from '@lifeforge/localization'
+import { ModuleHeader, Stack, Tabs } from '@lifeforge/ui'
 
 import PhilosophyTab from './tabs/01_Philosophy'
 import GlossaryTab from './tabs/02_Glossaries'
@@ -18,20 +19,17 @@ const TAB_COMPONENTS = {
 }
 
 export default function Guide() {
-  const { t } = useTranslation('apps.jiahuiiiii$stock')
+  const { t } = useModuleTranslation()
 
   const [activeTab, setActiveTab] =
     useState<(typeof TAB_KEYS)[number]>('philosophy')
 
+  const ActiveTab = TAB_COMPONENTS[activeTab].component
+
   return (
     <>
-      <ModuleHeader
-        icon="tabler:book"
-        namespace="apps.jiahuiiiii$stock"
-        title="guide"
-        tKey="subsectionsTitleAndDesc"
-      />
-      <div className="mb-12 space-y-6">
+      <ModuleHeader icon="tabler:book" title="guide" />
+      <Stack gap="lg" mb="2xl">
         <Tabs
           currentTab={activeTab}
           enabled={[...TAB_KEYS]}
@@ -42,12 +40,8 @@ export default function Guide() {
           }))}
           onTabChange={setActiveTab}
         />
-        {(() => {
-          const TabComponent = TAB_COMPONENTS[activeTab].component
-
-          return <TabComponent />
-        })()}
-      </div>
+        <ActiveTab />
+      </Stack>
     </>
   )
 }

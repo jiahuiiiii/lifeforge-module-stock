@@ -1,4 +1,4 @@
-import type { CashFlowOption } from '@server/utils/defaults'
+import type { CashFlowOption } from '../../constants/cashFlow'
 
 export type QualitativeChecks = {
   valueChain: boolean
@@ -33,5 +33,5 @@ export type DerivedValues = {
   gdpScore: number
   prcScore: number
   passedZulu: boolean
-  undervaluedPe: boolean
+  undervaluedPE: boolean
 }

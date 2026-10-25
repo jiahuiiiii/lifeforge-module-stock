@@ -1,18 +1,20 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import dayjs from 'dayjs'
+
+import { type InferOutput, useForgeMutation } from '@lifeforge/api'
+import { useModuleTranslation } from '@lifeforge/localization'
 import {
   Card,
   ConfirmationModal,
   ContextMenu,
   ContextMenuItem,
+  Flex,
+  Stack,
   TagChip,
+  Text,
   useModalStore
-} from 'lifeforge-ui'
-import { useTranslation } from 'react-i18next'
-import { toast } from 'react-toastify'
-import type { InferOutput } from 'shared'
+} from '@lifeforge/ui'
 
-import forgeAPI from '@/utils/forgeAPI'
+import { forgeAPI } from '@/manifest'
 
 type CalculatorLogItem = InferOutput<
   typeof forgeAPI.analyzer.logs.calculator.list
@@ -29,86 +31,71 @@ const METRIC_CONFIG = {
 }
 
 function CalculatorItem({ log }: { log: CalculatorLogItem }) {
-  const { t } = useTranslation('apps.jiahuiiiii$stock')
-
+  const { t } = useModuleTranslation()
   const { open } = useModalStore()
 
-  const queryClient = useQueryClient()
-
-  const deleteMutation = useMutation(
-    forgeAPI.analyzer.logs.calculator.remove
-      .input({
-        id: log.id
-      })
-      .mutationOptions({
-        onSuccess: () => {
-          queryClient.invalidateQueries({
-            queryKey: forgeAPI.analyzer.logs.calculator.list.key
-          })
-        },
-        onError: error => {
-          console.error('Error deleting calculator log:', error)
-          toast.error(t('errors.calculator.deleteFailed'))
-        }
-      })
+  const deleteMutation = useForgeMutation(
+    forgeAPI.analyzer.logs.calculator.remove.input({ id: log.id }),
+    {
+      action: 'delete',
+      queryKey: forgeAPI.analyzer.logs.calculator.key
+    }
   )
 
+  function handleDelete() {
+    open(ConfirmationModal, {
+      title: t('modals.deleteCalculation.title'),
+      description: t('modals.deleteCalculation.description', {
+        ticker: log.ticker
+      }),
+      confirmationButton: 'delete',
+      onConfirm: async () => {
+        await deleteMutation.mutateAsync(undefined)
+      }
+    })
+  }
+
   return (
-    <Card className="flex flex-col">
-      <div className="mb-3 flex items-start justify-between">
-        <div>
-          <div className="text-xl font-semibold">{log.ticker}</div>
-          {log.name && <div className="text-custom-500">{log.name}</div>}
-          <div className="text-bg-500 mt-2 text-xs">
+    <Card gap="md">
+      <Flex align="start" justify="between">
+        <Stack gap="xs" minWidth="0">
+          <Text size="xl" weight="semibold">
+            {log.ticker}
+          </Text>
+          {log.name && <Text color="primary">{log.name}</Text>}
+          <Text color="muted" size="sm">
             {dayjs(log.date).format('YYYY-MM-DD')}
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          {log.exchange && <TagChip className="text-xs" label={log.exchange} />}
-          <ContextMenu
-            classNames={{
-              button: 'p-2!'
-            }}
-          >
+          </Text>
+        </Stack>
+        <Flex align="center" gap="sm">
+          {log.exchange && <TagChip label={log.exchange} size="sm" />}
+          <ContextMenu>
             <ContextMenuItem
               dangerous
               icon="tabler:trash"
-              label={t('modals.deleteCalculation.confirm')}
-              onClick={() => {
-                open(ConfirmationModal, {
-                  title: t('modals.deleteCalculation.title'),
-                  description: t('modals.deleteCalculation.description', {
-                    ticker: log.ticker
-                  }),
-                  confirmButtonText: t('modals.deleteCalculation.confirm'),
-                  onConfirm: async () => {
-                    await deleteMutation.mutateAsync({})
-                  }
-                })
-              }}
+              label="delete"
+              onClick={handleDelete}
             />
           </ContextMenu>
-        </div>
-      </div>
-      <div className="space-y-1">
+        </Flex>
+      </Flex>
+      <Stack gap="xs">
         {METRIC_KEYS.map(key => (
-          <div key={key} className="flex justify-between">
-            <span className="text-bg-500">
+          <Flex key={key} justify="between">
+            <Text color="muted">
               {t(`logbook.labels.${METRIC_CONFIG[key].labelKey}`)}
-            </span>
-            {log.values_and_scores[key]?.value ? (
-              <span>
-                {log.values_and_scores[key].value.toFixed(2)}
+            </Text>
+            {log.values_and_scores[key]?.value !== undefined ? (
+              <Text>
+                {log.values_and_scores[key]!.value!.toFixed(2)}
                 {METRIC_CONFIG[key].suffix}
-              </span>
+              </Text>
             ) : (
-              <span className="text-bg-400 dark:text-bg-600">
-                {t('logbook.labels.na')}
-              </span>
+              <Text color="muted">{t('logbook.labels.na')}</Text>
             )}
-          </div>
+          </Flex>
         ))}
-      </div>
+      </Stack>
     </Card>
   )
 }

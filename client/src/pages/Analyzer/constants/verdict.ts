@@ -1,20 +1,20 @@
-import COLORS from 'tailwindcss/colors'
+import { COLORS } from '@lifeforge/ui'
 
 export const VERDICTS = {
   PASS: {
     icon: 'tabler:check',
     label: 'Invest',
-    color: COLORS.green[500]
+    color: COLORS['green-500']
   },
   NEUTRAL: {
     icon: 'tabler:alert-circle',
     label: 'Watch',
-    color: COLORS.yellow[500]
+    color: COLORS['yellow-500']
   },
   FAIL: {
     icon: 'tabler:x',
     label: 'Reject',
-    color: COLORS.red[500]
+    color: COLORS['red-500']
   }
 } as const
 

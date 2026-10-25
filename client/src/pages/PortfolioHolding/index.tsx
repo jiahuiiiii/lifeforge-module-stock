@@ -1,10 +1,20 @@
-import { Icon } from '@iconify/react'
 import { useQuery } from '@tanstack/react-query'
-import { Button, EmptyStateScreen, GoBackButton, WithQuery } from 'lifeforge-ui'
-import { useTranslation } from 'react-i18next'
-import { type InferOutput, useModalStore, useNavigate, useParams } from 'shared'
+import { useNavigate, useParams } from 'react-router'
 
-import forgeAPI from '@/utils/forgeAPI'
+import type { InferOutput } from '@lifeforge/api'
+import { useModuleTranslation } from '@lifeforge/localization'
+import {
+  Button,
+  EmptyStateScreen,
+  FAB,
+  GoBackButton,
+  ModuleHeader,
+  Stack,
+  WithQuery,
+  useModalStore
+} from '@lifeforge/ui'
+
+import { forgeAPI } from '@/manifest'
 import numberToCurrency from '@/utils/numberToCurrency'
 
 import HoldingsTable from './components/HoldingsTable'
@@ -18,16 +28,13 @@ export type HoldingEntry = InferOutput<
 >['holdings'][number]
 
 function PortfolioHolding() {
-  const { t } = useTranslation('apps.jiahuiiiii$stock')
-
+  const { t } = useModuleTranslation()
   const { open } = useModalStore()
-
   const navigate = useNavigate()
-
   const { portfolioId } = useParams()
 
   const portfolioQuery = useQuery(
-    forgeAPI.portfolios.getById.input({ id: portfolioId! }).queryOptions({
+    forgeAPI.portfolios.getById.input({ id: portfolioId ?? '' }).queryOptions({
       enabled: !!portfolioId
     })
   )
@@ -35,65 +42,60 @@ function PortfolioHolding() {
   const { holdingsWithPrices, isLoading: isHoldingsDataLoading } =
     useHoldingWithPrices(portfolioQuery.data?.holdings ?? [])
 
+  function handleAddHolding() {
+    open(ModifyHoldingModal, {
+      openType: 'create'
+    })
+  }
+
   return (
     <>
       <GoBackButton onClick={() => navigate(-1)} />
-      <div className="flex-between mb-6">
-        <div className="flex items-center gap-3">
-          <div className="flex-center bg-custom-500/10 size-14 rounded-lg">
-            <Icon className="text-custom-500 size-7" icon="tabler:briefcase" />
-          </div>
-          <div>
-            <p className="text-xl font-medium">{portfolioQuery.data?.name}</p>
-            <p className="text-bg-500">
-              {t('portfolio.holdingsValuing', {
-                count: holdingsWithPrices.length,
-                value: numberToCurrency(
-                  portfolioQuery.data?.valueHistory?.slice(-1)?.[0]?.value || 0
-                )
-              })}
-            </p>
-          </div>
-        </div>
-        <Button
-          icon="tabler:plus"
-          namespace="apps.jiahuiiiii$stock"
-          onClick={() =>
-            open(ModifyHoldingModal, {
-              openType: 'create'
-            })
-          }
-        >
-          Add Holding
-        </Button>
-      </div>
       <WithQuery query={portfolioQuery}>
         {portfolio => (
           <>
+            <ModuleHeader
+              description={t('portfolio.holdingsValuing', {
+                count: holdingsWithPrices.length,
+                value: numberToCurrency(
+                  portfolio.value_history.slice(-1)[0]?.value ?? 0
+                )
+              })}
+              icon="tabler:briefcase"
+              namespace={false}
+              title={portfolio.name}
+              trailing={
+                <Button
+                  display={{ base: 'none', md: 'flex' }}
+                  icon="tabler:plus"
+                  onClick={handleAddHolding}
+                >
+                  Add Holding
+                </Button>
+              }
+            />
             {holdingsWithPrices.length === 0 ? (
               <EmptyStateScreen
                 icon="tabler:chart-pie-off"
-                message={{
-                  id: 'holding',
-                  namespace: 'apps.jiahuiiiii$stock'
-                }}
+                message={{ id: 'holding' }}
               />
             ) : (
-              <div className="space-y-6">
+              <Stack gap="lg" mb="lg">
                 <PortfolioSummary holdingsWithPrices={holdingsWithPrices} />
                 <PerformanceChart
                   holdings={holdingsWithPrices}
-                  portfolioName={portfolio?.name ?? 'My Portfolio'}
+                  portfolioName={portfolio.name || 'My Portfolio'}
                 />
                 <HoldingsTable
                   holdings={holdingsWithPrices}
                   isLoading={isHoldingsDataLoading}
                 />
-              </div>
+              </Stack>
             )}
           </>
         )}
       </WithQuery>
+      <FAB onClick={handleAddHolding} />
     </>
   )
 }

@@ -1,4 +1,4 @@
-import type { CurrencyInput, NumberInput, TextInput } from 'lifeforge-ui'
+import type { CurrencyInput, NumberInput, TextInput } from '@lifeforge/ui'
 import type z from 'zod'
 
 import type { AnalyzerSettingsContextValue } from '@/pages/Analyzer/providers/useAnalyzerSettings'

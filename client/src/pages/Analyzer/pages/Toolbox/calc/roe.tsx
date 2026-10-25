@@ -1,5 +1,7 @@
 import z from 'zod'
 
+import { Flex, Stack, Text } from '@lifeforge/ui'
+
 import {
   calculateROE,
   getScore
@@ -37,27 +39,29 @@ export default createCalculator('tabler:activity')
   .calculate(({ netIncome, equity }, settings) => {
     const income = parseShorthand(netIncome)
 
-    const eq = parseShorthand(equity)
+    const equityValue = parseShorthand(equity)
 
-    if (isNaN(income) || isNaN(eq) || eq <= 0) {
+    if (isNaN(income) || isNaN(equityValue) || equityValue <= 0) {
       return { roe: null, score: 0 }
     }
 
-    const roeValue = calculateROE(income, eq)
+    const roeValue = calculateROE(income, equityValue)
 
-    const scoreValue = getScore(roeValue, settings.roe)
-
-    return { roe: roeValue, score: scoreValue }
+    return { roe: roeValue, score: getScore(roeValue, settings.roe) }
   })
   .displayResult(
     ({ roe, score }) =>
       roe !== null && (
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="text-bg-500 text-sm">Return on Equity</div>
-            <div className="text-2xl font-semibold">{roe.toFixed(2)}%</div>
-          </div>
+        <Flex align="center" justify="between">
+          <Stack gap="xs">
+            <Text color="muted" size="sm">
+              Return on Equity
+            </Text>
+            <Text size="2xl" weight="semibold">
+              {roe.toFixed(2)}%
+            </Text>
+          </Stack>
           <ScoreBadge maxScore={20} score={score} />
-        </div>
+        </Flex>
       )
   )

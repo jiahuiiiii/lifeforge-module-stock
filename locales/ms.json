@@ -2,17 +2,6 @@
   "title": "Saham",
   "description": "Jejak saham, urus senarai pantau, dan bina portfolio anda.",
   "subsections": {
-    "dashboard": "Papan Pemuka",
-    "watchlist": "Senarai Pantau",
-    "portfolio": "Portfolio",
-    "calculators": "Kalkulator",
-    "analyzer": "Penganalisis",
-    "logbook": "Buku Log",
-    "settings": "Tetapan",
-    "guide": "Panduan",
-    "diary": "Diari"
-  },
-  "subsectionsTitleAndDesc": {
     "dashboard": {
       "title": "Papan Pemuka",
       "description": "Jejak saham, urus senarai pantau, dan bina portfolio anda."
@@ -25,16 +14,20 @@
       "title": "Portfolio",
       "description": "Urus pegangan anda dan jejak prestasi pelaburan."
     },
+    "diary": {
+      "title": "Diari",
+      "description": "Rekod pemikiran pelaburan dan pemerhatian pasaran anda."
+    },
     "toolbox": {
-      "title": "Pengalat Penganalisis",
-      "description": "Kira metrik kewangan utama untuk analisis saham."
+      "title": "Kalkulator",
+      "description": ""
     },
     "analyzer": {
       "title": "Penganalisis",
       "description": "Analisis saham menggunakan metodologi pelaburan Cold Eye."
     },
     "logbook": {
-      "title": "Buku Log Analisis",
+      "title": "Buku Log",
       "description": "Rekod dan semak sejarah analisis saham anda."
     },
     "settings": {
@@ -42,12 +35,8 @@
       "description": "Konfigurasi ambang skor dan parameter analisis."
     },
     "guide": {
-      "title": "Panduan Pelaburan",
+      "title": "Panduan",
       "description": "Pelajari falsafah dan strategi pelaburan Cold Eye."
-    },
-    "diary": {
-      "title": "Diari",
-      "description": "Rekod pemikiran pelaburan dan pemerhatian pasaran anda."
     }
   },
   "titles": {
@@ -66,7 +55,9 @@
     "back": "Kembali",
     "viewVerdict": "Lihat Keputusan",
     "fetchFromLogbook": "Ambil dari Buku Log",
-    "saveToLogbook": "Simpan ke Buku Log"
+    "saveToLogbook": "Simpan ke Buku Log",
+    "addToWatchlist": "Tambah ke Senarai Pantau",
+    "removeFromWatchlist": "Buang dari Senarai Pantau"
   },
   "modals": {
     "portfolio": {
@@ -85,7 +76,7 @@
       "create": "Tambah Diari",
       "update": "Edit Diari",
       "remove": "Buang Diari",
-      "removeConfirmation": "Buang {{symbol}} dari portfolio? Tindakan ini tidak boleh dibatalkan."
+      "removeConfirmation": "Alih keluar \"{{name}}\" daripada diari anda? Tindakan ini tidak boleh dibatalkan."
     },
     "resetToDefaults": {
       "title": "Set Semula ke Lalai",
@@ -105,7 +96,11 @@
       "description": "Adakah anda pasti mahu memadam pengiraan untuk {{ticker}}?",
       "confirm": "Padam"
     },
-    "saveCalculation": "Simpan Pengiraan"
+    "saveCalculation": "Simpan Pengiraan",
+    "watchlist": {
+      "remove": "Alih Keluar daripada Senarai Pantau",
+      "removeConfirmation": "Adakah anda pasti mahu mengalih keluar {{symbol}} daripada senarai pantau anda?"
+    }
   },
   "inputs": {
     "portfolioName": "Nama Portfolio",
@@ -156,7 +151,8 @@
     "totalCost": "Jumlah Kos",
     "totalPL": "Jumlah U/R",
     "dayChange": "Perubahan Harian",
-    "performanceVs": "Prestasi vs <benchmark></benchmark>"
+    "performanceVs": "Prestasi vs <benchmark></benchmark>",
+    "performanceVsLabel": "Prestasi berbanding"
   },
   "table": {
     "symbol": "Simbol",
@@ -167,7 +163,8 @@
     "marketValue": "Nilai Pasaran",
     "pl": "U/R",
     "plPercent": "U/R %",
-    "actions": "Tindakan"
+    "actions": "Tindakan",
+    "holdings": "Pegangan"
   },
   "portfolio": {
     "holdingsCount": "{{count}} pegangan",
@@ -243,7 +240,8 @@
     }
   },
   "items": {
-    "diary": "Entri Diari"
+    "diary": "Entri Diari",
+    "stocks": "Entri Saham"
   },
   "calculators": {
     "categories": {
@@ -584,5 +582,19 @@
       "zuluPass": "Zulu Lulus",
       "undervalued": "Undervalued"
     }
+  },
+  "watchlist": {
+    "fetchFailed": "Tidak dapat mendapatkan data",
+    "changeToday": "{{amount}} hari ini"
+  },
+  "holding": {
+    "sharesAt": "{{shares}} saham @ ${{cost}}"
+  },
+  "performance": {
+    "benchmarkUnavailable": "Penanda aras tidak tersedia: {{symbol}}",
+    "benchmarkLoadFailed": "Gagal memuatkan data penanda aras",
+    "planLimitDescription": "Indeks ini tidak tersedia pada pelan API anda. Sila naik taraf untuk melihat data perbandingan.",
+    "loading": "Memuatkan data prestasi...",
+    "noData": "Tiada data prestasi tersedia"
   }
 }

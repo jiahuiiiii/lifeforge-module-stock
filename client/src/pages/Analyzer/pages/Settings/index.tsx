@@ -1,37 +1,34 @@
-import type { CashFlowOption, MetricConfig } from '@server/utils/defaults'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
+import { useEffect, useMemo, useState } from 'react'
+
+import { type InferOutput, useForgeMutation } from '@lifeforge/api'
+import { useModuleTranslation } from '@lifeforge/localization'
 import {
   Button,
   ConfirmationModal,
+  Grid,
   ModuleHeader,
+  Stack,
   WithQuery,
   useModalStore
-} from 'lifeforge-ui'
-import { useEffect, useMemo, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+} from '@lifeforge/ui'
 
-import forgeAPI from '@/utils/forgeAPI'
+import { forgeAPI } from '@/manifest'
 
 import CashFlowMetricEditor from './components/CashFlowMetricEditor'
 import MetricEditor, { METRIC_ICONS } from './components/MetricEditor'
 
+export type SettingsMap = InferOutput<typeof forgeAPI.analyzer.settings.list>
+
 export default function Settings() {
-  const { t } = useTranslation('apps.jiahuiiiii$stock')
-
+  const { t } = useModuleTranslation()
   const { open } = useModalStore()
-
-  const queryClient = useQueryClient()
-
   const settingsQuery = useQuery(forgeAPI.analyzer.settings.list.queryOptions())
-
-  const [localSettings, setLocalSettings] = useState<Record<
-    string,
-    MetricConfig
-  > | null>(null)
+  const [localSettings, setLocalSettings] = useState<SettingsMap | null>(null)
 
   useEffect(() => {
     if (settingsQuery.data && !localSettings) {
-      setLocalSettings(settingsQuery.data as Record<string, MetricConfig>)
+      setLocalSettings(settingsQuery.data)
     }
   }, [settingsQuery.data, localSettings])
 
@@ -41,116 +38,90 @@ export default function Settings() {
     return JSON.stringify(localSettings) !== JSON.stringify(settingsQuery.data)
   }, [localSettings, settingsQuery.data])
 
-  const updateMutation = useMutation({
-    mutationFn: async (settings: Record<string, MetricConfig>) => {
-      return forgeAPI.analyzer.settings.update.mutate({
-        settings: settings as Record<
-          string,
-          {
-            label: string
-            unit: '%' | 'x' | 'pts'
-            isInverse?: boolean
-            tiers:
-              | { threshold: number; score: number }[]
-              | Record<CashFlowOption, number>
-          }
-        >
-      })
-    },
+  const updateMutation = useForgeMutation(forgeAPI.analyzer.settings.update, {
+    action: 'update',
+    queryKey: forgeAPI.analyzer.settings.key,
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: forgeAPI.analyzer.settings.list.key
-      })
+      setLocalSettings(null)
     }
   })
 
-  const resetMutation = useMutation({
-    mutationFn: async () => {
-      return forgeAPI.analyzer.settings.reset.mutate({})
-    },
+  const resetMutation = useForgeMutation(forgeAPI.analyzer.settings.reset, {
+    action: 'update',
+    queryKey: forgeAPI.analyzer.settings.key,
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: forgeAPI.analyzer.settings.list.key
-      })
       setLocalSettings(null)
     }
   })
 
   return (
     <>
-      <ModuleHeader
-        icon="tabler:settings"
-        namespace="apps.jiahuiiiii$stock"
-        title="settings"
-        tKey="subsectionsTitleAndDesc"
-      />
+      <ModuleHeader icon="tabler:settings" title="settings" />
       <WithQuery query={settingsQuery}>
         {() => (
-          <>
-            <div className="mb-12 space-y-4">
-              <div className="grid gap-4 lg:grid-cols-2">
-                {localSettings &&
-                  (
-                    Object.keys(METRIC_ICONS) as (keyof typeof METRIC_ICONS)[]
-                  ).map(id => (
+          <Stack gap="md" mb="2xl">
+            <Grid gap="md" templateCols={{ base: 1, lg: 2 }}>
+              {localSettings &&
+                (
+                  Object.keys(METRIC_ICONS) as (keyof typeof METRIC_ICONS)[]
+                ).map(metricId => {
+                  const config = localSettings[metricId]
+
+                  if (!config) return null
+
+                  return (
                     <MetricEditor
-                      key={id}
-                      config={localSettings[id]}
+                      key={metricId}
+                      config={config}
                       localSettings={localSettings}
-                      metricId={id}
+                      metricId={metricId}
                       setLocalSettings={setLocalSettings}
                     />
-                  ))}
-                {localSettings && (
-                  <CashFlowMetricEditor
-                    localSettings={localSettings}
-                    setLocalSettings={setLocalSettings}
-                    settings={
-                      localSettings.cashflow.tiers as Record<
-                        CashFlowOption,
-                        number
-                      >
-                    }
-                  />
-                )}
-              </div>
-              <Button
-                className="w-full"
-                disabled={!hasChanges || updateMutation.isPending}
-                icon="tabler:device-floppy"
-                loading={updateMutation.isPending}
-                namespace="apps.jiahuiiiii$stock"
-                onClick={() => {
-                  if (localSettings) {
-                    updateMutation.mutate(localSettings)
+                  )
+                })}
+              {localSettings && (
+                <CashFlowMetricEditor
+                  localSettings={localSettings}
+                  setLocalSettings={setLocalSettings}
+                  settings={
+                    localSettings.cashflow!.tiers as Record<string, number>
                   }
-                }}
-              >
-                saveChanges
-              </Button>
-              <Button
-                dangerous
-                className="w-full"
-                disabled={resetMutation.isPending}
-                icon="tabler:refresh"
-                loading={resetMutation.isPending}
-                namespace="apps.jiahuiiiii$stock"
-                variant="secondary"
-                onClick={() =>
-                  open(ConfirmationModal, {
-                    title: t('modals.resetToDefaults.title'),
-                    description: t('modals.resetToDefaults.description'),
-                    confirmationButton: 'confirm',
-                    onConfirm: async () => {
-                      resetMutation.mutate()
-                    }
-                  })
+                />
+              )}
+            </Grid>
+            <Button
+              disabled={!hasChanges || updateMutation.isPending}
+              icon="tabler:device-floppy"
+              loading={updateMutation.isPending}
+              width="100%"
+              onClick={() => {
+                if (localSettings) {
+                  updateMutation.mutate({ settings: localSettings })
                 }
-              >
-                resetDefaults
-              </Button>
-            </div>
-          </>
+              }}
+            >
+              saveChanges
+            </Button>
+            <Button
+              dangerous
+              disabled={resetMutation.isPending}
+              icon="tabler:refresh"
+              loading={resetMutation.isPending}
+              variant="secondary"
+              width="100%"
+              onClick={() =>
+                open(ConfirmationModal, {
+                  title: t('modals.resetToDefaults.title'),
+                  description: t('modals.resetToDefaults.description'),
+                  onConfirm: async () => {
+                    await resetMutation.mutateAsync(undefined)
+                  }
+                })
+              }
+            >
+              resetDefaults
+            </Button>
+          </Stack>
         )}
       </WithQuery>
     </>

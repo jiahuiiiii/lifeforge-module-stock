@@ -1,8 +1,9 @@
-import { WithQueryData } from 'lifeforge-ui'
 import { createContext, useContext, useState } from 'react'
-import type { InferOutput } from 'shared'
 
-import forgeAPI from '@/utils/forgeAPI'
+import type { InferOutput } from '@lifeforge/api'
+import { WithQueryData } from '@lifeforge/ui'
+
+import { forgeAPI } from '@/manifest'
 
 import useDerivedValues from '../hooks/useDerivedValues'
 import type {
@@ -12,7 +13,7 @@ import type {
   RawValues
 } from '../types'
 
-type AnalyzerContext = {
+type AnalyzerContextValue = {
   phase: number
   setPhase: React.Dispatch<React.SetStateAction<number>>
   baseInfo: BaseInfo
@@ -26,14 +27,16 @@ type AnalyzerContext = {
   calculatorLogs: InferOutput<typeof forgeAPI.analyzer.logs.calculator.list>
 }
 
-const AnalyzerContext = createContext<AnalyzerContext | undefined>(undefined)
+const AnalyzerContext = createContext<AnalyzerContextValue | undefined>(
+  undefined
+)
 
 export default function AnalyzerProvider({
   children
 }: {
   children: React.ReactNode
 }) {
-  const [phase, setPhase] = useState<number>(1)
+  const [phase, setPhase] = useState(1)
 
   const [baseInfo, setBaseInfo] = useState<BaseInfo>({
     stockExchange: '',
@@ -67,14 +70,12 @@ export default function AnalyzerProvider({
       ticker: '',
       companyName: ''
     })
-
     setQualitative({
       valueChain: false,
       dividendPolicy: false,
       management: false,
       moat: false
     })
-
     setRawValues({
       cagr: 0,
       dy: 0,
@@ -87,7 +88,7 @@ export default function AnalyzerProvider({
   }
 
   return (
-    <WithQueryData controller={forgeAPI.analyzer.logs.calculator.list}>
+    <WithQueryData contract={forgeAPI.analyzer.logs.calculator.list}>
       {calculatorLogs => (
         <AnalyzerContext
           value={{

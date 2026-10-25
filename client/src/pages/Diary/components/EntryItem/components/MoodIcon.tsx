@@ -1,5 +1,4 @@
-import { Icon } from '@iconify/react'
-import { anyColorToHex } from 'shared'
+import { Flex, Icon } from '@lifeforge/ui'
 
 import { MOOD_CONFIG, type Mood } from '../../../constants'
 
@@ -7,14 +6,17 @@ function MoodIcon({ mood }: { mood: Mood }) {
   const config = MOOD_CONFIG[mood]
 
   return (
-    <div
-      className="flex size-10 items-center justify-center rounded-lg"
-      style={{
-        backgroundColor: anyColorToHex(config.color) + '20'
-      }}
+    <Flex
+      align="center"
+      flexShrink="0"
+      height="2.5em"
+      justify="center"
+      r="md"
+      style={{ backgroundColor: `${config.color}20` }}
+      width="2.5em"
     >
-      <Icon className="size-5" color={config.color} icon={config.icon} />
-    </div>
+      <Icon icon={config.icon} style={{ color: config.color }} />
+    </Flex>
   )
 }
 

@@ -2,17 +2,6 @@
   "title": "股票",
   "description": "追蹤股票、管理關注列表並構建您的投資組合。",
   "subsections": {
-    "dashboard": "儀表板",
-    "watchlist": "關注列表",
-    "portfolio": "投資組合",
-    "calculators": "計算器",
-    "analyzer": "分析器",
-    "logbook": "日誌本",
-    "settings": "設定",
-    "guide": "指南",
-    "diary": "日記"
-  },
-  "subsectionsTitleAndDesc": {
     "dashboard": {
       "title": "儀表板",
       "description": "追蹤股票、管理關注列表並構建您的投資組合。"
@@ -25,16 +14,20 @@
       "title": "投資組合",
       "description": "管理您的持倉並追蹤投資表現。"
     },
+    "diary": {
+      "title": "日記",
+      "description": "記錄您的投資思考和市場觀察。"
+    },
     "toolbox": {
-      "title": "分析器工具箱",
-      "description": "計算股票分析的關鍵財務指標。"
+      "title": "計算器",
+      "description": ""
     },
     "analyzer": {
       "title": "分析器",
       "description": "使用冷眼投資法分析股票。"
     },
     "logbook": {
-      "title": "分析日誌本",
+      "title": "日誌本",
       "description": "記錄並回顧您的股票分析歷史。"
     },
     "settings": {
@@ -42,12 +35,8 @@
       "description": "配置評分閾值和分析參數。"
     },
     "guide": {
-      "title": "投資指南",
+      "title": "指南",
       "description": "學習冷眼投資哲學和策略。"
-    },
-    "diary": {
-      "title": "日記",
-      "description": "記錄您的投資思考和市場觀察。"
     }
   },
   "titles": {
@@ -66,7 +55,9 @@
     "back": "返回",
     "viewVerdict": "查看結果",
     "fetchFromLogbook": "從日誌匯入",
-    "saveToLogbook": "儲存到日誌"
+    "saveToLogbook": "儲存到日誌",
+    "addToWatchlist": "新增到自選股",
+    "removeFromWatchlist": "從自選股移除"
   },
   "modals": {
     "portfolio": {
@@ -85,7 +76,7 @@
       "create": "新增日記",
       "update": "編輯日記",
       "remove": "移除日記",
-      "removeConfirmation": "確定要刪除「{{name}}」日記嗎？此操作無法撤銷。"
+      "removeConfirmation": "確定要從日記中移除「{{name}}」嗎？此操作無法復原。"
     },
     "resetToDefaults": {
       "title": "重置為預設值",
@@ -105,7 +96,11 @@
       "description": "確定要刪除 {{ticker}} 的計算嗎？",
       "confirm": "刪除"
     },
-    "saveCalculation": "儲存計算"
+    "saveCalculation": "儲存計算",
+    "watchlist": {
+      "remove": "從自選股移除",
+      "removeConfirmation": "確定要將 {{symbol}} 從自選股中移除嗎？"
+    }
   },
   "inputs": {
     "portfolioName": "投資組合名稱",
@@ -156,7 +151,8 @@
     "totalCost": "總成本",
     "totalPL": "總盈虧",
     "dayChange": "日漲跌",
-    "performanceVs": "對比 <benchmark></benchmark> 表現"
+    "performanceVs": "對比 <benchmark></benchmark> 表現",
+    "performanceVsLabel": "表現對比"
   },
   "table": {
     "symbol": "代碼",
@@ -167,7 +163,8 @@
     "marketValue": "市值",
     "pl": "盈虧",
     "plPercent": "盈虧 %",
-    "actions": "操作"
+    "actions": "操作",
+    "holdings": "持股"
   },
   "portfolio": {
     "holdingsCount": "{{count}} 只持倉",
@@ -243,7 +240,8 @@
     }
   },
   "items": {
-    "diary": "日記條目"
+    "diary": "日記條目",
+    "stocks": "股票條目"
   },
   "calculators": {
     "categories": {
@@ -584,5 +582,19 @@
       "zuluPass": "Zulu通過",
       "undervalued": "低估"
     }
+  },
+  "watchlist": {
+    "fetchFailed": "無法取得資料",
+    "changeToday": "今日 {{amount}}"
+  },
+  "holding": {
+    "sharesAt": "{{shares}} 股 @ ${{cost}}"
+  },
+  "performance": {
+    "benchmarkUnavailable": "基準不可用：{{symbol}}",
+    "benchmarkLoadFailed": "載入基準資料失敗",
+    "planLimitDescription": "目前的 API 方案不支援此指數。請升級以查看比較資料。",
+    "loading": "正在載入表現資料...",
+    "noData": "暫無表現資料"
   }
 }

@@ -1,4 +1,4 @@
-import { parseAsString, parseAsStringEnum, useQueryState } from 'shared'
+import { parseAsString, parseAsStringEnum, useQueryState } from 'nuqs'
 
 import { MOODS } from '../constants'
 

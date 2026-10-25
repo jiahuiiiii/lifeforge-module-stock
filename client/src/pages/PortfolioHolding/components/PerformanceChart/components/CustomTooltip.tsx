@@ -1,6 +1,6 @@
-import { Card } from 'lifeforge-ui'
+import { Box, Card, Flex, Text } from '@lifeforge/ui'
 
-export default function CustomTooltip({
+function CustomTooltip({
   active,
   payload,
   label
@@ -9,24 +9,37 @@ export default function CustomTooltip({
   payload?: Array<{ name: string; value: number; color: string }>
   label?: string
 }) {
-  if (!(active && payload && payload.length)) return null
+  if (!active || !payload || payload.length === 0) return null
 
   return (
-    <Card className="border-bg-200 dark:border-bg-700/50 border">
-      <p className="mb-2 text-sm font-semibold">{label}</p>
-      {payload.map((entry, index) => (
-        <div key={index} className="flex items-center gap-2 text-sm">
-          <div
-            className="size-2 rounded-full"
-            style={{ backgroundColor: entry.color }}
-          />
-          <span className="text-bg-500">{entry.name}:</span>
-          <span className="font-medium">
-            {entry.value >= 0 ? '+' : ''}
-            {entry.value.toFixed(2)}%
-          </span>
-        </div>
-      ))}
+    <Card gap="sm">
+      <Text size="sm" weight="semibold">
+        {label}
+      </Text>
+      {payload.map((entry, index) => {
+        const value = Number(entry.value)
+
+        return (
+          <Flex key={index} align="center" gap="sm">
+            <Box
+              flexShrink="0"
+              height="0.5em"
+              r="full"
+              style={{ backgroundColor: entry.color }}
+              width="0.5em"
+            />
+            <Text color="muted" size="sm">
+              {entry.name}:
+            </Text>
+            <Text size="sm" weight="medium">
+              {Number.isFinite(value) && value >= 0 ? '+' : ''}
+              {Number.isFinite(value) ? value.toFixed(2) : '-'}%
+            </Text>
+          </Flex>
+        )
+      })}
     </Card>
   )
 }
+
+export default CustomTooltip

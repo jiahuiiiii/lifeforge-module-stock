@@ -1,13 +1,17 @@
 import { useQuery } from '@tanstack/react-query'
-import {
-  EmptyStateScreen,
-  ModuleHeader,
-  SearchInput,
-  WithQuery
-} from 'lifeforge-ui'
 import { useState } from 'react'
 
-import forgeAPI from '@/utils/forgeAPI'
+import { useModuleTranslation } from '@lifeforge/localization'
+import {
+  EmptyStateScreen,
+  Flex,
+  ModuleHeader,
+  SearchInput,
+  Text,
+  WithQuery
+} from '@lifeforge/ui'
+
+import { forgeAPI } from '@/manifest'
 
 import SearchResultItem from './components/SearchResultItem'
 
@@ -18,21 +22,19 @@ export interface WatchlistItem {
 }
 
 function Dashboard() {
+  const { t } = useModuleTranslation()
   const [searchQuery, setSearchQuery] = useState('')
 
   const searchResultQuery = useQuery(
     forgeAPI.data.search
-      .input({
-        keywords: searchQuery
-      })
+      .input({ keywords: searchQuery })
       .queryOptions({
-        queryKey: ['search-stocks', searchQuery],
         enabled: searchQuery.trim().length > 0
       })
   )
 
   return (
-    <div className="flex size-full flex-1 animate-[fadeSlideIn_0.3s_ease-out] flex-col">
+    <Flex direction="column" flex="1" height="100%" width="100%">
       <ModuleHeader />
       <SearchInput
         debounceMs={300}
@@ -42,33 +44,31 @@ function Dashboard() {
         onChange={setSearchQuery}
       >
         <WithQuery loaderSize="2rem" query={searchResultQuery}>
-          {results => (
-            <>
-              {results.bestMatches?.length === 0 ? (
-                <div className="text-bg-500 text-center">
-                  No suggestions found.
-                </div>
-              ) : (
-                <div className="max-h-[30vh] w-full space-y-2 overflow-y-auto">
-                  {results.bestMatches?.map(match => (
-                    <SearchResultItem key={match['1. symbol']} match={match} />
-                  ))}
-                </div>
-              )}
-            </>
-          )}
+          {results =>
+            results.results.length === 0 ? (
+              <Text align="center" color="muted">
+                {t('empty.search.title')}
+              </Text>
+            ) : (
+              <Flex
+                direction="column"
+                gap="sm"
+                maxHeight="30vh"
+                overflowY="auto"
+                width="100%"
+              >
+                {results.results.map(match => (
+                  <SearchResultItem key={match.symbol} match={match} />
+                ))}
+              </Flex>
+            )
+          }
         </WithQuery>
       </SearchInput>
-      <div className="flex-center flex-1">
-        <EmptyStateScreen
-          icon="material-symbols-light:candlestick-chart"
-          message={{
-            id: 'stock',
-            namespace: 'apps.jiahuiiiii$stock'
-          }}
-        />
-      </div>
-    </div>
+      <Flex align="center" flex="1" justify="center">
+        <EmptyStateScreen icon="material-symbols-light:candlestick-chart" message={{ id: 'stock' }} />
+      </Flex>
+    </Flex>
   )
 }
 
